@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useState as _u } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useStore } from "@/lib/store";
 import {

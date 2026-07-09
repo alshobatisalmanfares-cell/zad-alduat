@@ -46,7 +46,6 @@ function AdminShell() {
             className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
           />
           {err && <p className="text-xs text-destructive mt-2">{err}</p>}
-          <p className="text-[11px] text-muted-foreground mt-2">تجريبي: <b>admin123</b></p>
 
           <button
             type="submit"
