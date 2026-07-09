@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -30,8 +30,3 @@ export function PageHeader({
     </header>
   );
 }
-
-// Dummy route to keep file safe if imported as route; we use as component only
-export const Route = createFileRoute("/_page-header-placeholder")({
-  component: () => null,
-});
