@@ -9,38 +9,214 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as QuranRouteImport } from './routes/quran'
+import { Route as KhutbahRouteImport } from './routes/khutbah'
+import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as AzkarRouteImport } from './routes/azkar'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as KhutbahIdRouteImport } from './routes/khutbah.$id'
+import { Route as AdminKhutabRouteImport } from './routes/admin.khutab'
+import { Route as AdminHadithRouteImport } from './routes/admin.hadith'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AdminAzkarRouteImport } from './routes/admin.azkar'
 
+const QuranRoute = QuranRouteImport.update({
+  id: '/quran',
+  path: '/quran',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KhutbahRoute = KhutbahRouteImport.update({
+  id: '/khutbah',
+  path: '/khutbah',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AzkarRoute = AzkarRouteImport.update({
+  id: '/azkar',
+  path: '/azkar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KhutbahIdRoute = KhutbahIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => KhutbahRoute,
+} as any)
+const AdminKhutabRoute = AdminKhutabRouteImport.update({
+  id: '/khutab',
+  path: '/khutab',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminHadithRoute = AdminHadithRouteImport.update({
+  id: '/hadith',
+  path: '/hadith',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAzkarRoute = AdminAzkarRouteImport.update({
+  id: '/azkar',
+  path: '/azkar',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/azkar': typeof AzkarRoute
+  '/favorites': typeof FavoritesRoute
+  '/khutbah': typeof KhutbahRouteWithChildren
+  '/quran': typeof QuranRoute
+  '/admin/azkar': typeof AdminAzkarRoute
+  '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/hadith': typeof AdminHadithRoute
+  '/admin/khutab': typeof AdminKhutabRoute
+  '/khutbah/$id': typeof KhutbahIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/azkar': typeof AzkarRoute
+  '/favorites': typeof FavoritesRoute
+  '/khutbah': typeof KhutbahRouteWithChildren
+  '/quran': typeof QuranRoute
+  '/admin/azkar': typeof AdminAzkarRoute
+  '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/hadith': typeof AdminHadithRoute
+  '/admin/khutab': typeof AdminKhutabRoute
+  '/khutbah/$id': typeof KhutbahIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/azkar': typeof AzkarRoute
+  '/favorites': typeof FavoritesRoute
+  '/khutbah': typeof KhutbahRouteWithChildren
+  '/quran': typeof QuranRoute
+  '/admin/azkar': typeof AdminAzkarRoute
+  '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/hadith': typeof AdminHadithRoute
+  '/admin/khutab': typeof AdminKhutabRoute
+  '/khutbah/$id': typeof KhutbahIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/azkar'
+    | '/favorites'
+    | '/khutbah'
+    | '/quran'
+    | '/admin/azkar'
+    | '/admin/categories'
+    | '/admin/dashboard'
+    | '/admin/hadith'
+    | '/admin/khutab'
+    | '/khutbah/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/azkar'
+    | '/favorites'
+    | '/khutbah'
+    | '/quran'
+    | '/admin/azkar'
+    | '/admin/categories'
+    | '/admin/dashboard'
+    | '/admin/hadith'
+    | '/admin/khutab'
+    | '/khutbah/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/azkar'
+    | '/favorites'
+    | '/khutbah'
+    | '/quran'
+    | '/admin/azkar'
+    | '/admin/categories'
+    | '/admin/dashboard'
+    | '/admin/hadith'
+    | '/admin/khutab'
+    | '/khutbah/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  AzkarRoute: typeof AzkarRoute
+  FavoritesRoute: typeof FavoritesRoute
+  KhutbahRoute: typeof KhutbahRouteWithChildren
+  QuranRoute: typeof QuranRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/quran': {
+      id: '/quran'
+      path: '/quran'
+      fullPath: '/quran'
+      preLoaderRoute: typeof QuranRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/khutbah': {
+      id: '/khutbah'
+      path: '/khutbah'
+      fullPath: '/khutbah'
+      preLoaderRoute: typeof KhutbahRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/azkar': {
+      id: '/azkar'
+      path: '/azkar'
+      fullPath: '/azkar'
+      preLoaderRoute: typeof AzkarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +224,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/khutbah/$id': {
+      id: '/khutbah/$id'
+      path: '/$id'
+      fullPath: '/khutbah/$id'
+      preLoaderRoute: typeof KhutbahIdRouteImport
+      parentRoute: typeof KhutbahRoute
+    }
+    '/admin/khutab': {
+      id: '/admin/khutab'
+      path: '/khutab'
+      fullPath: '/admin/khutab'
+      preLoaderRoute: typeof AdminKhutabRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/hadith': {
+      id: '/admin/hadith'
+      path: '/hadith'
+      fullPath: '/admin/hadith'
+      preLoaderRoute: typeof AdminHadithRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/categories': {
+      id: '/admin/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminCategoriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/azkar': {
+      id: '/admin/azkar'
+      path: '/azkar'
+      fullPath: '/admin/azkar'
+      preLoaderRoute: typeof AdminAzkarRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminAzkarRoute: typeof AdminAzkarRoute
+  AdminCategoriesRoute: typeof AdminCategoriesRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminHadithRoute: typeof AdminHadithRoute
+  AdminKhutabRoute: typeof AdminKhutabRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAzkarRoute: AdminAzkarRoute,
+  AdminCategoriesRoute: AdminCategoriesRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminHadithRoute: AdminHadithRoute,
+  AdminKhutabRoute: AdminKhutabRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface KhutbahRouteChildren {
+  KhutbahIdRoute: typeof KhutbahIdRoute
+}
+
+const KhutbahRouteChildren: KhutbahRouteChildren = {
+  KhutbahIdRoute: KhutbahIdRoute,
+}
+
+const KhutbahRouteWithChildren =
+  KhutbahRoute._addFileChildren(KhutbahRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  AzkarRoute: AzkarRoute,
+  FavoritesRoute: FavoritesRoute,
+  KhutbahRoute: KhutbahRouteWithChildren,
+  QuranRoute: QuranRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
