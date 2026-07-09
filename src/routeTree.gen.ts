@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as KhutbahRouteImport } from './routes/khutbah'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as KhutbahIdRouteImport } from './routes/khutbah.$id'
 
 const KhutbahRoute = KhutbahRouteImport.update({
   id: '/khutbah',
@@ -22,31 +23,39 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KhutbahIdRoute = KhutbahIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => KhutbahRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/khutbah': typeof KhutbahRoute
+  '/khutbah': typeof KhutbahRouteWithChildren
+  '/khutbah/$id': typeof KhutbahIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/khutbah': typeof KhutbahRoute
+  '/khutbah': typeof KhutbahRouteWithChildren
+  '/khutbah/$id': typeof KhutbahIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/khutbah': typeof KhutbahRoute
+  '/khutbah': typeof KhutbahRouteWithChildren
+  '/khutbah/$id': typeof KhutbahIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/khutbah'
+  fullPaths: '/' | '/khutbah' | '/khutbah/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/khutbah'
-  id: '__root__' | '/' | '/khutbah'
+  to: '/' | '/khutbah' | '/khutbah/$id'
+  id: '__root__' | '/' | '/khutbah' | '/khutbah/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  KhutbahRoute: typeof KhutbahRoute
+  KhutbahRoute: typeof KhutbahRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +74,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/khutbah/$id': {
+      id: '/khutbah/$id'
+      path: '/$id'
+      fullPath: '/khutbah/$id'
+      preLoaderRoute: typeof KhutbahIdRouteImport
+      parentRoute: typeof KhutbahRoute
+    }
   }
 }
 
+interface KhutbahRouteChildren {
+  KhutbahIdRoute: typeof KhutbahIdRoute
+}
+
+const KhutbahRouteChildren: KhutbahRouteChildren = {
+  KhutbahIdRoute: KhutbahIdRoute,
+}
+
+const KhutbahRouteWithChildren =
+  KhutbahRoute._addFileChildren(KhutbahRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  KhutbahRoute: KhutbahRoute,
+  KhutbahRoute: KhutbahRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
