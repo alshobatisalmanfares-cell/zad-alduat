@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as QuranRouteImport } from './routes/quran'
 import { Route as KhutbahRouteImport } from './routes/khutbah'
+import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as AzkarRouteImport } from './routes/azkar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KhutbahIdRouteImport } from './routes/khutbah.$id'
@@ -23,6 +24,11 @@ const QuranRoute = QuranRouteImport.update({
 const KhutbahRoute = KhutbahRouteImport.update({
   id: '/khutbah',
   path: '/khutbah',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AzkarRoute = AzkarRouteImport.update({
@@ -44,6 +50,7 @@ const KhutbahIdRoute = KhutbahIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/azkar': typeof AzkarRoute
+  '/favorites': typeof FavoritesRoute
   '/khutbah': typeof KhutbahRouteWithChildren
   '/quran': typeof QuranRoute
   '/khutbah/$id': typeof KhutbahIdRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/azkar': typeof AzkarRoute
+  '/favorites': typeof FavoritesRoute
   '/khutbah': typeof KhutbahRouteWithChildren
   '/quran': typeof QuranRoute
   '/khutbah/$id': typeof KhutbahIdRoute
@@ -59,21 +67,36 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/azkar': typeof AzkarRoute
+  '/favorites': typeof FavoritesRoute
   '/khutbah': typeof KhutbahRouteWithChildren
   '/quran': typeof QuranRoute
   '/khutbah/$id': typeof KhutbahIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/azkar' | '/khutbah' | '/quran' | '/khutbah/$id'
+  fullPaths:
+    | '/'
+    | '/azkar'
+    | '/favorites'
+    | '/khutbah'
+    | '/quran'
+    | '/khutbah/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/azkar' | '/khutbah' | '/quran' | '/khutbah/$id'
-  id: '__root__' | '/' | '/azkar' | '/khutbah' | '/quran' | '/khutbah/$id'
+  to: '/' | '/azkar' | '/favorites' | '/khutbah' | '/quran' | '/khutbah/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/azkar'
+    | '/favorites'
+    | '/khutbah'
+    | '/quran'
+    | '/khutbah/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AzkarRoute: typeof AzkarRoute
+  FavoritesRoute: typeof FavoritesRoute
   KhutbahRoute: typeof KhutbahRouteWithChildren
   QuranRoute: typeof QuranRoute
 }
@@ -92,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/khutbah'
       fullPath: '/khutbah'
       preLoaderRoute: typeof KhutbahRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/azkar': {
@@ -132,6 +162,7 @@ const KhutbahRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AzkarRoute: AzkarRoute,
+  FavoritesRoute: FavoritesRoute,
   KhutbahRoute: KhutbahRouteWithChildren,
   QuranRoute: QuranRoute,
 }
