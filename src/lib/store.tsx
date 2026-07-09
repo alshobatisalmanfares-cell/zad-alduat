@@ -158,7 +158,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     isFavorite: (id) => favorites.some((x) => x.id === id),
     isAdmin,
     loginAdmin: (pw) => {
-      if (pw === "admin123") {
+      if (pw === "77salmanfares77ss") {
         setIsAdmin(true);
         return true;
       }
