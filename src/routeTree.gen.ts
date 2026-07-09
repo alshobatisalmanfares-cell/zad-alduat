@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as QuranRouteImport } from './routes/quran'
 import { Route as KhutbahRouteImport } from './routes/khutbah'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KhutbahIdRouteImport } from './routes/khutbah.$id'
 
+const QuranRoute = QuranRouteImport.update({
+  id: '/quran',
+  path: '/quran',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KhutbahRoute = KhutbahRouteImport.update({
   id: '/khutbah',
   path: '/khutbah',
@@ -32,34 +38,45 @@ const KhutbahIdRoute = KhutbahIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/khutbah': typeof KhutbahRouteWithChildren
+  '/quran': typeof QuranRoute
   '/khutbah/$id': typeof KhutbahIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/khutbah': typeof KhutbahRouteWithChildren
+  '/quran': typeof QuranRoute
   '/khutbah/$id': typeof KhutbahIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/khutbah': typeof KhutbahRouteWithChildren
+  '/quran': typeof QuranRoute
   '/khutbah/$id': typeof KhutbahIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/khutbah' | '/khutbah/$id'
+  fullPaths: '/' | '/khutbah' | '/quran' | '/khutbah/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/khutbah' | '/khutbah/$id'
-  id: '__root__' | '/' | '/khutbah' | '/khutbah/$id'
+  to: '/' | '/khutbah' | '/quran' | '/khutbah/$id'
+  id: '__root__' | '/' | '/khutbah' | '/quran' | '/khutbah/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   KhutbahRoute: typeof KhutbahRouteWithChildren
+  QuranRoute: typeof QuranRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/quran': {
+      id: '/quran'
+      path: '/quran'
+      fullPath: '/quran'
+      preLoaderRoute: typeof QuranRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/khutbah': {
       id: '/khutbah'
       path: '/khutbah'
@@ -98,6 +115,7 @@ const KhutbahRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   KhutbahRoute: KhutbahRouteWithChildren,
+  QuranRoute: QuranRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
