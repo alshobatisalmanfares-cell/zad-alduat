@@ -9,12 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as QuranRouteImport } from './routes/quran'
 import { Route as KhutbahRouteImport } from './routes/khutbah'
+import { Route as HadithRouteImport } from './routes/hadith'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as AzkarRouteImport } from './routes/azkar'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as QuranIdRouteImport } from './routes/quran.$id'
 import { Route as KhutbahIdRouteImport } from './routes/khutbah.$id'
 import { Route as AdminKhutabRouteImport } from './routes/admin.khutab'
 import { Route as AdminHadithRouteImport } from './routes/admin.hadith'
@@ -22,6 +25,11 @@ import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminAzkarRouteImport } from './routes/admin.azkar'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QuranRoute = QuranRouteImport.update({
   id: '/quran',
   path: '/quran',
@@ -30,6 +38,11 @@ const QuranRoute = QuranRouteImport.update({
 const KhutbahRoute = KhutbahRouteImport.update({
   id: '/khutbah',
   path: '/khutbah',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HadithRoute = HadithRouteImport.update({
+  id: '/hadith',
+  path: '/hadith',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FavoritesRoute = FavoritesRouteImport.update({
@@ -51,6 +64,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const QuranIdRoute = QuranIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => QuranRoute,
 } as any)
 const KhutbahIdRoute = KhutbahIdRouteImport.update({
   id: '/$id',
@@ -88,28 +106,34 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/azkar': typeof AzkarRoute
   '/favorites': typeof FavoritesRoute
+  '/hadith': typeof HadithRoute
   '/khutbah': typeof KhutbahRouteWithChildren
-  '/quran': typeof QuranRoute
+  '/quran': typeof QuranRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/azkar': typeof AdminAzkarRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/hadith': typeof AdminHadithRoute
   '/admin/khutab': typeof AdminKhutabRoute
   '/khutbah/$id': typeof KhutbahIdRoute
+  '/quran/$id': typeof QuranIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/azkar': typeof AzkarRoute
   '/favorites': typeof FavoritesRoute
+  '/hadith': typeof HadithRoute
   '/khutbah': typeof KhutbahRouteWithChildren
-  '/quran': typeof QuranRoute
+  '/quran': typeof QuranRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/azkar': typeof AdminAzkarRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/hadith': typeof AdminHadithRoute
   '/admin/khutab': typeof AdminKhutabRoute
   '/khutbah/$id': typeof KhutbahIdRoute
+  '/quran/$id': typeof QuranIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -117,14 +141,17 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/azkar': typeof AzkarRoute
   '/favorites': typeof FavoritesRoute
+  '/hadith': typeof HadithRoute
   '/khutbah': typeof KhutbahRouteWithChildren
-  '/quran': typeof QuranRoute
+  '/quran': typeof QuranRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/azkar': typeof AdminAzkarRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/hadith': typeof AdminHadithRoute
   '/admin/khutab': typeof AdminKhutabRoute
   '/khutbah/$id': typeof KhutbahIdRoute
+  '/quran/$id': typeof QuranIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -133,42 +160,51 @@ export interface FileRouteTypes {
     | '/admin'
     | '/azkar'
     | '/favorites'
+    | '/hadith'
     | '/khutbah'
     | '/quran'
+    | '/sitemap.xml'
     | '/admin/azkar'
     | '/admin/categories'
     | '/admin/dashboard'
     | '/admin/hadith'
     | '/admin/khutab'
     | '/khutbah/$id'
+    | '/quran/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
     | '/azkar'
     | '/favorites'
+    | '/hadith'
     | '/khutbah'
     | '/quran'
+    | '/sitemap.xml'
     | '/admin/azkar'
     | '/admin/categories'
     | '/admin/dashboard'
     | '/admin/hadith'
     | '/admin/khutab'
     | '/khutbah/$id'
+    | '/quran/$id'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/azkar'
     | '/favorites'
+    | '/hadith'
     | '/khutbah'
     | '/quran'
+    | '/sitemap.xml'
     | '/admin/azkar'
     | '/admin/categories'
     | '/admin/dashboard'
     | '/admin/hadith'
     | '/admin/khutab'
     | '/khutbah/$id'
+    | '/quran/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -176,12 +212,21 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AzkarRoute: typeof AzkarRoute
   FavoritesRoute: typeof FavoritesRoute
+  HadithRoute: typeof HadithRoute
   KhutbahRoute: typeof KhutbahRouteWithChildren
-  QuranRoute: typeof QuranRoute
+  QuranRoute: typeof QuranRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/quran': {
       id: '/quran'
       path: '/quran'
@@ -194,6 +239,13 @@ declare module '@tanstack/react-router' {
       path: '/khutbah'
       fullPath: '/khutbah'
       preLoaderRoute: typeof KhutbahRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hadith': {
+      id: '/hadith'
+      path: '/hadith'
+      fullPath: '/hadith'
+      preLoaderRoute: typeof HadithRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/favorites': {
@@ -223,6 +275,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/quran/$id': {
+      id: '/quran/$id'
+      path: '/$id'
+      fullPath: '/quran/$id'
+      preLoaderRoute: typeof QuranIdRouteImport
+      parentRoute: typeof QuranRoute
     }
     '/khutbah/$id': {
       id: '/khutbah/$id'
@@ -298,24 +357,26 @@ const KhutbahRouteChildren: KhutbahRouteChildren = {
 const KhutbahRouteWithChildren =
   KhutbahRoute._addFileChildren(KhutbahRouteChildren)
 
+interface QuranRouteChildren {
+  QuranIdRoute: typeof QuranIdRoute
+}
+
+const QuranRouteChildren: QuranRouteChildren = {
+  QuranIdRoute: QuranIdRoute,
+}
+
+const QuranRouteWithChildren = QuranRoute._addFileChildren(QuranRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AzkarRoute: AzkarRoute,
   FavoritesRoute: FavoritesRoute,
+  HadithRoute: HadithRoute,
   KhutbahRoute: KhutbahRouteWithChildren,
-  QuranRoute: QuranRoute,
+  QuranRoute: QuranRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
