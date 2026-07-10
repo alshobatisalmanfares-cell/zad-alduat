@@ -1,12 +1,12 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, BookOpen, Sparkles, Heart, ScrollText } from "lucide-react";
+import { MushafIcon, MisbahaIcon, HeartStarIcon, HadithIcon, MosqueIcon } from "@/components/icons/IslamicIcons";
 
 const items = [
-  { to: "/", label: "الرئيسية", icon: Home },
-  { to: "/khutbah", label: "الخطب", icon: ScrollText },
-  { to: "/quran", label: "القرآن", icon: BookOpen },
-  { to: "/azkar", label: "الأذكار", icon: Sparkles },
-  { to: "/favorites", label: "المفضلة", icon: Heart },
+  { to: "/", label: "الرئيسية", Icon: MosqueIcon },
+  { to: "/quran", label: "القرآن", Icon: MushafIcon },
+  { to: "/hadith", label: "الحديث", Icon: HadithIcon },
+  { to: "/azkar", label: "الأذكار", Icon: MisbahaIcon },
+  { to: "/favorites", label: "المفضلة", Icon: HeartStarIcon },
 ] as const;
 
 export function BottomNav() {
@@ -15,8 +15,8 @@ export function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur-lg pb-[env(safe-area-inset-bottom)]">
-      <ul className="grid grid-cols-5">
-        {items.map(({ to, label, icon: Icon }) => {
+      <ul className="grid grid-cols-5 max-w-md mx-auto">
+        {items.map(({ to, label, Icon }) => {
           const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
           return (
             <li key={to}>
@@ -31,7 +31,7 @@ export function BottomNav() {
                     active ? "bg-primary/10 scale-105" : ""
                   }`}
                 >
-                  <Icon className="h-5 w-5" strokeWidth={active ? 2.4 : 2} />
+                  <Icon className="h-6 w-6" />
                 </span>
                 <span className={active ? "font-bold" : "font-medium"}>{label}</span>
               </Link>

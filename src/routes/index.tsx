@@ -1,33 +1,32 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
 import { useStore } from "@/lib/store";
+import { Compass } from "lucide-react";
 import {
-  Heart, ScrollText, Sparkles, Infinity as InfIcon, BookOpen, Compass, Moon, Radio, Shield,
-} from "lucide-react";
-import { AdminGateModal } from "@/components/AdminGateModal";
+  MushafIcon, MinbarIcon, MisbahaIcon, HadithIcon, HeartStarIcon,
+  CrescentIcon, SunIcon,
+} from "@/components/icons/IslamicIcons";
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
 function Home() {
-  const { hadithOfDay } = useStore();
-  const [gate, setGate] = useState(false);
+  const { hadithOfDay, nightMode, toggleNight } = useStore();
 
   const quick = [
-    { to: "/favorites", label: "المفضلة", icon: Heart, gradient: "from-rose-500 to-pink-600" },
-    { to: "/khutbah", label: "خطب الجمعة", icon: ScrollText, gradient: "from-emerald-600 to-teal-700" },
-    { to: "/azkar", label: "الأذكار", icon: Sparkles, gradient: "from-amber-500 to-yellow-600" },
-    { to: "/azkar", label: "التسبيح", icon: InfIcon, gradient: "from-teal-500 to-emerald-700" },
+    { to: "/favorites", label: "المفضلة", Icon: HeartStarIcon, gradient: "from-rose-500 to-pink-600" },
+    { to: "/khutbah", label: "خطب الجمعة", Icon: MinbarIcon, gradient: "from-emerald-600 to-teal-700" },
+    { to: "/azkar", label: "الأذكار", Icon: MisbahaIcon, gradient: "from-amber-500 to-yellow-600" },
+    { to: "/azkar", label: "التسبيح", Icon: CrescentIcon, gradient: "from-teal-500 to-emerald-700" },
   ] as const;
 
   const sections = [
-    { to: "/quran", label: "القرآن الكريم", icon: BookOpen, gradient: "from-emerald-600 to-green-700" },
-    { to: "/quran", label: "الحديث الشريف", icon: Radio, gradient: "from-teal-600 to-emerald-800" },
-    { to: "/khutbah", label: "خطب الجمعة", icon: ScrollText, gradient: "from-amber-500 to-orange-600" },
-    { to: "/azkar", label: "أذكار وأدعية", icon: Sparkles, gradient: "from-yellow-500 to-amber-600" },
-    { to: "/favorites", label: "المفضلة", icon: Heart, gradient: "from-rose-500 to-pink-600" },
-    { to: "__admin__", label: "لوحة التحكم", icon: Shield, gradient: "from-slate-700 to-emerald-900" },
+    { to: "/quran", label: "القرآن الكريم", Icon: MushafIcon, gradient: "from-emerald-600 to-green-700" },
+    { to: "/hadith", label: "الحديث الشريف", Icon: HadithIcon, gradient: "from-teal-600 to-emerald-800" },
+    { to: "/khutbah", label: "خطب الجمعة", Icon: MinbarIcon, gradient: "from-amber-500 to-orange-600" },
+    { to: "/azkar", label: "أذكار وأدعية", Icon: MisbahaIcon, gradient: "from-yellow-500 to-amber-600" },
+    { to: "/favorites", label: "المفضلة", Icon: HeartStarIcon, gradient: "from-rose-500 to-pink-600" },
+    { to: "/quran", label: "المصحف", Icon: MushafIcon, gradient: "from-emerald-700 to-teal-900" },
   ] as const;
 
   return (
@@ -47,9 +46,14 @@ function Home() {
                 <div className="font-black text-lg leading-tight">زاد الدعاة</div>
               </div>
             </div>
-            <div className="h-9 w-9 rounded-full bg-white/15 grid place-items-center backdrop-blur">
-              <Moon className="h-4 w-4" />
-            </div>
+            <button
+              type="button"
+              onClick={toggleNight}
+              aria-label={nightMode ? "الوضع النهاري" : "الوضع الليلي"}
+              className="h-9 w-9 rounded-full bg-white/15 grid place-items-center backdrop-blur hover:bg-white/25 transition"
+            >
+              {nightMode ? <SunIcon className="h-4 w-4" /> : <CrescentIcon className="h-4 w-4" />}
+            </button>
           </div>
           <h1 className="text-2xl font-black leading-snug mb-1">زادك العلمي والدعوي</h1>
           <p className="text-sm opacity-90 flex items-center gap-1">
@@ -61,10 +65,10 @@ function Home() {
       {/* Quick actions */}
       <section className="px-5 -mt-6 relative z-10">
         <div className="grid grid-cols-4 gap-3 bg-card rounded-2xl p-3 shadow-soft border border-border">
-          {quick.map(({ to, label, icon: Icon, gradient }) => (
+          {quick.map(({ to, label, Icon, gradient }) => (
             <Link key={label} to={to} className="flex flex-col items-center gap-1.5 py-1">
               <span className={`h-12 w-12 rounded-2xl grid place-items-center bg-gradient-to-br ${gradient} text-white shadow-md`}>
-                <Icon className="h-6 w-6" strokeWidth={2.4} />
+                <Icon className="h-7 w-7" />
               </span>
               <span className="text-[11px] font-bold text-foreground text-center leading-tight">{label}</span>
             </Link>
@@ -79,29 +83,16 @@ function Home() {
           <span className="text-xs text-muted-foreground">استكشف</span>
         </div>
         <div className="grid grid-cols-3 gap-3">
-          {sections.map(({ to, label, icon: Icon, gradient }) => {
-            const isAdmin = to === "__admin__";
-            const Tile = (
+          {sections.map(({ to, label, Icon, gradient }) => (
+            <Link key={label} to={to}>
               <div className="aspect-square rounded-2xl bg-card border border-border shadow-card flex flex-col items-center justify-center gap-2 hover:border-primary transition-all hover:-translate-y-0.5">
                 <span className={`h-12 w-12 rounded-2xl grid place-items-center bg-gradient-to-br ${gradient} text-white shadow-md`}>
-                  <Icon className="h-6 w-6" strokeWidth={2.2} />
+                  <Icon className="h-7 w-7" />
                 </span>
                 <span className="text-xs font-bold text-center px-1">{label}</span>
               </div>
-            );
-            if (isAdmin) {
-              return (
-                <button key={label} type="button" onClick={() => setGate(true)} className="text-right">
-                  {Tile}
-                </button>
-              );
-            }
-            return (
-              <Link key={label} to={to}>
-                {Tile}
-              </Link>
-            );
-          })}
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -111,7 +102,7 @@ function Home() {
           <div className="absolute -top-6 -left-6 w-24 h-24 rounded-full bg-white/10" />
           <div className="flex items-center justify-between mb-3">
             <span className="inline-flex items-center gap-1.5 text-xs font-bold bg-white/15 px-2.5 py-1 rounded-full">
-              <Radio className="h-3.5 w-3.5" /> حديث اليوم
+              <HadithIcon className="h-3.5 w-3.5" /> حديث اليوم
             </span>
           </div>
           <p className="text-[15px] leading-loose font-medium" style={{ fontFamily: "Amiri, serif" }}>
@@ -121,8 +112,6 @@ function Home() {
       </section>
 
       <div className="h-6" />
-
-      <AdminGateModal open={gate} onClose={() => setGate(false)} />
     </div>
   );
 }
