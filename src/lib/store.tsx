@@ -128,10 +128,11 @@ function useLS<T>(key: string, initial: T): [T, (v: T | ((p: T) => T)) => void] 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [fontScale, setFontScale] = useLS("zad.fontScale", 1);
   const [nightMode, setNightMode] = useLS("zad.night", false);
-  const [khutab, setKhutab] = useState<Khutbah[]>(seedKhutab);
+  const [khutab, setKhutab] = useState<Khutbah[]>([]);
   const [azkar, setAzkar] = useLS<Dhikr[]>("zad.azkar", seedAzkar);
   const [categories, setCategories] = useLS<Category[]>("zad.cats", seedCategories);
   const [hadithOfDay, setHadithLocal] = useState<string>(seedHadith);
+
   const [favorites, setFavorites] = useLS<Favorite[]>("zad.favs", []);
   const [isAdmin, setIsAdmin] = useLS<boolean>("zad.admin", false);
   const [adminPassword, setAdminPassword] = useState<string | null>(null);
