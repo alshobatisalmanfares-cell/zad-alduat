@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import { createClient } from "@supabase/supabase-js";
 import surahs from "@/data/surahs.json";
 
 const BASE_URL = "https://zad-alduat.lovable.app";
@@ -26,7 +27,6 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/favorites", changefreq: "monthly", priority: "0.3" },
         ];
 
-        // Dynamic: one entry per surah
         for (const s of surahs as { number: number }[]) {
           entries.push({
             path: `/quran/${s.number}`,
@@ -36,9 +36,29 @@ export const Route = createFileRoute("/sitemap.xml")({
           });
         }
 
-        // TODO(cloud): once Lovable Cloud is enabled, fetch published khutab
-        // from the `khutab` table via the server publishable Supabase client
-        // and push one entry per row here.
+        // Live khutab from Supabase
+        try {
+          const url = process.env.SUPABASE_URL;
+          const key = process.env.SUPABASE_PUBLISHABLE_KEY;
+          if (url && key) {
+            const sb = createClient(url, key, {
+              auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+            });
+            const { data } = await sb
+              .from("khutab")
+              .select("id, updated_at")
+              .order("updated_at", { ascending: false });
+            for (const k of (data ?? []) as { id: string; updated_at: string }[]) {
+              entries.push({
+                path: `/khutbah/${k.id}`,
+                lastmod: k.updated_at.slice(0, 10),
+                changefreq: "monthly",
+                priority: "0.8",
+              });
+            }
+          }
+        } catch {}
+
 
         const urls = entries.map((e) =>
           [
