@@ -1,4 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { adminMutate } from "@/lib/admin.functions";
+
 
 export type Khutbah = {
   id: string;
