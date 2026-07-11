@@ -36,9 +36,9 @@ type Store = {
   toggleNight: () => void;
   // data
   khutab: Khutbah[];
-  addKhutbah: (k: Omit<Khutbah, "id">) => void;
-  updateKhutbah: (id: string, k: Partial<Khutbah>) => void;
-  deleteKhutbah: (id: string) => void;
+  addKhutbah: (k: Omit<Khutbah, "id">) => Promise<void>;
+  updateKhutbah: (id: string, k: Partial<Khutbah>) => Promise<void>;
+  deleteKhutbah: (id: string) => Promise<void>;
   azkar: Dhikr[];
   addDhikr: (d: Omit<Dhikr, "id">) => void;
   updateDhikr: (id: string, d: Partial<Dhikr>) => void;
@@ -47,7 +47,7 @@ type Store = {
   addCategory: (name: string) => void;
   deleteCategory: (id: string) => void;
   hadithOfDay: string;
-  setHadithOfDay: (t: string) => void;
+  setHadithOfDay: (t: string) => Promise<void>;
   favorites: Favorite[];
   toggleFavorite: (f: Favorite) => void;
   isFavorite: (id: string) => boolean;
@@ -55,7 +55,9 @@ type Store = {
   isAdmin: boolean;
   loginAdmin: (pw: string) => boolean;
   logoutAdmin: () => void;
+  adminPassword: string | null;
 };
+
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
