@@ -128,16 +128,53 @@ function useLS<T>(key: string, initial: T): [T, (v: T | ((p: T) => T)) => void] 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [fontScale, setFontScale] = useLS("zad.fontScale", 1);
   const [nightMode, setNightMode] = useLS("zad.night", false);
-  const [khutab, setKhutab] = useLS<Khutbah[]>("zad.khutab", seedKhutab);
+  const [khutab, setKhutab] = useState<Khutbah[]>(seedKhutab);
   const [azkar, setAzkar] = useLS<Dhikr[]>("zad.azkar", seedAzkar);
   const [categories, setCategories] = useLS<Category[]>("zad.cats", seedCategories);
-  const [hadithOfDay, setHadithOfDay] = useLS<string>("zad.hadith", seedHadith);
+  const [hadithOfDay, setHadithLocal] = useState<string>(seedHadith);
   const [favorites, setFavorites] = useLS<Favorite[]>("zad.favs", []);
   const [isAdmin, setIsAdmin] = useLS<boolean>("zad.admin", false);
+  const [adminPassword, setAdminPassword] = useState<string | null>(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", nightMode);
   }, [nightMode]);
+
+  // Initial fetch + realtime sync from Supabase
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const [{ data: kh }, { data: st }] = await Promise.all([
+        supabase.from("khutab").select("*").order("created_at", { ascending: false }),
+        supabase.from("app_settings").select("value").eq("key", "hadith_of_day").maybeSingle(),
+      ]);
+      if (!alive) return;
+      if (kh) setKhutab(kh as Khutbah[]);
+      if (st?.value) setHadithLocal(st.value);
+    })().catch(() => {});
+
+    const ch = supabase
+      .channel("zad-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "khutab" }, async () => {
+        const { data } = await supabase.from("khutab").select("*").order("created_at", { ascending: false });
+        if (data) setKhutab(data as Khutbah[]);
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "app_settings" }, async () => {
+        const { data } = await supabase.from("app_settings").select("value").eq("key", "hadith_of_day").maybeSingle();
+        if (data?.value) setHadithLocal(data.value);
+      })
+      .subscribe();
+
+    return () => {
+      alive = false;
+      supabase.removeChannel(ch);
+    };
+  }, []);
+
+  const requirePw = () => {
+    if (!adminPassword) throw new Error("Not authenticated");
+    return adminPassword;
+  };
 
   const value: Store = {
     fontScale,
@@ -145,9 +182,15 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     nightMode,
     toggleNight: () => setNightMode((v) => !v),
     khutab,
-    addKhutbah: (k) => setKhutab((p) => [{ ...k, id: uid() }, ...p]),
-    updateKhutbah: (id, k) => setKhutab((p) => p.map((x) => (x.id === id ? { ...x, ...k } : x))),
-    deleteKhutbah: (id) => setKhutab((p) => p.filter((x) => x.id !== id)),
+    addKhutbah: async (k) => {
+      await adminMutate({ data: { password: requirePw(), action: "khutbah.create", data: k } });
+    },
+    updateKhutbah: async (id, k) => {
+      await adminMutate({ data: { password: requirePw(), action: "khutbah.update", id, data: k } });
+    },
+    deleteKhutbah: async (id) => {
+      await adminMutate({ data: { password: requirePw(), action: "khutbah.delete", id } });
+    },
     azkar,
     addDhikr: (d) => setAzkar((p) => [{ ...d, id: uid() }, ...p]),
     updateDhikr: (id, d) => setAzkar((p) => p.map((x) => (x.id === id ? { ...x, ...d } : x))),
@@ -156,24 +199,32 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addCategory: (name) => setCategories((p) => [...p, { id: uid(), name }]),
     deleteCategory: (id) => setCategories((p) => p.filter((c) => c.id !== id)),
     hadithOfDay,
-    setHadithOfDay,
+    setHadithOfDay: async (t) => {
+      await adminMutate({ data: { password: requirePw(), action: "hadith.set", data: { value: t } } });
+    },
     favorites,
     toggleFavorite: (f) =>
       setFavorites((p) => (p.some((x) => x.id === f.id) ? p.filter((x) => x.id !== f.id) : [f, ...p])),
     isFavorite: (id) => favorites.some((x) => x.id === id),
     isAdmin,
+    adminPassword,
     loginAdmin: (pw) => {
       if (pw === "77salmanfares77ss") {
         setIsAdmin(true);
+        setAdminPassword(pw);
         return true;
       }
       return false;
     },
-    logoutAdmin: () => setIsAdmin(false),
+    logoutAdmin: () => {
+      setIsAdmin(false);
+      setAdminPassword(null);
+    },
   };
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
+
 
 export function useStore() {
   const c = useContext(Ctx);
