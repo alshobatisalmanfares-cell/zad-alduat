@@ -37,14 +37,19 @@ function AdminHadith() {
           style={{ fontFamily: "Amiri, serif" }}
         />
         <button
-          onClick={() => {
-            setHadithOfDay(text.trim());
-            setSaved(true);
+          onClick={async () => {
+            try {
+              await setHadithOfDay(text.trim());
+              setSaved(true);
+            } catch (e) {
+              alert("فشل الحفظ: " + (e as Error).message);
+            }
           }}
           className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-xl gradient-primary text-primary-foreground py-2.5 font-bold text-sm"
         >
           <Save className="h-4 w-4" /> حفظ ونشر فورًا
         </button>
+
         {saved && <p className="text-xs text-primary mt-2 text-center">✓ تم التحديث ويظهر الآن للمستخدمين</p>}
       </div>
     </div>
