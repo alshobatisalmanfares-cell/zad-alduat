@@ -27,12 +27,17 @@ function AdminKhutab() {
     setCreating(false);
     setEditing(null);
   };
-  const save = () => {
+  const save = async () => {
     if (!form.title.trim() || !form.content.trim()) return;
-    if (editing) updateKhutbah(editing.id, form);
-    else addKhutbah(form);
-    close();
+    try {
+      if (editing) await updateKhutbah(editing.id, form);
+      else await addKhutbah(form);
+      close();
+    } catch (e) {
+      alert("فشل الحفظ: " + (e as Error).message);
+    }
   };
+
 
   return (
     <div className="space-y-3">
