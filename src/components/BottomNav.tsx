@@ -3,9 +3,9 @@ import { MushafIcon, MisbahaIcon, HeartStarIcon, HadithIcon, MosqueIcon } from "
 
 const items = [
   { to: "/", label: "الرئيسية", Icon: MosqueIcon },
-  { to: "/quran", label: "القرآن", Icon: MushafIcon },
+  { to: "/quran", label: "المصحف", Icon: MushafIcon },
   { to: "/hadith", label: "الحديث", Icon: HadithIcon },
-  { to: "/azkar", label: "الأذكار", Icon: MisbahaIcon },
+  { to: "/azkar", label: "التسبيح", Icon: MisbahaIcon },
   { to: "/favorites", label: "المفضلة", Icon: HeartStarIcon },
 ] as const;
 
@@ -28,7 +28,7 @@ export function BottomNav() {
               >
                 <span
                   className={`grid place-items-center h-9 w-9 rounded-2xl transition-all ${
-                    active ? "bg-primary/10 scale-105" : ""
+                    active ? "bg-primary/15 scale-105" : ""
                   }`}
                 >
                   <Icon className="h-6 w-6" />

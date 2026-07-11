@@ -17,6 +17,7 @@ import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as AzkarRouteImport } from './routes/azkar'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as QuranIndexRouteImport } from './routes/quran.index'
 import { Route as QuranIdRouteImport } from './routes/quran.$id'
 import { Route as KhutbahIdRouteImport } from './routes/khutbah.$id'
 import { Route as AdminKhutabRouteImport } from './routes/admin.khutab'
@@ -64,6 +65,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const QuranIndexRoute = QuranIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => QuranRoute,
 } as any)
 const QuranIdRoute = QuranIdRouteImport.update({
   id: '/$id',
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/admin/khutab': typeof AdminKhutabRoute
   '/khutbah/$id': typeof KhutbahIdRoute
   '/quran/$id': typeof QuranIdRoute
+  '/quran/': typeof QuranIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -125,7 +132,6 @@ export interface FileRoutesByTo {
   '/favorites': typeof FavoritesRoute
   '/hadith': typeof HadithRoute
   '/khutbah': typeof KhutbahRouteWithChildren
-  '/quran': typeof QuranRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/azkar': typeof AdminAzkarRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -134,6 +140,7 @@ export interface FileRoutesByTo {
   '/admin/khutab': typeof AdminKhutabRoute
   '/khutbah/$id': typeof KhutbahIdRoute
   '/quran/$id': typeof QuranIdRoute
+  '/quran': typeof QuranIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,6 +159,7 @@ export interface FileRoutesById {
   '/admin/khutab': typeof AdminKhutabRoute
   '/khutbah/$id': typeof KhutbahIdRoute
   '/quran/$id': typeof QuranIdRoute
+  '/quran/': typeof QuranIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,6 +179,7 @@ export interface FileRouteTypes {
     | '/admin/khutab'
     | '/khutbah/$id'
     | '/quran/$id'
+    | '/quran/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -179,7 +188,6 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/hadith'
     | '/khutbah'
-    | '/quran'
     | '/sitemap.xml'
     | '/admin/azkar'
     | '/admin/categories'
@@ -188,6 +196,7 @@ export interface FileRouteTypes {
     | '/admin/khutab'
     | '/khutbah/$id'
     | '/quran/$id'
+    | '/quran'
   id:
     | '__root__'
     | '/'
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/admin/khutab'
     | '/khutbah/$id'
     | '/quran/$id'
+    | '/quran/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -275,6 +285,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/quran/': {
+      id: '/quran/'
+      path: '/'
+      fullPath: '/quran/'
+      preLoaderRoute: typeof QuranIndexRouteImport
+      parentRoute: typeof QuranRoute
     }
     '/quran/$id': {
       id: '/quran/$id'
@@ -359,10 +376,12 @@ const KhutbahRouteWithChildren =
 
 interface QuranRouteChildren {
   QuranIdRoute: typeof QuranIdRoute
+  QuranIndexRoute: typeof QuranIndexRoute
 }
 
 const QuranRouteChildren: QuranRouteChildren = {
   QuranIdRoute: QuranIdRoute,
+  QuranIndexRoute: QuranIndexRoute,
 }
 
 const QuranRouteWithChildren = QuranRoute._addFileChildren(QuranRouteChildren)

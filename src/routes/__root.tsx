@@ -80,10 +80,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#0f5132" },
+      { name: "theme-color", content: "#0a0a0a" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "زاد الدعاة" },
+      { name: "google-site-verification", content: "La90iHMhtvnYwBk1mnhonFebPOlu3J5Vb4YlO2CrGQQ" },
       { title: "​زاد الدعاة — خطب الجمعة والموسوعة الدعوية" },
       { name: "description", content: "موسوعة دعوية متجددة لخطب الجمعة المكتوبة والمصنفة للخطباء، تضم المصحف الشريف كاملاً، الأحاديث الصحيحة، وأذكار حصن المسلم مع دعم التصفح بدون إنترنت." },
       { property: "og:title", content: "​زاد الدعاة — خطب الجمعة والموسوعة الدعوية" },
