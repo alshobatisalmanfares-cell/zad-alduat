@@ -57,12 +57,13 @@ function Dashboard() {
       <div className="rounded-2xl bg-gradient-to-br from-primary to-primary-glow text-primary-foreground p-4 shadow-soft">
         <div className="flex items-center gap-2 mb-2">
           <Radio className="h-4 w-4" />
-          <h3 className="font-black text-sm">تنبيه</h3>
+          <h3 className="font-black text-sm">مزامنة مباشرة</h3>
         </div>
         <p className="text-xs opacity-90 leading-relaxed">
-          البيانات محفوظة حاليًا محليًا على الجهاز. لتفعيل قاعدة بيانات حقيقية ومزامنة بين الأجهزة يمكن ربط التطبيق بـ Lovable Cloud.
+          الخطب وحديث اليوم متصلة بقاعدة البيانات السحابية. أي إضافة أو تعديل أو حذف يظهر فورًا على جميع الأجهزة.
         </p>
       </div>
+
     </div>
   );
 }
