@@ -5,6 +5,7 @@ import { ReaderControls } from "@/components/ReaderControls";
 import { useStore } from "@/lib/store";
 import { Heart, Search, BookOpen } from "lucide-react";
 import hadithData from "@/data/hadith.json";
+import { Highlight } from "@/lib/highlight";
 
 export const Route = createFileRoute("/hadith")({
   component: HadithPage,
@@ -25,9 +26,19 @@ function HadithPage() {
   const { fontScale, toggleFavorite, isFavorite } = useStore();
 
   const categories = useMemo(() => ["الكل", ...Array.from(new Set(items.map((h) => h.category)))], [items]);
-  const filtered = items.filter(
-    (h) => (cat === "الكل" || h.category === cat) && (!q || h.text.includes(q) || h.book.includes(q)),
-  );
+
+  // Search scoped strictly to hadith text/title/category/book.
+  const filtered = useMemo(() => {
+    const ql = q.trim().toLowerCase();
+    return items.filter(
+      (h) =>
+        (cat === "الكل" || h.category === cat) &&
+        (!ql ||
+          h.text.toLowerCase().includes(ql) ||
+          h.book.toLowerCase().includes(ql) ||
+          h.category.toLowerCase().includes(ql)),
+    );
+  }, [items, cat, q]);
 
   return (
     <div>
@@ -39,7 +50,7 @@ function HadithPage() {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="ابحث في الأحاديث..."
+            placeholder="ابحث في الأحاديث فقط..."
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
         </div>
@@ -70,12 +81,14 @@ function HadithPage() {
               <div className="flex items-center justify-between mb-2 gap-2">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="inline-flex items-center gap-1 text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                    <BookOpen className="h-3 w-3" /> {h.book}
+                    <BookOpen className="h-3 w-3" /> <Highlight text={h.book} query={q} />
                   </span>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold">
                     {h.grade}
                   </span>
-                  <span className="text-[10px] text-muted-foreground">{h.category}</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    <Highlight text={h.category} query={q} />
+                  </span>
                 </div>
                 <button
                   onClick={() => toggleFavorite({ id: h.id, type: "hadith", title: `${h.book} #${h.number}`, content: h.text })}
@@ -88,12 +101,12 @@ function HadithPage() {
                 className="leading-loose text-foreground"
                 style={{ fontFamily: "Amiri, serif", fontSize: `${fontScale * 17}px`, direction: "rtl" }}
               >
-                {h.text}
+                <Highlight text={h.text} query={q} />
               </p>
             </article>
           );
         })}
-        {filtered.length === 0 && <p className="text-center text-muted-foreground py-10">لا نتائج مطابقة.</p>}
+        {filtered.length === 0 && <p className="text-center text-muted-foreground py-10">لا نتائج مطابقة في الأحاديث.</p>}
       </div>
 
       <div className="h-8" />

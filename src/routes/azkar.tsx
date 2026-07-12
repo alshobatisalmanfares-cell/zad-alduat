@@ -1,9 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { ReaderControls } from "@/components/ReaderControls";
 import { useStore } from "@/lib/store";
-import { Heart, RotateCcw, Infinity as InfIcon, BookHeart } from "lucide-react";
+import { Heart, RotateCcw, Infinity as InfIcon, BookHeart, ChevronLeft, Search } from "lucide-react";
+import { Highlight } from "@/lib/highlight";
 
 export const Route = createFileRoute("/azkar")({
   component: AzkarPage,
@@ -11,13 +12,22 @@ export const Route = createFileRoute("/azkar")({
 
 function AzkarPage() {
   const [tab, setTab] = useState<"azkar" | "tasbih">("azkar");
-  const { azkar, toggleFavorite, isFavorite, fontScale } = useStore();
+  const { azkar, isFavorite, fontScale } = useStore();
   const categories = useMemo(() => Array.from(new Set(azkar.map((z) => z.category))), [azkar]);
   const [cat, setCat] = useState<string>(categories[0] ?? "");
+  const [q, setQ] = useState("");
+
+  // Search scoped strictly to azkar (title + text only).
+  const filtered = useMemo(() => {
+    const ql = q.trim().toLowerCase();
+    return azkar
+      .filter((z) => z.category === cat)
+      .filter((z) => !ql || z.title.toLowerCase().includes(ql) || z.text.toLowerCase().includes(ql));
+  }, [azkar, cat, q]);
 
   return (
     <div>
-      <PageHeader title="الأذكار والأدعية" subtitle="حصن المسلم بين يديك" />
+      <PageHeader title="الأذكار والأدعية" subtitle={`حصن المسلم — ${azkar.length} ذكرًا ودعاء`} />
 
       <div className="px-5 -mt-4 relative z-10">
         <div className="grid grid-cols-2 gap-2 bg-card rounded-2xl p-1 border border-border shadow-card">
@@ -42,7 +52,19 @@ function AzkarPage() {
 
       {tab === "azkar" ? (
         <>
-          <div className="px-5 mt-4">
+          <div className="px-5 mt-3">
+            <div className="flex items-center gap-2 bg-card rounded-2xl px-3 py-2.5 border border-border shadow-card">
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="ابحث في الأذكار فقط..."
+                className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              />
+            </div>
+          </div>
+
+          <div className="px-5 mt-3">
             <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
               {categories.map((c) => (
                 <button
@@ -65,34 +87,39 @@ function AzkarPage() {
           </div>
 
           <div className="px-5 mt-4 space-y-3">
-            {azkar
-              .filter((z) => z.category === cat)
-              .map((z) => {
-                const fav = isFavorite(z.id);
-                return (
-                  <div key={z.id} className="rounded-2xl bg-card border border-border shadow-card p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-black text-sm text-primary">{z.title}</h3>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent text-accent-foreground">
-                          × {z.count}
-                        </span>
-                        <button
-                          onClick={() => toggleFavorite({ id: z.id, type: "dhikr", title: z.title, content: z.text })}
-                        >
-                          <Heart className={`h-4 w-4 ${fav ? "fill-rose-500 text-rose-500" : "text-muted-foreground"}`} />
-                        </button>
-                      </div>
+            {filtered.map((z) => {
+              const fav = isFavorite(z.id);
+              return (
+                <Link
+                  key={z.id}
+                  to="/azkar/$id"
+                  params={{ id: z.id }}
+                  className="block rounded-2xl bg-card border border-border shadow-card p-4 hover:border-[color:var(--gold)] transition"
+                >
+                  <div className="flex items-center justify-between mb-2 gap-2">
+                    <h3 className="font-black text-sm text-primary truncate">
+                      <Highlight text={z.title} query={q} />
+                    </h3>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent text-accent-foreground">
+                        × {z.count}
+                      </span>
+                      {fav && <Heart className="h-4 w-4 fill-rose-500 text-rose-500" />}
+                      <ChevronLeft className="h-4 w-4 text-muted-foreground" />
                     </div>
-                    <p
-                      className="leading-loose text-foreground"
-                      style={{ fontFamily: "Amiri, serif", fontSize: `${fontScale * 16}px` }}
-                    >
-                      {z.text}
-                    </p>
                   </div>
-                );
-              })}
+                  <p
+                    className="leading-loose text-foreground line-clamp-3"
+                    style={{ fontFamily: "Amiri, serif", fontSize: `${fontScale * 15}px`, direction: "rtl" }}
+                  >
+                    <Highlight text={z.text} query={q} />
+                  </p>
+                </Link>
+              );
+            })}
+            {filtered.length === 0 && (
+              <p className="text-center text-sm text-muted-foreground py-10">لا نتائج في هذا القسم</p>
+            )}
           </div>
         </>
       ) : (

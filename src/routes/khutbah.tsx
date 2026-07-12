@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useStore } from "@/lib/store";
 import { PageHeader } from "@/components/PageHeader";
 import { Search, Heart, ChevronLeft } from "lucide-react";
+import { Highlight } from "@/lib/highlight";
 
 export const Route = createFileRoute("/khutbah")({
   component: KhutbahIndex,
@@ -13,12 +14,13 @@ function KhutbahIndex() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string | null>(null);
 
+  // Search is strictly scoped to khutab (title + full content only).
   const filtered = useMemo(
     () =>
       khutab.filter(
         (k) =>
           (!cat || k.category === cat) &&
-          (!q || k.title.includes(q) || k.content.includes(q)),
+          (!q || k.title.toLowerCase().includes(q.toLowerCase()) || k.content.toLowerCase().includes(q.toLowerCase())),
       ),
     [khutab, q, cat],
   );
@@ -35,7 +37,7 @@ function KhutbahIndex() {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="ابحث في الخطب..."
+            placeholder="ابحث في الخطب فقط..."
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
         </div>
@@ -78,8 +80,12 @@ function KhutbahIndex() {
                     </span>
                     <span className="text-[10px] text-muted-foreground">{k.date}</span>
                   </div>
-                  <h3 className="font-black text-[15px] leading-snug truncate">{k.title}</h3>
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">{k.content}</p>
+                  <h3 className="font-black text-[15px] leading-snug truncate">
+                    <Highlight text={k.title} query={q} />
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+                    <Highlight text={k.content} query={q} />
+                  </p>
                 </div>
                 <div className="flex flex-col items-center gap-2 shrink-0">
                   {isFavorite(k.id) && <Heart className="h-4 w-4 fill-rose-500 text-rose-500" />}
@@ -90,7 +96,7 @@ function KhutbahIndex() {
           </li>
         ))}
         {filtered.length === 0 && (
-          <li className="text-center text-sm text-muted-foreground py-10">لا توجد نتائج</li>
+          <li className="text-center text-sm text-muted-foreground py-10">لا توجد نتائج في الخطب</li>
         )}
       </ul>
     </div>

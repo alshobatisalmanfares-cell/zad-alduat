@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { Search } from "lucide-react";
 import surahs from "@/data/surahs.json";
+import { Highlight } from "@/lib/highlight";
 
 export const Route = createFileRoute("/quran/")({
   component: QuranIndex,
@@ -18,9 +19,13 @@ type Surah = { number: number; nameAr: string; nameEn: string; revelation: strin
 
 function QuranIndex() {
   const [q, setQ] = useState("");
-  const list = (surahs as Surah[]).filter(
-    (s) => !q || s.nameAr.includes(q) || s.nameEn.toLowerCase().includes(q.toLowerCase()) || String(s.number).includes(q),
-  );
+  // Search scoped strictly to Quran surahs (name/number).
+  const list = useMemo(() => {
+    const ql = q.trim().toLowerCase();
+    return (surahs as Surah[]).filter(
+      (s) => !ql || s.nameAr.includes(q) || s.nameEn.toLowerCase().includes(ql) || String(s.number).includes(ql),
+    );
+  }, [q]);
 
   return (
     <div>
@@ -56,8 +61,12 @@ function QuranIndex() {
             </span>
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline justify-between gap-2">
-                <h3 className="font-black text-base truncate" style={{ fontFamily: "Amiri, serif" }}>سورة {s.nameAr}</h3>
-                <span className="text-[10px] text-muted-foreground">{s.nameEn}</span>
+                <h3 className="font-black text-base truncate" style={{ fontFamily: "Amiri, serif" }}>
+                  سورة <Highlight text={s.nameAr} query={q} />
+                </h3>
+                <span className="text-[10px] text-muted-foreground">
+                  <Highlight text={s.nameEn} query={q} />
+                </span>
               </div>
               <div className="flex items-center gap-2 mt-0.5 text-[11px] text-muted-foreground">
                 <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary">
@@ -68,6 +77,7 @@ function QuranIndex() {
             </div>
           </Link>
         ))}
+        {list.length === 0 && <p className="text-center text-muted-foreground py-10">لا نتائج في السور.</p>}
       </div>
 
       <div className="h-8" />
