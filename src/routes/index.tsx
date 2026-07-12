@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useStore } from "@/lib/store";
-import { Compass } from "lucide-react";
+import { Compass, Mail } from "lucide-react";
 import {
   MushafIcon, MinbarIcon, MisbahaIcon, HadithIcon, HeartStarIcon,
   CrescentIcon, SunIcon,
@@ -33,6 +33,7 @@ function Home() {
     { to: "/hadith", label: "الحديث الشريف", Icon: HadithIcon },
     { to: "/azkar", label: "أذكار وأدعية", Icon: MisbahaIcon },
     { to: "/favorites", label: "المفضلة", Icon: HeartStarIcon },
+    { to: "/contact", label: "تواصل معنا", Icon: Mail },
   ] as const;
 
   return (
@@ -99,10 +100,14 @@ function Home() {
           </div>
         </Link>
 
-        {/* Other sections */}
-        <div className="grid grid-cols-3 gap-3">
+        {/* Other sections — flex-wrap so the last row (2 items) auto-centers */}
+        <div className="flex flex-wrap justify-center gap-3">
           {sections.map(({ to, label, Icon }) => (
-            <Link key={label} to={to}>
+            <Link
+              key={label}
+              to={to}
+              className="basis-[calc(33.333%-0.5rem)] max-w-[calc(33.333%-0.5rem)]"
+            >
               <div className="aspect-square rounded-2xl bg-card border border-border shadow-card flex flex-col items-center justify-center gap-2 hover:border-[color:var(--gold)] transition-all hover:-translate-y-0.5">
                 <span className="h-12 w-12 rounded-2xl grid place-items-center bg-gradient-to-br from-[color:var(--gold)] to-[oklch(0.60_0.13_75)] text-black shadow-md">
                   <Icon className="h-7 w-7" />
