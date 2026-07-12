@@ -6,7 +6,7 @@ function escapeRegExp(s: string) {
 
 /**
  * Highlight `query` occurrences inside `text` using a luminous gold background.
- * Case-insensitive; safe for RTL Arabic (uses substring split, not text nodes).
+ * Case-insensitive; RTL-safe.
  */
 export function Highlight({
   text,
@@ -20,8 +20,18 @@ export function Highlight({
   const parts = useMemo(() => {
     const q = query.trim();
     if (!q) return [{ t: text, hit: false }];
-    const re = new RegExp(`(${escapeRegExp(q)})`, "gi");
-    return text.split(re).map((t) => ({ t, hit: re.test(t) && t.length > 0 && t.toLowerCase() === q.toLowerCase() }));
+    const re = new RegExp(escapeRegExp(q), "gi");
+    const out: { t: string; hit: boolean }[] = [];
+    let last = 0;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(text)) !== null) {
+      if (m.index > last) out.push({ t: text.slice(last, m.index), hit: false });
+      out.push({ t: m[0], hit: true });
+      last = m.index + m[0].length;
+      if (m.index === re.lastIndex) re.lastIndex++;
+    }
+    if (last < text.length) out.push({ t: text.slice(last), hit: false });
+    return out;
   }, [text, query]);
 
   return (
@@ -32,9 +42,10 @@ export function Highlight({
             key={i}
             className="rounded px-0.5 font-black"
             style={{
-              background: "linear-gradient(90deg, oklch(0.85 0.16 85 / 0.55), oklch(0.72 0.16 80 / 0.55))",
+              background:
+                "linear-gradient(90deg, oklch(0.88 0.16 88 / 0.7), oklch(0.75 0.16 82 / 0.7))",
               color: "inherit",
-              boxShadow: "0 0 0 1px oklch(0.7 0.16 80 / 0.6)",
+              boxShadow: "0 0 0 1px oklch(0.72 0.16 82 / 0.7), 0 0 12px oklch(0.85 0.16 85 / 0.35)",
             }}
           >
             {p.t}

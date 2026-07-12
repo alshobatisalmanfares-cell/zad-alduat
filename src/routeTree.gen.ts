@@ -147,21 +147,18 @@ export interface FileRoutesByFullPath {
   '/admin/hadith': typeof AdminHadithRoute
   '/admin/khutab': typeof AdminKhutabRoute
   '/azkar/$id': typeof AzkarIdRoute
-  '/azkar/': typeof AzkarIndexRoute
   '/khutbah/$id': typeof KhutbahIdRoute
-  '/khutbah/': typeof KhutbahIndexRoute
   '/quran/$id': typeof QuranIdRoute
+  '/azkar/': typeof AzkarIndexRoute
+  '/khutbah/': typeof KhutbahIndexRoute
   '/quran/': typeof QuranIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
-  '/azkar': typeof AzkarIndexRoute
   '/contact': typeof ContactRoute
   '/favorites': typeof FavoritesRoute
   '/hadith': typeof HadithRoute
-  '/khutbah': typeof KhutbahIndexRoute
-  '/quran': typeof QuranIndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/azkar': typeof AdminAzkarRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -171,6 +168,9 @@ export interface FileRoutesByTo {
   '/azkar/$id': typeof AzkarIdRoute
   '/khutbah/$id': typeof KhutbahIdRoute
   '/quran/$id': typeof QuranIdRoute
+  '/azkar': typeof AzkarIndexRoute
+  '/khutbah': typeof KhutbahIndexRoute
+  '/quran': typeof QuranIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -189,10 +189,10 @@ export interface FileRoutesById {
   '/admin/hadith': typeof AdminHadithRoute
   '/admin/khutab': typeof AdminKhutabRoute
   '/azkar/$id': typeof AzkarIdRoute
-  '/azkar/': typeof AzkarIndexRoute
   '/khutbah/$id': typeof KhutbahIdRoute
-  '/khutbah/': typeof KhutbahIndexRoute
   '/quran/$id': typeof QuranIdRoute
+  '/azkar/': typeof AzkarIndexRoute
+  '/khutbah/': typeof KhutbahIndexRoute
   '/quran/': typeof QuranIndexRoute
 }
 export interface FileRouteTypes {
@@ -213,21 +213,18 @@ export interface FileRouteTypes {
     | '/admin/hadith'
     | '/admin/khutab'
     | '/azkar/$id'
-    | '/azkar/'
     | '/khutbah/$id'
-    | '/khutbah/'
     | '/quran/$id'
+    | '/azkar/'
+    | '/khutbah/'
     | '/quran/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
-    | '/azkar'
     | '/contact'
     | '/favorites'
     | '/hadith'
-    | '/khutbah'
-    | '/quran'
     | '/sitemap.xml'
     | '/admin/azkar'
     | '/admin/categories'
@@ -237,6 +234,9 @@ export interface FileRouteTypes {
     | '/azkar/$id'
     | '/khutbah/$id'
     | '/quran/$id'
+    | '/azkar'
+    | '/khutbah'
+    | '/quran'
   id:
     | '__root__'
     | '/'
@@ -254,10 +254,10 @@ export interface FileRouteTypes {
     | '/admin/hadith'
     | '/admin/khutab'
     | '/azkar/$id'
-    | '/azkar/'
     | '/khutbah/$id'
-    | '/khutbah/'
     | '/quran/$id'
+    | '/azkar/'
+    | '/khutbah/'
     | '/quran/'
   fileRoutesById: FileRoutesById
 }
@@ -487,13 +487,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
