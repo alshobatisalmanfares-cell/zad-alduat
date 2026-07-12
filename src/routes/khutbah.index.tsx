@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { Search, Heart, ChevronLeft } from "lucide-react";
 import { Highlight } from "@/lib/highlight";
 
-export const Route = createFileRoute("/khutbah")({
+export const Route = createFileRoute("/khutbah/")({
   component: KhutbahIndex,
 });
 

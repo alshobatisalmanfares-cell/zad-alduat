@@ -6,7 +6,7 @@ import { useStore } from "@/lib/store";
 import { Heart, RotateCcw, Infinity as InfIcon, BookHeart, ChevronLeft, Search } from "lucide-react";
 import { Highlight } from "@/lib/highlight";
 
-export const Route = createFileRoute("/azkar")({
+export const Route = createFileRoute("/azkar/")({
   component: AzkarPage,
 });
 
