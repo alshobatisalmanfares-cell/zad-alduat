@@ -29,13 +29,16 @@ function AdminKhutab() {
     setEditing(null);
   };
   const save = async () => {
-    if (!form.title.trim() || !form.content.trim()) return;
+    if (!form.title.trim() || !form.content.trim() || saving) return;
+    setSaving(true);
     try {
       if (editing) await updateKhutbah(editing.id, form);
       else await addKhutbah(form);
       close();
     } catch (e) {
       alert("فشل الحفظ: " + (e as Error).message);
+    } finally {
+      setSaving(false);
     }
   };
 
