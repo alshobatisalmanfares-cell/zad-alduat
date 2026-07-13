@@ -219,13 +219,16 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     toggleNight: () => setNightMode((v) => !v),
     khutab,
     addKhutbah: async (k) => {
-      await adminMutate({ data: { password: requirePw(), action: "khutbah.create", data: k } });
+      const row = (await adminMutate({ data: { password: requirePw(), action: "khutbah.create", data: k } })) as Khutbah;
+      if (row?.id) setKhutab((p) => (p.some((x) => x.id === row.id) ? p : [row, ...p]));
     },
     updateKhutbah: async (id, k) => {
-      await adminMutate({ data: { password: requirePw(), action: "khutbah.update", id, data: k } });
+      const row = (await adminMutate({ data: { password: requirePw(), action: "khutbah.update", id, data: k } })) as Khutbah;
+      if (row?.id) setKhutab((p) => p.map((x) => (x.id === row.id ? row : x)));
     },
     deleteKhutbah: async (id) => {
       await adminMutate({ data: { password: requirePw(), action: "khutbah.delete", id } });
+      setKhutab((p) => p.filter((x) => x.id !== id));
     },
     azkar,
     addDhikr: (d) => setAzkar((p) => [{ ...d, id: uid() }, ...p]),
