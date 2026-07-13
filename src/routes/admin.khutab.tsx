@@ -14,6 +14,7 @@ function AdminKhutab() {
   const [editing, setEditing] = useState<Khutbah | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<Omit<Khutbah, "id">>(empty);
+  const [saving, setSaving] = useState(false);
 
   const openCreate = () => {
     setForm({ ...empty, category: categories[0]?.name ?? "", date: new Date().toISOString().slice(0, 10) });
