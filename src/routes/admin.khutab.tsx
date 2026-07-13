@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useStore, type Khutbah } from "@/lib/store";
-import { Plus, Edit3, Trash2, X, Save } from "lucide-react";
+import { Plus, Edit3, Trash2, X, Save, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/khutab")({
   component: AdminKhutab,
