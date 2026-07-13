@@ -67,7 +67,14 @@ function AdminKhutab() {
                   <Edit3 className="h-3.5 w-3.5" />
                 </button>
                 <button
-                  onClick={() => confirm("حذف هذه الخطبة؟") && deleteKhutbah(k.id)}
+                  onClick={async () => {
+                    if (!confirm("حذف هذه الخطبة؟")) return;
+                    try {
+                      await deleteKhutbah(k.id);
+                    } catch (e) {
+                      alert("فشل الحذف: " + (e as Error).message);
+                    }
+                  }}
                   className="h-8 w-8 rounded-lg bg-destructive/10 text-destructive grid place-items-center"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
