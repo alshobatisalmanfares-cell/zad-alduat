@@ -146,9 +146,16 @@ function AdminKhutab() {
 
               <button
                 onClick={save}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl gradient-primary text-primary-foreground py-2.5 font-bold text-sm"
+                disabled={saving}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl gradient-primary text-primary-foreground py-2.5 font-bold text-sm disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <Save className="h-4 w-4" /> حفظ
+                {saving ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" /> حفظ
+                  </>
+                )}
               </button>
             </div>
           </div>
