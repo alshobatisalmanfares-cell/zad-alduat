@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useStore, type Khutbah } from "@/lib/store";
-import { Plus, Edit3, Trash2, X, Save } from "lucide-react";
+import { Plus, Edit3, Trash2, X, Save, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/khutab")({
   component: AdminKhutab,
@@ -14,6 +14,7 @@ function AdminKhutab() {
   const [editing, setEditing] = useState<Khutbah | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<Omit<Khutbah, "id">>(empty);
+  const [saving, setSaving] = useState(false);
 
   const openCreate = () => {
     setForm({ ...empty, category: categories[0]?.name ?? "", date: new Date().toISOString().slice(0, 10) });
@@ -28,13 +29,16 @@ function AdminKhutab() {
     setEditing(null);
   };
   const save = async () => {
-    if (!form.title.trim() || !form.content.trim()) return;
+    if (!form.title.trim() || !form.content.trim() || saving) return;
+    setSaving(true);
     try {
       if (editing) await updateKhutbah(editing.id, form);
       else await addKhutbah(form);
       close();
     } catch (e) {
       alert("فشل الحفظ: " + (e as Error).message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -142,9 +146,16 @@ function AdminKhutab() {
 
               <button
                 onClick={save}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl gradient-primary text-primary-foreground py-2.5 font-bold text-sm"
+                disabled={saving}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl gradient-primary text-primary-foreground py-2.5 font-bold text-sm disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <Save className="h-4 w-4" /> حفظ
+                {saving ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" /> حفظ
+                  </>
+                )}
               </button>
             </div>
           </div>
