@@ -39,11 +39,11 @@ function Home() {
   return (
     <div>
       {/* Header banner */}
-      <header className="gradient-header text-primary-foreground rounded-b-[2.5rem] px-5 pt-12 pb-8 relative overflow-hidden">
+      <header className="gradient-header text-primary-foreground rounded-b-[2rem] px-5 pt-10 pb-4 relative overflow-hidden">
         <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-[color:var(--gold)]/15 blur-2xl" />
         <div className="absolute -bottom-16 -right-8 w-52 h-52 rounded-full bg-[color:var(--gold)]/10 blur-3xl" />
         <div className="relative">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="h-11 w-11 rounded-2xl bg-[color:var(--gold)]/15 backdrop-blur grid place-items-center overflow-hidden border border-[color:var(--gold)]/30">
                 <img src="/icon-192.png" alt="زاد الدعاة" className="h-9 w-9 rounded-xl object-cover" />
@@ -62,15 +62,15 @@ function Home() {
               {nightMode ? <SunIcon className="h-4 w-4" /> : <CrescentIcon className="h-4 w-4" />}
             </button>
           </div>
-          <h1 className="text-2xl font-black leading-snug mb-1 text-[color:var(--gold)]">زادك العلمي والدعوي</h1>
+          <h1 className="text-2xl font-black leading-snug text-[color:var(--gold)]">زادك العلمي والدعوي</h1>
+          <p className="text-[13px] opacity-90 flex items-center gap-1 mt-1">
+            <Compass className="h-3.5 w-3.5" /> في مكان واحد — بارك الله فيك
+          </p>
           <p
-            className="text-[12px] leading-[1.9] text-center text-[color:var(--gold)]/70 mt-2 px-1"
+            className="text-[15px] leading-[2] text-center text-[color:var(--gold)]/80 mt-3 px-1"
             style={{ fontFamily: '"Amiri Quran", "Amiri", serif' }}
           >
             ﴿ وَلْتَكُنْ مِنْكُمْ أُمَّةٌ يَدْعُونَ إِلَى الْخَيْرِ وَيَأْمُرُونَ بِالْمَعْرُوفِ وَيَنْهَوْنَ عَنِ الْمُنْكَرِ وَأُولَٰئِكَ هُمُ الْمُفْلِحُونَ ﴾
-          </p>
-          <p className="text-sm opacity-90 flex items-center gap-1 mt-3">
-            <Compass className="h-4 w-4" /> في مكان واحد — بارك الله فيك
           </p>
         </div>
       </header>
