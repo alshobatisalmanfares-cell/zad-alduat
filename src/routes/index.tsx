@@ -63,25 +63,18 @@ function Home() {
             </button>
           </div>
           <h1 className="text-2xl font-black leading-snug mb-1 text-[color:var(--gold)]">زادك العلمي والدعوي</h1>
-          <p className="text-sm opacity-90 flex items-center gap-1">
+          <p
+            className="text-[12px] leading-[1.9] text-center text-[color:var(--gold)]/70 mt-2 px-1"
+            style={{ fontFamily: '"Amiri Quran", "Amiri", serif' }}
+          >
+            ﴿ وَلْتَكُنْ مِنْكُمْ أُمَّةٌ يَدْعُونَ إِلَى الْخَيْرِ وَيَأْمُرُونَ بِالْمَعْرُوفِ وَيَنْهَوْنَ عَنِ الْمُنْكَرِ وَأُولَٰئِكَ هُمُ الْمُفْلِحُونَ ﴾
+          </p>
+          <p className="text-sm opacity-90 flex items-center gap-1 mt-3">
             <Compass className="h-4 w-4" /> في مكان واحد — بارك الله فيك
           </p>
         </div>
       </header>
 
-      {/* Holy Quran verse */}
-      <section className="px-5 mt-6">
-        <div className="relative text-center px-4 py-5 rounded-2xl border border-[color:var(--gold)]/25 bg-gradient-to-b from-[color:var(--gold)]/5 to-transparent">
-          <span className="absolute top-2 right-3 text-[color:var(--gold)]/60 text-lg leading-none select-none">﴿</span>
-          <span className="absolute top-2 left-3 text-[color:var(--gold)]/60 text-lg leading-none select-none">﴾</span>
-          <p
-            className="text-[19px] leading-[2.15] font-bold text-[color:var(--gold)]"
-            style={{ fontFamily: '"Amiri Quran", "Amiri", "Scheherazade New", serif' }}
-          >
-            وَلْتَكُنْ مِنْكُمْ أُمَّةٌ يَدْعُونَ إِلَى الْخَيْرِ وَيَأْمُرُونَ بِالْمَعْرُوفِ وَيَنْهَوْنَ عَنِ الْمُنْكَرِ وَأُولَٰئِكَ هُمُ الْمُفْلِحُونَ
-          </p>
-        </div>
-      </section>
 
       {/* Sections grid */}
       <section className="px-5 mt-6">
