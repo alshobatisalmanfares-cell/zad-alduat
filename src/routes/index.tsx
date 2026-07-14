@@ -69,6 +69,20 @@ function Home() {
         </div>
       </header>
 
+      {/* Holy Quran verse */}
+      <section className="px-5 mt-6">
+        <div className="relative text-center px-4 py-5 rounded-2xl border border-[color:var(--gold)]/25 bg-gradient-to-b from-[color:var(--gold)]/5 to-transparent">
+          <span className="absolute top-2 right-3 text-[color:var(--gold)]/60 text-lg leading-none select-none">﴿</span>
+          <span className="absolute top-2 left-3 text-[color:var(--gold)]/60 text-lg leading-none select-none">﴾</span>
+          <p
+            className="text-[19px] leading-[2.15] font-bold text-[color:var(--gold)]"
+            style={{ fontFamily: '"Amiri Quran", "Amiri", "Scheherazade New", serif' }}
+          >
+            وَلْتَكُنْ مِنْكُمْ أُمَّةٌ يَدْعُونَ إِلَى الْخَيْرِ وَيَأْمُرُونَ بِالْمَعْرُوفِ وَيَنْهَوْنَ عَنِ الْمُنْكَرِ وَأُولَٰئِكَ هُمُ الْمُفْلِحُونَ
+          </p>
+        </div>
+      </section>
+
       {/* Sections grid */}
       <section className="px-5 mt-6">
         <div className="flex items-center justify-between mb-3">
