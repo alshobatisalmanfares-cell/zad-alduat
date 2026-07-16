@@ -126,3 +126,16 @@
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
 }
+
+/* Tactile press feedback across all interactive elements */
+@layer base {
+  button, a, [role="button"] {
+    transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease, color 150ms ease;
+  }
+  button:not(:disabled):active,
+  a:active,
+  [role="button"]:not([aria-disabled="true"]):active {
+    transform: scale(0.96);
+  }
+}
+

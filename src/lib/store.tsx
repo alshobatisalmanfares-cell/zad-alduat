@@ -36,6 +36,7 @@ type Store = {
   toggleNight: () => void;
   // data
   khutab: Khutbah[];
+  khutabLoading: boolean;
   addKhutbah: (k: Omit<Khutbah, "id">) => Promise<void>;
   updateKhutbah: (id: string, k: Partial<Khutbah>) => Promise<void>;
   deleteKhutbah: (id: string) => Promise<void>;
@@ -162,7 +163,8 @@ function useLS<T>(key: string, initial: T): [T, (v: T | ((p: T) => T)) => void] 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [fontScale, setFontScale] = useLS("zad.fontScale", 1);
   const [nightMode, setNightMode] = useLS("zad.night", false);
-  const [khutab, setKhutab] = useState<Khutbah[]>([]);
+  const [khutab, setKhutab] = useLS<Khutbah[]>("zad.khutab.cache", []);
+  const [khutabLoading, setKhutabLoading] = useState<boolean>(khutab.length === 0);
   const [azkar, setAzkar] = useLS<Dhikr[]>("zad.azkar.v3", seedAzkar);
   const [categories, setCategories] = useLS<Category[]>("zad.cats", seedCategories);
   const [hadithOfDay, setHadithLocal] = useState<string>(seedHadith);
@@ -176,18 +178,22 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     document.documentElement.classList.toggle("dark", nightMode);
   }, [nightMode]);
 
-  // Initial fetch + realtime sync from Supabase
+  // Initial fetch + realtime sync from Supabase (cache-first; refreshes in background)
   useEffect(() => {
     let alive = true;
     (async () => {
-      const [{ data: kh }, { data: st }] = await Promise.all([
-        supabase.from("khutab").select("*").order("created_at", { ascending: false }),
-        supabase.from("app_settings").select("value").eq("key", "hadith_of_day").maybeSingle(),
-      ]);
-      if (!alive) return;
-      if (kh) setKhutab(kh as Khutbah[]);
-      if (st?.value) setHadithLocal(st.value);
-    })().catch(() => {});
+      try {
+        const [{ data: kh }, { data: st }] = await Promise.all([
+          supabase.from("khutab").select("*").order("created_at", { ascending: false }),
+          supabase.from("app_settings").select("value").eq("key", "hadith_of_day").maybeSingle(),
+        ]);
+        if (!alive) return;
+        if (kh) setKhutab(kh as Khutbah[]);
+        if (st?.value) setHadithLocal(st.value);
+      } finally {
+        if (alive) setKhutabLoading(false);
+      }
+    })().catch(() => { if (alive) setKhutabLoading(false); });
 
     const ch = supabase
       .channel("zad-live")
@@ -205,6 +211,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       alive = false;
       supabase.removeChannel(ch);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const requirePw = () => {
@@ -218,6 +225,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     nightMode,
     toggleNight: () => setNightMode((v) => !v),
     khutab,
+    khutabLoading,
     addKhutbah: async (k) => {
       const row = (await adminMutate({ data: { password: requirePw(), action: "khutbah.create", data: k } })) as Khutbah;
       if (row?.id) setKhutab((p) => (p.some((x) => x.id === row.id) ? p : [row, ...p]));
