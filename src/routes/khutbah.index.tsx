@@ -95,7 +95,13 @@ function KhutbahIndex() {
             </Link>
           </li>
         ))}
-        {filtered.length === 0 && (
+        {filtered.length === 0 && khutabLoading && (
+          <li className="flex items-center justify-center gap-2 text-sm text-muted-foreground py-10">
+            <Loader2 className="h-4 w-4 animate-spin text-[color:var(--gold)]" />
+            جاري تحميل الخطب...
+          </li>
+        )}
+        {filtered.length === 0 && !khutabLoading && (
           <li className="text-center text-sm text-muted-foreground py-10">لا توجد نتائج في الخطب</li>
         )}
       </ul>
