@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useStore } from "@/lib/store";
 import { PageHeader } from "@/components/PageHeader";
-import { Search, Heart, ChevronLeft } from "lucide-react";
+import { Search, Heart, ChevronLeft, Loader2 } from "lucide-react";
 import { Highlight } from "@/lib/highlight";
 
 export const Route = createFileRoute("/khutbah/")({
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/khutbah/")({
 });
 
 function KhutbahIndex() {
-  const { khutab, categories, isFavorite } = useStore();
+  const { khutab, categories, isFavorite, khutabLoading } = useStore();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string | null>(null);
 
