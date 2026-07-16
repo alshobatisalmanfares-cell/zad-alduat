@@ -225,6 +225,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     nightMode,
     toggleNight: () => setNightMode((v) => !v),
     khutab,
+    khutabLoading,
     addKhutbah: async (k) => {
       const row = (await adminMutate({ data: { password: requirePw(), action: "khutbah.create", data: k } })) as Khutbah;
       if (row?.id) setKhutab((p) => (p.some((x) => x.id === row.id) ? p : [row, ...p]));
