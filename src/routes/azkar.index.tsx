@@ -1,29 +1,43 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
-import { ReaderControls } from "@/components/ReaderControls";
 import { useStore } from "@/lib/store";
-import { Heart, RotateCcw, Infinity as InfIcon, BookHeart, ChevronLeft, Search } from "lucide-react";
-import { Highlight } from "@/lib/highlight";
+import {
+  ChevronLeft,
+  Sunrise,
+  Sunset,
+  Moon,
+  Sun,
+  BookOpen,
+  Sparkles,
+  BookHeart,
+  Infinity as InfIcon,
+  RotateCcw,
+  Loader2,
+} from "lucide-react";
 
 export const Route = createFileRoute("/azkar/")({
   component: AzkarPage,
 });
 
+const CATEGORY_META: Record<string, { icon: any; gradient: string }> = {
+  "أذكار الصباح": { icon: Sunrise, gradient: "from-amber-500/25 to-orange-600/10" },
+  "أذكار المساء": { icon: Sunset, gradient: "from-purple-500/25 to-indigo-600/10" },
+  "أذكار النوم": { icon: Moon, gradient: "from-indigo-500/25 to-slate-700/10" },
+  "أذكار الاستيقاظ": { icon: Sun, gradient: "from-yellow-500/25 to-amber-600/10" },
+  "أذكار الصلاة": { icon: BookOpen, gradient: "from-emerald-500/25 to-teal-600/10" },
+  "أدعية مأثورة": { icon: Sparkles, gradient: "from-rose-500/25 to-pink-600/10" },
+};
+
 function AzkarPage() {
   const [tab, setTab] = useState<"azkar" | "tasbih">("azkar");
-  const { azkar, isFavorite, fontScale } = useStore();
-  const categories = useMemo(() => Array.from(new Set(azkar.map((z) => z.category))), [azkar]);
-  const [cat, setCat] = useState<string>(categories[0] ?? "");
-  const [q, setQ] = useState("");
+  const { azkar } = useStore();
 
-  // Search scoped strictly to azkar (title + text only).
-  const filtered = useMemo(() => {
-    const ql = q.trim().toLowerCase();
-    return azkar
-      .filter((z) => z.category === cat)
-      .filter((z) => !ql || z.title.toLowerCase().includes(ql) || z.text.toLowerCase().includes(ql));
-  }, [azkar, cat, q]);
+  const categories = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const z of azkar) map.set(z.category, (map.get(z.category) ?? 0) + 1);
+    return Array.from(map.entries()).map(([name, count]) => ({ name, count }));
+  }, [azkar]);
 
   return (
     <div>
@@ -51,77 +65,36 @@ function AzkarPage() {
       </div>
 
       {tab === "azkar" ? (
-        <>
-          <div className="px-5 mt-3">
-            <div className="flex items-center gap-2 bg-card rounded-2xl px-3 py-2.5 border border-border shadow-card">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="ابحث في الأذكار فقط..."
-                className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-              />
+        <div className="px-5 mt-5 space-y-3">
+          {categories.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+              <Loader2 className="h-6 w-6 animate-spin text-[color:var(--gold)] mb-3" />
+              <p className="text-sm">جاري تحميل الذكر...</p>
             </div>
-          </div>
-
-          <div className="px-5 mt-3">
-            <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-              {categories.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => setCat(c)}
-                  className={`shrink-0 px-4 py-1.5 rounded-full text-xs font-bold border ${
-                    cat === c
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-card text-foreground border-border"
-                  }`}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="px-5 mt-2 flex justify-center">
-            <ReaderControls />
-          </div>
-
-          <div className="px-5 mt-4 space-y-3">
-            {filtered.map((z) => {
-              const fav = isFavorite(z.id);
+          ) : (
+            categories.map((c) => {
+              const meta = CATEGORY_META[c.name] ?? { icon: BookHeart, gradient: "from-[color:var(--gold)]/20 to-transparent" };
+              const Icon = meta.icon;
               return (
                 <Link
-                  key={z.id}
-                  to="/azkar/$id"
-                  params={{ id: z.id }}
-                  className="block rounded-2xl bg-card border border-border shadow-card p-4 hover:border-[color:var(--gold)] transition"
+                  key={c.name}
+                  to="/azkar/read/$category"
+                  params={{ category: c.name }}
+                  className="flex items-center gap-4 rounded-2xl bg-card border border-border shadow-card p-4 hover:border-[color:var(--gold)] transition-colors group"
                 >
-                  <div className="flex items-center justify-between mb-2 gap-2">
-                    <h3 className="font-black text-sm text-primary truncate">
-                      <Highlight text={z.title} query={q} />
-                    </h3>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent text-accent-foreground">
-                        × {z.count}
-                      </span>
-                      {fav && <Heart className="h-4 w-4 fill-rose-500 text-rose-500" />}
-                      <ChevronLeft className="h-4 w-4 text-muted-foreground" />
-                    </div>
+                  <div className={`h-14 w-14 shrink-0 rounded-2xl bg-gradient-to-br ${meta.gradient} border border-[color:var(--gold)]/30 grid place-items-center text-[color:var(--gold)]`}>
+                    <Icon className="h-6 w-6" />
                   </div>
-                  <p
-                    className="leading-loose text-foreground line-clamp-3"
-                    style={{ fontFamily: "Amiri, serif", fontSize: `${fontScale * 15}px`, direction: "rtl" }}
-                  >
-                    <Highlight text={z.text} query={q} />
-                  </p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-black text-foreground truncate">{c.name}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">{c.count} ذكرًا ودعاء</p>
+                  </div>
+                  <ChevronLeft className="h-5 w-5 text-muted-foreground group-hover:text-[color:var(--gold)] transition-colors" />
                 </Link>
               );
-            })}
-            {filtered.length === 0 && (
-              <p className="text-center text-sm text-muted-foreground py-10">لا نتائج في هذا القسم</p>
-            )}
-          </div>
-        </>
+            })
+          )}
+        </div>
       ) : (
         <Tasbih />
       )}

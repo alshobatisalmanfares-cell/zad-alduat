@@ -29,6 +29,7 @@ import { Route as AdminHadithRouteImport } from './routes/admin.hadith'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminAzkarRouteImport } from './routes/admin.azkar'
+import { Route as AzkarReadCategoryRouteImport } from './routes/azkar.read.$category'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -130,6 +131,11 @@ const AdminAzkarRoute = AdminAzkarRouteImport.update({
   path: '/azkar',
   getParentRoute: () => AdminRoute,
 } as any)
+const AzkarReadCategoryRoute = AzkarReadCategoryRouteImport.update({
+  id: '/read/$category',
+  path: '/read/$category',
+  getParentRoute: () => AzkarRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/azkar/': typeof AzkarIndexRoute
   '/khutbah/': typeof KhutbahIndexRoute
   '/quran/': typeof QuranIndexRoute
+  '/azkar/read/$category': typeof AzkarReadCategoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/azkar': typeof AzkarIndexRoute
   '/khutbah': typeof KhutbahIndexRoute
   '/quran': typeof QuranIndexRoute
+  '/azkar/read/$category': typeof AzkarReadCategoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/azkar/': typeof AzkarIndexRoute
   '/khutbah/': typeof KhutbahIndexRoute
   '/quran/': typeof QuranIndexRoute
+  '/azkar/read/$category': typeof AzkarReadCategoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/azkar/'
     | '/khutbah/'
     | '/quran/'
+    | '/azkar/read/$category'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/azkar'
     | '/khutbah'
     | '/quran'
+    | '/azkar/read/$category'
   id:
     | '__root__'
     | '/'
@@ -259,6 +270,7 @@ export interface FileRouteTypes {
     | '/azkar/'
     | '/khutbah/'
     | '/quran/'
+    | '/azkar/read/$category'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -415,6 +427,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAzkarRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/azkar/read/$category': {
+      id: '/azkar/read/$category'
+      path: '/read/$category'
+      fullPath: '/azkar/read/$category'
+      preLoaderRoute: typeof AzkarReadCategoryRouteImport
+      parentRoute: typeof AzkarRoute
+    }
   }
 }
 
@@ -439,11 +458,13 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 interface AzkarRouteChildren {
   AzkarIdRoute: typeof AzkarIdRoute
   AzkarIndexRoute: typeof AzkarIndexRoute
+  AzkarReadCategoryRoute: typeof AzkarReadCategoryRoute
 }
 
 const AzkarRouteChildren: AzkarRouteChildren = {
   AzkarIdRoute: AzkarIdRoute,
   AzkarIndexRoute: AzkarIndexRoute,
+  AzkarReadCategoryRoute: AzkarReadCategoryRoute,
 }
 
 const AzkarRouteWithChildren = AzkarRoute._addFileChildren(AzkarRouteChildren)
