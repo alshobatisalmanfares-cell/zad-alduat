@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useStore, type Khutbah } from "@/lib/store";
-import { Plus, Edit3, Trash2, X, Save, Loader2 } from "lucide-react";
+import { Plus, Edit3, Trash2, X, Save, Loader2, Search, ArrowUpDown } from "lucide-react";
 
 export const Route = createFileRoute("/admin/khutab")({
   component: AdminKhutab,
@@ -15,6 +15,24 @@ function AdminKhutab() {
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<Omit<Khutbah, "id">>(empty);
   const [saving, setSaving] = useState(false);
+  const [q, setQ] = useState("");
+  const [filterCat, setFilterCat] = useState("الكل");
+  const [sort, setSort] = useState<"newest" | "oldest" | "title">("newest");
+
+  const visible = useMemo(() => {
+    const ql = q.trim().toLowerCase();
+    const list = khutab.filter(
+      (k) =>
+        (filterCat === "الكل" || k.category === filterCat) &&
+        (!ql || k.title.toLowerCase().includes(ql) || k.content.toLowerCase().includes(ql)),
+    );
+    return [...list].sort((a, b) => {
+      if (sort === "title") return a.title.localeCompare(b.title, "ar");
+      const cmp = (a.date || "").localeCompare(b.date || "");
+      return sort === "newest" ? -cmp : cmp;
+    });
+  }, [khutab, q, filterCat, sort]);
+
 
   const openCreate = () => {
     setForm({ ...empty, category: categories[0]?.name ?? "", date: new Date().toISOString().slice(0, 10) });
