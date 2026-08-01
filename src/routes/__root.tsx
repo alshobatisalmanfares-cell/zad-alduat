@@ -14,6 +14,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppStoreProvider } from "../lib/store";
 import { BottomNav } from "../components/BottomNav";
 import { InstallPrompt } from "../components/InstallPrompt";
+import { Toaster } from "../components/ui/sonner";
+
 
 function NotFoundComponent() {
   return (
@@ -145,6 +147,8 @@ function RootComponent() {
           <Outlet />
           <BottomNav />
           <InstallPrompt />
+          <Toaster position="top-center" richColors />
+
         </div>
       </AppStoreProvider>
     </QueryClientProvider>
