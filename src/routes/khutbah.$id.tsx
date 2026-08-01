@@ -15,7 +15,9 @@ function KhutbahDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const { khutab, toggleFavorite, isFavorite, fontScale } = useStore();
+  const [copied, setCopied] = useState(false);
   const k = khutab.find((x) => x.id === id);
+
 
   if (!k) {
     return (
