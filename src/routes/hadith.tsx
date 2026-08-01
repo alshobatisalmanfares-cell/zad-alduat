@@ -3,7 +3,9 @@ import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { ReaderControls } from "@/components/ReaderControls";
 import { useStore } from "@/lib/store";
-import { Heart, Search, BookOpen } from "lucide-react";
+import { Heart, Search, BookOpen, X, Copy, Check, Share2, ChevronLeft, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
+
 import hadithData from "@/data/hadith.json";
 import { Highlight } from "@/lib/highlight";
 
