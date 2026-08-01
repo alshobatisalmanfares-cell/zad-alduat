@@ -42,6 +42,12 @@ function HadithPage() {
     );
   }, [items, cat, q]);
 
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
+  const active = openIdx === null ? null : filtered[openIdx] ?? null;
+
+
+
   return (
     <div>
       <PageHeader title="الحديث الشريف" subtitle={`${items.length} حديثًا صحيحًا`} />
