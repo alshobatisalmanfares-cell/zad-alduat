@@ -42,37 +42,32 @@ function Home() {
       <header className="gradient-header text-primary-foreground rounded-b-[2rem] px-5 pt-10 pb-4 relative overflow-hidden">
         <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-[color:var(--gold)]/15 blur-2xl" />
         <div className="absolute -bottom-16 -right-8 w-52 h-52 rounded-full bg-[color:var(--gold)]/10 blur-3xl" />
-        <div className="relative">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="h-11 w-11 rounded-2xl bg-[color:var(--gold)]/15 backdrop-blur grid place-items-center overflow-hidden border border-[color:var(--gold)]/30">
-                <img src="/icon-192.png" alt="زاد الدعاة" className="h-9 w-9 rounded-xl object-cover" />
-              </div>
-              <div>
-                <div className="text-[11px] opacity-80 leading-none">تطبيق</div>
-                <div className="font-black text-lg leading-tight text-[color:var(--gold)]">زاد الدعاة</div>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={toggleNight}
-              aria-label={nightMode ? "الوضع النهاري" : "الوضع الليلي"}
-              className="h-9 w-9 rounded-full bg-[color:var(--gold)]/15 grid place-items-center backdrop-blur hover:bg-[color:var(--gold)]/25 transition text-[color:var(--gold)] border border-[color:var(--gold)]/30"
-            >
-              {nightMode ? <SunIcon className="h-4 w-4" /> : <CrescentIcon className="h-4 w-4" />}
-            </button>
+        <div className="relative flex flex-col items-center justify-center text-center">
+          <button
+            type="button"
+            onClick={toggleNight}
+            aria-label={nightMode ? "الوضع النهاري" : "الوضع الليلي"}
+            className="absolute top-0 left-0 h-9 w-9 rounded-full bg-[color:var(--gold)]/15 grid place-items-center backdrop-blur hover:bg-[color:var(--gold)]/25 transition text-[color:var(--gold)] border border-[color:var(--gold)]/30"
+          >
+            {nightMode ? <SunIcon className="h-4 w-4" /> : <CrescentIcon className="h-4 w-4" />}
+          </button>
+
+          <div className="h-14 w-14 rounded-2xl bg-[color:var(--gold)]/15 backdrop-blur grid place-items-center overflow-hidden border border-[color:var(--gold)]/30">
+            <img src="/icon-192.png" alt="زاد الدعاة" className="h-12 w-12 rounded-xl object-cover" />
           </div>
-          <h1 className="text-2xl font-black leading-snug text-[color:var(--gold)]">زادك العلمي والدعوي</h1>
-          <p className="text-[13px] opacity-90 flex items-center gap-1 mt-1">
-            <Compass className="h-3.5 w-3.5" /> في مكان واحد — بارك الله فيك
+
+          <h1 className="mt-2 text-2xl font-black leading-tight text-[color:var(--gold)]">زاد الدعاة</h1>
+          <p className="text-[11px] leading-snug opacity-85 mt-0.5">
+            منصة الخطب والموارد الدعوية الشاملة
           </p>
           <p
-            className="text-[15px] leading-[2] text-center text-[color:var(--gold)]/80 mt-3 px-1"
+            className="text-[13px] leading-[1.9] text-[color:var(--gold)]/80 mt-2 px-1"
             style={{ fontFamily: '"Amiri Quran", "Amiri", serif' }}
           >
             ﴿ وَلْتَكُنْ مِنْكُمْ أُمَّةٌ يَدْعُونَ إِلَى الْخَيْرِ وَيَأْمُرُونَ بِالْمَعْرُوفِ وَيَنْهَوْنَ عَنِ الْمُنْكَرِ وَأُولَٰئِكَ هُمُ الْمُفْلِحُونَ ﴾
           </p>
         </div>
+
       </header>
 
 

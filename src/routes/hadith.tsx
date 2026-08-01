@@ -3,7 +3,9 @@ import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { ReaderControls } from "@/components/ReaderControls";
 import { useStore } from "@/lib/store";
-import { Heart, Search, BookOpen } from "lucide-react";
+import { Heart, Search, BookOpen, X, Copy, Check, Share2, ChevronLeft, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
+
 import hadithData from "@/data/hadith.json";
 import { Highlight } from "@/lib/highlight";
 
@@ -40,6 +42,12 @@ function HadithPage() {
     );
   }, [items, cat, q]);
 
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
+  const active = openIdx === null ? null : filtered[openIdx] ?? null;
+
+
+
   return (
     <div>
       <PageHeader title="الحديث الشريف" subtitle={`${items.length} حديثًا صحيحًا`} />
@@ -74,10 +82,14 @@ function HadithPage() {
       </div>
 
       <div className="px-4 mt-4 space-y-3">
-        {filtered.map((h) => {
+        {filtered.map((h, i) => {
           const fav = isFavorite(h.id);
           return (
-            <article key={h.id} className="rounded-2xl bg-card border border-border shadow-card p-4">
+            <article
+              key={h.id}
+              onClick={() => setOpenIdx(i)}
+              className="rounded-2xl bg-card border border-border shadow-card p-4 cursor-pointer active:scale-[0.99] hover:border-[color:var(--gold)]/60 transition"
+            >
               <div className="flex items-center justify-between mb-2 gap-2">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="inline-flex items-center gap-1 text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
@@ -91,14 +103,17 @@ function HadithPage() {
                   </span>
                 </div>
                 <button
-                  onClick={() => toggleFavorite({ id: h.id, type: "hadith", title: `${h.book} #${h.number}`, content: h.text })}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavorite({ id: h.id, type: "hadith", title: `${h.book} #${h.number}`, content: h.text });
+                  }}
                   aria-label="حفظ في المفضلة"
                 >
                   <Heart className={`h-4 w-4 ${fav ? "fill-rose-500 text-rose-500" : "text-muted-foreground"}`} />
                 </button>
               </div>
               <p
-                className="leading-loose text-foreground"
+                className="leading-loose text-foreground line-clamp-4"
                 style={{ fontFamily: "Amiri, serif", fontSize: `${fontScale * 17}px`, direction: "rtl" }}
               >
                 <Highlight text={h.text} query={q} />
@@ -108,6 +123,117 @@ function HadithPage() {
         })}
         {filtered.length === 0 && <p className="text-center text-muted-foreground py-10">لا نتائج مطابقة في الأحاديث.</p>}
       </div>
+
+      {active && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm grid place-items-end sm:place-items-center p-3"
+          onClick={() => setOpenIdx(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-3xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[oklch(0.16_0.02_80)] to-[oklch(0.09_0.01_80)] text-[color:var(--gold)] p-5 shadow-soft max-h-[88vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+            style={{ direction: "rtl" }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[11px] font-bold bg-[color:var(--gold)]/15 border border-[color:var(--gold)]/30 px-2.5 py-1 rounded-full">
+                {(openIdx ?? 0) + 1} من {filtered.length}
+              </span>
+              <button
+                onClick={() => setOpenIdx(null)}
+                aria-label="إغلاق"
+                className="h-8 w-8 rounded-full bg-[color:var(--gold)]/15 grid place-items-center"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <p
+              className="leading-loose text-center"
+              style={{ fontFamily: "Amiri, serif", fontSize: `${fontScale * 19}px` }}
+            >
+              {active.text}
+            </p>
+
+            <div className="mt-5 space-y-1.5 text-[12px] border-t border-[color:var(--gold)]/25 pt-4">
+              <div className="flex justify-between gap-2">
+                <span className="opacity-70">مخرج الحديث</span>
+                <span className="font-bold">{active.book} — رقم {active.number}</span>
+              </div>
+              <div className="flex justify-between gap-2">
+                <span className="opacity-70">الدرجة</span>
+                <span className="font-bold">{active.grade}</span>
+              </div>
+              <div className="flex justify-between gap-2">
+                <span className="opacity-70">الباب</span>
+                <span className="font-bold">{active.category}</span>
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 gap-2">
+              <button
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(`${active.text}\n\n${active.book} — ${active.number} (${active.grade})`);
+                    setCopied(true);
+                    toast.success("تم نسخ النص بنجاح");
+                    setTimeout(() => setCopied(false), 1800);
+                  } catch {
+                    toast.error("تعذّر النسخ");
+                  }
+                }}
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[color:var(--gold)]/15 border border-[color:var(--gold)]/30 py-2.5 text-xs font-black active:scale-95 transition"
+              >
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />} {copied ? "تم النسخ" : "نسخ"}
+              </button>
+              <button
+                onClick={async () => {
+                  const text = `${active.text}\n\n${active.book} — ${active.number}\n— من تطبيق زاد الدعاة`;
+                  try {
+                    if (navigator.share) await navigator.share({ title: active.book, text });
+                    else {
+                      await navigator.clipboard.writeText(text);
+                      toast.success("تم نسخ النص بنجاح");
+                    }
+                  } catch {
+                    /* dismissed */
+                  }
+                }}
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[color:var(--gold)] text-black py-2.5 text-xs font-black active:scale-95 transition"
+              >
+                <Share2 className="h-4 w-4" /> مشاركة
+              </button>
+            </div>
+
+            <div className="mt-3 flex items-center justify-between gap-2">
+              <button
+                onClick={() => setOpenIdx((n) => Math.max(0, (n ?? 0) - 1))}
+                disabled={(openIdx ?? 0) === 0}
+                aria-label="السابق"
+                className="h-10 w-10 rounded-xl bg-[color:var(--gold)]/10 border border-[color:var(--gold)]/30 grid place-items-center disabled:opacity-30"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => {
+                  toggleFavorite({ id: active.id, type: "hadith", title: `${active.book} #${active.number}`, content: active.text });
+                }}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-[color:var(--gold)]/30 py-2.5 text-xs font-black"
+              >
+                <Heart className={`h-4 w-4 ${isFavorite(active.id) ? "fill-rose-400 text-rose-400" : ""}`} /> المفضلة
+              </button>
+              <button
+                onClick={() => setOpenIdx((n) => Math.min(filtered.length - 1, (n ?? 0) + 1))}
+                disabled={(openIdx ?? 0) === filtered.length - 1}
+                aria-label="التالي"
+                className="h-10 w-10 rounded-xl bg-[color:var(--gold)]/10 border border-[color:var(--gold)]/30 grid place-items-center disabled:opacity-30"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       <div className="h-8" />
     </div>

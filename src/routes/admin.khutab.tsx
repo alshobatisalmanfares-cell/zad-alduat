@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useStore, type Khutbah } from "@/lib/store";
-import { Plus, Edit3, Trash2, X, Save, Loader2 } from "lucide-react";
+import { Plus, Edit3, Trash2, X, Save, Loader2, Search, ArrowUpDown } from "lucide-react";
 
 export const Route = createFileRoute("/admin/khutab")({
   component: AdminKhutab,
@@ -15,6 +15,24 @@ function AdminKhutab() {
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<Omit<Khutbah, "id">>(empty);
   const [saving, setSaving] = useState(false);
+  const [q, setQ] = useState("");
+  const [filterCat, setFilterCat] = useState("الكل");
+  const [sort, setSort] = useState<"newest" | "oldest" | "title">("newest");
+
+  const visible = useMemo(() => {
+    const ql = q.trim().toLowerCase();
+    const list = khutab.filter(
+      (k) =>
+        (filterCat === "الكل" || k.category === filterCat) &&
+        (!ql || k.title.toLowerCase().includes(ql) || k.content.toLowerCase().includes(ql)),
+    );
+    return [...list].sort((a, b) => {
+      if (sort === "title") return a.title.localeCompare(b.title, "ar");
+      const cmp = (a.date || "").localeCompare(b.date || "");
+      return sort === "newest" ? -cmp : cmp;
+    });
+  }, [khutab, q, filterCat, sort]);
+
 
   const openCreate = () => {
     setForm({ ...empty, category: categories[0]?.name ?? "", date: new Date().toISOString().slice(0, 10) });
@@ -52,8 +70,46 @@ function AdminKhutab() {
         <Plus className="h-4 w-4" /> إضافة خطبة جديدة
       </button>
 
+      <div className="flex items-center gap-2 bg-card rounded-2xl px-3 py-2.5 border border-border shadow-card">
+        <Search className="h-4 w-4 text-muted-foreground" />
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="ابحث في الخطب..."
+          className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+        />
+      </div>
+
+      <div className="flex items-center gap-2">
+        <select
+          value={filterCat}
+          onChange={(e) => setFilterCat(e.target.value)}
+          className="input flex-1"
+        >
+          <option value="الكل">كل الأقسام</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.name}>{c.name}</option>
+          ))}
+        </select>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value as typeof sort)}
+          className="input flex-1"
+        >
+          <option value="newest">الأحدث أولًا</option>
+          <option value="oldest">الأقدم أولًا</option>
+          <option value="title">حسب العنوان</option>
+        </select>
+        <span className="h-9 w-9 shrink-0 rounded-xl bg-primary/10 text-primary grid place-items-center">
+          <ArrowUpDown className="h-4 w-4" />
+        </span>
+      </div>
+
+      <p className="text-[11px] text-muted-foreground">{visible.length} خطبة</p>
+
       <ul className="space-y-2">
-        {khutab.map((k) => (
+        {visible.map((k) => (
+
           <li key={k.id} className="rounded-2xl bg-card border border-border p-3 shadow-card">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
