@@ -52,20 +52,39 @@ function KhutbahDetail() {
       </div>
 
       <div className="px-5 mt-5">
-        <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
-          <span className="inline-flex items-center gap-1"><Tag className="h-3.5 w-3.5" /> {k.category}</span>
-          <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {k.date}</span>
-        </div>
+        <article className="rounded-2xl bg-card border border-border shadow-card p-5 text-foreground">
+          <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-border">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+              <span className="inline-flex items-center gap-1"><Tag className="h-3.5 w-3.5" /> {k.category}</span>
+              <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {k.date}</span>
+            </div>
+            <button
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(`${k.title}\n\n${k.content}`);
+                  setCopied(true);
+                  toast.success("تم نسخ النص بنجاح");
+                  setTimeout(() => setCopied(false), 1800);
+                } catch {
+                  toast.error("تعذّر النسخ");
+                }
+              }}
+              aria-label="نسخ الخطبة"
+              className="shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-border bg-muted/40 px-2.5 py-1.5 text-[11px] font-bold hover:border-[color:var(--gold)] hover:text-[color:var(--gold)] active:scale-95 transition"
+            >
+              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              {copied ? "تم النسخ" : "نسخ"}
+            </button>
+          </div>
 
-        <article
-          className="rounded-2xl bg-card border border-border shadow-card p-5 leading-loose text-foreground"
-          style={{ fontFamily: "Amiri, serif", fontSize: `${fontScale * 17}px` }}
-        >
-          {k.content.split("\n").map((p, i) => (
-            <p key={i} className="mb-4 last:mb-0">{p}</p>
-          ))}
+          <div className="leading-loose" style={{ fontFamily: "Amiri, serif", fontSize: `${fontScale * 17}px` }}>
+            {k.content.split("\n").map((p, i) => (
+              <p key={i} className="mb-4 last:mb-0">{p}</p>
+            ))}
+          </div>
         </article>
       </div>
+
 
       <div className="h-6" />
     </div>
