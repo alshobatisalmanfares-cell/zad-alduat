@@ -1,8 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 import { useStore } from "@/lib/store";
 import { PageHeader } from "@/components/PageHeader";
 import { ReaderControls } from "@/components/ReaderControls";
-import { Heart, Calendar, Tag } from "lucide-react";
+import { Heart, Calendar, Tag, Copy, Check } from "lucide-react";
+
 
 export const Route = createFileRoute("/khutbah/$id")({
   component: KhutbahDetail,
