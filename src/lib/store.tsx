@@ -17,7 +17,26 @@ export type Dhikr = {
   text: string;
   count: number;
   category: string; // e.g. "أذكار الصباح"
+  sortOrder: number;
 };
+
+export type DhikrRow = {
+  id: string;
+  title: string;
+  text: string;
+  count: number;
+  category: string;
+  sort_order: number;
+};
+
+export const mapDhikr = (r: DhikrRow): Dhikr => ({
+  id: r.id,
+  title: r.title,
+  text: r.text,
+  count: r.count,
+  category: r.category,
+  sortOrder: r.sort_order ?? 0,
+});
 
 export type Category = { id: string; name: string };
 
@@ -41,9 +60,9 @@ type Store = {
   updateKhutbah: (id: string, k: Partial<Khutbah>) => Promise<void>;
   deleteKhutbah: (id: string) => Promise<void>;
   azkar: Dhikr[];
-  addDhikr: (d: Omit<Dhikr, "id">) => void;
-  updateDhikr: (id: string, d: Partial<Dhikr>) => void;
-  deleteDhikr: (id: string) => void;
+  addDhikr: (d: Omit<Dhikr, "id">) => Promise<void>;
+  updateDhikr: (id: string, d: Partial<Omit<Dhikr, "id">>) => Promise<void>;
+  deleteDhikr: (id: string) => Promise<void>;
   categories: Category[];
   addCategory: (name: string) => void;
   deleteCategory: (id: string) => void;
@@ -61,6 +80,8 @@ type Store = {
 
 
 const uid = () => Math.random().toString(36).slice(2, 10);
+
+const sortAzkar = (list: Dhikr[]) => [...list].sort((a, b) => a.sortOrder - b.sortOrder);
 
 const seedCategories: Category[] = [
   { id: "c1", name: "الإيمان" },
@@ -165,7 +186,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [nightMode, setNightMode] = useLS("zad.night", false);
   const [khutab, setKhutab] = useLS<Khutbah[]>("zad.khutab.cache", []);
   const [khutabLoading, setKhutabLoading] = useState<boolean>(khutab.length === 0);
-  const [azkar, setAzkar] = useLS<Dhikr[]>("zad.azkar.v3", seedAzkar);
+  const [azkar, setAzkar] = useLS<Dhikr[]>("zad.azkar.cloud", []);
   const [categories, setCategories] = useLS<Category[]>("zad.cats", seedCategories);
   const [hadithOfDay, setHadithLocal] = useState<string>(seedHadith);
 
@@ -183,12 +204,14 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     let alive = true;
     (async () => {
       try {
-        const [{ data: kh }, { data: st }] = await Promise.all([
+        const [{ data: kh }, { data: az }, { data: st }] = await Promise.all([
           supabase.from("khutab").select("*").order("created_at", { ascending: false }),
+          supabase.from("azkar").select("*").order("sort_order", { ascending: true }),
           supabase.from("app_settings").select("value").eq("key", "hadith_of_day").maybeSingle(),
         ]);
         if (!alive) return;
         if (kh) setKhutab(kh as Khutbah[]);
+        if (az) setAzkar((az as DhikrRow[]).map(mapDhikr));
         if (st?.value) setHadithLocal(st.value);
       } finally {
         if (alive) setKhutabLoading(false);
@@ -200,6 +223,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       .on("postgres_changes", { event: "*", schema: "public", table: "khutab" }, async () => {
         const { data } = await supabase.from("khutab").select("*").order("created_at", { ascending: false });
         if (data) setKhutab(data as Khutbah[]);
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "azkar" }, async () => {
+        const { data } = await supabase.from("azkar").select("*").order("sort_order", { ascending: true });
+        if (data) setAzkar((data as DhikrRow[]).map(mapDhikr));
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "app_settings" }, async () => {
         const { data } = await supabase.from("app_settings").select("value").eq("key", "hadith_of_day").maybeSingle();
@@ -239,9 +266,32 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       setKhutab((p) => p.filter((x) => x.id !== id));
     },
     azkar,
-    addDhikr: (d) => setAzkar((p) => [{ ...d, id: uid() }, ...p]),
-    updateDhikr: (id, d) => setAzkar((p) => p.map((x) => (x.id === id ? { ...x, ...d } : x))),
-    deleteDhikr: (id) => setAzkar((p) => p.filter((x) => x.id !== id)),
+    addDhikr: async (d) => {
+      const row = (await adminMutate({
+        data: {
+          password: requirePw(),
+          action: "dhikr.create",
+          data: { title: d.title, text: d.text, category: d.category, count: d.count, sort_order: d.sortOrder ?? 0 },
+        },
+      })) as DhikrRow;
+      if (row?.id) setAzkar((p) => sortAzkar([...p.filter((x) => x.id !== row.id), mapDhikr(row)]));
+    },
+    updateDhikr: async (id, d) => {
+      const patch: Record<string, unknown> = {};
+      if (d.title !== undefined) patch.title = d.title;
+      if (d.text !== undefined) patch.text = d.text;
+      if (d.category !== undefined) patch.category = d.category;
+      if (d.count !== undefined) patch.count = d.count;
+      if (d.sortOrder !== undefined) patch.sort_order = d.sortOrder;
+      const row = (await adminMutate({
+        data: { password: requirePw(), action: "dhikr.update", id, data: patch },
+      })) as DhikrRow;
+      if (row?.id) setAzkar((p) => sortAzkar(p.map((x) => (x.id === row.id ? mapDhikr(row) : x))));
+    },
+    deleteDhikr: async (id) => {
+      await adminMutate({ data: { password: requirePw(), action: "dhikr.delete", id } });
+      setAzkar((p) => p.filter((x) => x.id !== id));
+    },
     categories,
     addCategory: (name) => setCategories((p) => [...p, { id: uid(), name }]),
     deleteCategory: (id) => setCategories((p) => p.filter((c) => c.id !== id)),
