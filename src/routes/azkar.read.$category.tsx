@@ -102,12 +102,13 @@ function AzkarReader() {
           </p>
         </article>
 
-        {/* counter */}
-        <div className="mt-6 rounded-3xl p-5 border border-[color:var(--gold)]/40 bg-gradient-to-br from-[oklch(0.18_0.02_80)] to-[oklch(0.10_0.02_80)] text-[color:var(--gold)] text-center">
-          <div className="text-xs font-bold mb-3 opacity-80">التكرار المستحب: × {z.count}</div>
+        {/* counter — compact */}
+        <div className="mt-3 rounded-2xl px-3 py-2 border border-[color:var(--gold)]/40 bg-gradient-to-br from-[oklch(0.18_0.02_80)] to-[oklch(0.10_0.02_80)] text-[color:var(--gold)] flex items-center justify-between gap-2" dir="rtl">
+          <span className="text-[10px] font-bold opacity-75 shrink-0">× {z.count}</span>
+
           <button
             onClick={() => !done && setCount((c) => c + 1)}
-            className={`mx-auto relative h-36 w-36 rounded-full grid place-items-center border-4 active:scale-95 transition-transform ${
+            className={`relative h-14 w-14 rounded-full grid place-items-center border-2 active:scale-95 transition-transform ${
               done
                 ? "bg-[color:var(--gold)] text-black border-[color:var(--gold)]"
                 : "bg-[color:var(--gold)]/10 border-[color:var(--gold)]/40"
@@ -115,61 +116,34 @@ function AzkarReader() {
             aria-label="زيادة العدّاد"
           >
             <div
-              className="absolute inset-1 rounded-full border-4 border-[color:var(--gold)]/70"
+              className="absolute inset-0.5 rounded-full border-2 border-[color:var(--gold)]/70"
               style={{
                 clipPath: `polygon(50% 50%, 50% 0%, ${
                   50 + 50 * Math.sin((pct / 100) * 2 * Math.PI)
                 }% ${50 - 50 * Math.cos((pct / 100) * 2 * Math.PI)}%, 50% 50%)`,
               }}
             />
-            <div className="relative text-center">
+            <div className="relative text-center leading-none">
               {done ? (
-                <>
-                  <CheckCircle2 className="h-8 w-8 mx-auto mb-1" />
-                  <div className="text-xs font-black">تم بحمد الله</div>
-                </>
+                <CheckCircle2 className="h-5 w-5 mx-auto" />
               ) : (
-                <>
-                  <div className="text-4xl font-black tabular-nums">{count}</div>
-                  <div className="text-[10px] opacity-85 mt-1">من {z.count}</div>
-                </>
+                <span className="text-lg font-black tabular-nums">{count}</span>
               )}
             </div>
           </button>
+
           <button
             onClick={() => setCount(0)}
-            className="mt-4 inline-flex items-center gap-1.5 bg-[color:var(--gold)]/15 border border-[color:var(--gold)]/30 rounded-full px-3 py-1.5 text-[11px] font-bold"
+            className="inline-flex items-center gap-1 bg-[color:var(--gold)]/15 border border-[color:var(--gold)]/30 rounded-full px-2.5 py-1 text-[10px] font-bold shrink-0"
           >
             <RotateCcw className="h-3 w-3" /> تصفير
           </button>
         </div>
       </div>
 
-      {/* Nav controls */}
-      <div className="px-5 mt-5">
-        <div className="flex items-center justify-between gap-2 rounded-2xl bg-card border border-border shadow-card p-2">
-          <button
-            onClick={() => go(idx - 1)}
-            disabled={idx === 0}
-            className="h-11 w-11 rounded-xl bg-[color:var(--gold)]/10 border border-[color:var(--gold)]/30 text-[color:var(--gold)] grid place-items-center disabled:opacity-30 disabled:cursor-not-allowed"
-            aria-label="السابق"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-
-          <div className="flex items-center gap-2 flex-1 justify-center">
-            <span className="text-sm font-black tabular-nums text-[color:var(--gold)]">
-              {idx + 1} / {list.length}
-            </span>
-            <button
-              onClick={share}
-              className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-[color:var(--gold)] text-black px-3 py-1.5 text-xs font-black"
-            >
-              <Share2 className="h-3.5 w-3.5" />
-              {copied ? "تم النسخ" : "مشاركة"}
-            </button>
-          </div>
-
+      {/* Nav controls — strict RTL: next on the right, prev on the left */}
+      <div className="px-5 mt-4">
+        <div dir="rtl" className="flex items-center justify-between gap-2 rounded-2xl bg-card border border-border shadow-card p-2">
           <button
             onClick={() => go(idx + 1)}
             disabled={idx === list.length - 1}
@@ -178,8 +152,31 @@ function AzkarReader() {
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
+
+          <div className="flex items-center gap-2 flex-1 justify-center">
+            <span className="text-sm font-black tabular-nums text-[color:var(--gold)]">
+              {idx + 1} / {list.length}
+            </span>
+            <button
+              onClick={share}
+              className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--gold)] text-black px-3 py-1.5 text-xs font-black"
+            >
+              <Share2 className="h-3.5 w-3.5" />
+              {copied ? "تم النسخ" : "مشاركة"}
+            </button>
+          </div>
+
+          <button
+            onClick={() => go(idx - 1)}
+            disabled={idx === 0}
+            className="h-11 w-11 rounded-xl bg-[color:var(--gold)]/10 border border-[color:var(--gold)]/30 text-[color:var(--gold)] grid place-items-center disabled:opacity-30 disabled:cursor-not-allowed"
+            aria-label="السابق"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
         </div>
       </div>
+
 
       <div className="h-8" />
     </div>

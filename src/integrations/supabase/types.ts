@@ -32,6 +32,39 @@ export type Database = {
         }
         Relationships: []
       }
+      azkar: {
+        Row: {
+          category: string
+          count: number
+          created_at: string
+          id: string
+          sort_order: number
+          text: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          count?: number
+          created_at?: string
+          id?: string
+          sort_order?: number
+          text?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          count?: number
+          created_at?: string
+          id?: string
+          sort_order?: number
+          text?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       khutab: {
         Row: {
           category: string

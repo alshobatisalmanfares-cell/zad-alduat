@@ -8,12 +8,23 @@ const KhutbahInput = z.object({
   content: z.string().min(1),
 });
 
+const DhikrInput = z.object({
+  title: z.string().min(1).max(300),
+  text: z.string().min(1),
+  category: z.string().max(120).default(""),
+  count: z.number().int().min(1).default(1),
+  sort_order: z.number().int().default(0),
+});
+
 const Payload = z.object({
   password: z.string().min(1),
   action: z.enum([
     "khutbah.create",
     "khutbah.update",
     "khutbah.delete",
+    "dhikr.create",
+    "dhikr.update",
+    "dhikr.delete",
     "hadith.set",
   ]),
   id: z.string().uuid().optional(),
@@ -49,6 +60,28 @@ export const adminMutate = createServerFn({ method: "POST" })
         if (!data.id) throw new Error("id required");
         const { error } = await supabaseAdmin
           .from("khutab").delete().eq("id", data.id);
+        if (error) throw new Error(error.message);
+        return { ok: true };
+      }
+      case "dhikr.create": {
+        const input = DhikrInput.parse(data.data);
+        const { data: row, error } = await supabaseAdmin
+          .from("azkar").insert(input).select().single();
+        if (error) throw new Error(error.message);
+        return row;
+      }
+      case "dhikr.update": {
+        if (!data.id) throw new Error("id required");
+        const input = DhikrInput.partial().parse(data.data);
+        const { data: row, error } = await supabaseAdmin
+          .from("azkar").update(input).eq("id", data.id).select().single();
+        if (error) throw new Error(error.message);
+        return row;
+      }
+      case "dhikr.delete": {
+        if (!data.id) throw new Error("id required");
+        const { error } = await supabaseAdmin
+          .from("azkar").delete().eq("id", data.id);
         if (error) throw new Error(error.message);
         return { ok: true };
       }

@@ -1,19 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useStore, type Dhikr } from "@/lib/store";
-import { Plus, Edit3, Trash2, X, Save } from "lucide-react";
+import { Plus, Edit3, Trash2, X, Save, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/azkar")({
   component: AdminAzkar,
 });
 
-const empty: Omit<Dhikr, "id"> = { title: "", text: "", count: 1, category: "أذكار الصباح" };
+const empty: Omit<Dhikr, "id"> = { title: "", text: "", count: 1, category: "أذكار الصباح", sortOrder: 0 };
 
 function AdminAzkar() {
   const { azkar, addDhikr, updateDhikr, deleteDhikr } = useStore();
   const [editing, setEditing] = useState<Dhikr | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<Omit<Dhikr, "id">>(empty);
+  const [saving, setSaving] = useState(false);
 
   const cats = Array.from(new Set([...azkar.map((z) => z.category), "أذكار الصباح", "أذكار المساء", "التسبيح", "أدعية متنوعة"]));
 
@@ -23,17 +25,35 @@ function AdminAzkar() {
   };
   const openEdit = (d: Dhikr) => {
     setEditing(d);
-    setForm({ title: d.title, text: d.text, count: d.count, category: d.category });
+    setForm({ title: d.title, text: d.text, count: d.count, category: d.category, sortOrder: d.sortOrder ?? 0 });
   };
   const close = () => {
     setEditing(null);
     setCreating(false);
   };
-  const save = () => {
+  const save = async () => {
     if (!form.title.trim() || !form.text.trim()) return;
-    if (editing) updateDhikr(editing.id, form);
-    else addDhikr(form);
-    close();
+    setSaving(true);
+    try {
+      if (editing) await updateDhikr(editing.id, form);
+      else await addDhikr(form);
+      toast.success("تم الحفظ بنجاح");
+      close();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "تعذّر الحفظ");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("حذف هذا الذكر؟")) return;
+    try {
+      await deleteDhikr(id);
+      toast.success("تم الحذف");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "تعذّر الحذف");
+    }
   };
 
   return (
@@ -57,6 +77,9 @@ function AdminAzkar() {
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent text-accent-foreground">
                     × {d.count}
                   </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                    الترتيب: {d.sortOrder ?? 0}
+                  </span>
                 </div>
                 <h3 className="font-black text-sm truncate">{d.title}</h3>
                 <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{d.text}</p>
@@ -66,7 +89,7 @@ function AdminAzkar() {
                   <Edit3 className="h-3.5 w-3.5" />
                 </button>
                 <button
-                  onClick={() => confirm("حذف هذا الذكر؟") && deleteDhikr(d.id)}
+                  onClick={() => remove(d.id)}
                   className="h-8 w-8 rounded-lg bg-destructive/10 text-destructive grid place-items-center"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -92,7 +115,7 @@ function AdminAzkar() {
                 <span className="text-xs font-bold mb-1 block">العنوان</span>
                 <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="input" />
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <label className="block">
                   <span className="text-xs font-bold mb-1 block">القسم</span>
                   <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="input">
@@ -111,6 +134,16 @@ function AdminAzkar() {
                     className="input"
                   />
                 </label>
+                <label className="block">
+                  <span className="text-xs font-bold mb-1 block">الترتيب</span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={form.sortOrder}
+                    onChange={(e) => setForm({ ...form, sortOrder: Math.max(0, +e.target.value || 0) })}
+                    className="input"
+                  />
+                </label>
               </div>
               <label className="block">
                 <span className="text-xs font-bold mb-1 block">النص</span>
@@ -122,8 +155,12 @@ function AdminAzkar() {
                   style={{ fontFamily: "Amiri, serif" }}
                 />
               </label>
-              <button onClick={save} className="w-full inline-flex items-center justify-center gap-2 rounded-xl gradient-primary text-primary-foreground py-2.5 font-bold text-sm">
-                <Save className="h-4 w-4" /> حفظ
+              <button
+                onClick={save}
+                disabled={saving}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl gradient-primary text-primary-foreground py-2.5 font-bold text-sm disabled:opacity-60"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} حفظ
               </button>
             </div>
           </div>
