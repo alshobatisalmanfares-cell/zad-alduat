@@ -8,12 +8,23 @@ const KhutbahInput = z.object({
   content: z.string().min(1),
 });
 
+const DhikrInput = z.object({
+  title: z.string().min(1).max(300),
+  text: z.string().min(1),
+  category: z.string().max(120).default(""),
+  count: z.number().int().min(1).default(1),
+  sort_order: z.number().int().default(0),
+});
+
 const Payload = z.object({
   password: z.string().min(1),
   action: z.enum([
     "khutbah.create",
     "khutbah.update",
     "khutbah.delete",
+    "dhikr.create",
+    "dhikr.update",
+    "dhikr.delete",
     "hadith.set",
   ]),
   id: z.string().uuid().optional(),
