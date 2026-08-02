@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TasbihRouteImport } from './routes/tasbih'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as QuranRouteImport } from './routes/quran'
 import { Route as KhutbahRouteImport } from './routes/khutbah'
@@ -31,6 +32,11 @@ import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminAzkarRouteImport } from './routes/admin.azkar'
 import { Route as AzkarReadCategoryRouteImport } from './routes/azkar.read.$category'
 
+const TasbihRoute = TasbihRouteImport.update({
+  id: '/tasbih',
+  path: '/tasbih',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/khutbah': typeof KhutbahRouteWithChildren
   '/quran': typeof QuranRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tasbih': typeof TasbihRoute
   '/admin/azkar': typeof AdminAzkarRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByTo {
   '/favorites': typeof FavoritesRoute
   '/hadith': typeof HadithRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tasbih': typeof TasbihRoute
   '/admin/azkar': typeof AdminAzkarRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -191,6 +199,7 @@ export interface FileRoutesById {
   '/khutbah': typeof KhutbahRouteWithChildren
   '/quran': typeof QuranRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tasbih': typeof TasbihRoute
   '/admin/azkar': typeof AdminAzkarRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -216,6 +225,7 @@ export interface FileRouteTypes {
     | '/khutbah'
     | '/quran'
     | '/sitemap.xml'
+    | '/tasbih'
     | '/admin/azkar'
     | '/admin/categories'
     | '/admin/dashboard'
@@ -236,6 +246,7 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/hadith'
     | '/sitemap.xml'
+    | '/tasbih'
     | '/admin/azkar'
     | '/admin/categories'
     | '/admin/dashboard'
@@ -259,6 +270,7 @@ export interface FileRouteTypes {
     | '/khutbah'
     | '/quran'
     | '/sitemap.xml'
+    | '/tasbih'
     | '/admin/azkar'
     | '/admin/categories'
     | '/admin/dashboard'
@@ -283,10 +295,18 @@ export interface RootRouteChildren {
   KhutbahRoute: typeof KhutbahRouteWithChildren
   QuranRoute: typeof QuranRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TasbihRoute: typeof TasbihRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tasbih': {
+      id: '/tasbih'
+      path: '/tasbih'
+      fullPath: '/tasbih'
+      preLoaderRoute: typeof TasbihRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -504,6 +524,7 @@ const rootRouteChildren: RootRouteChildren = {
   KhutbahRoute: KhutbahRouteWithChildren,
   QuranRoute: QuranRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TasbihRoute: TasbihRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
