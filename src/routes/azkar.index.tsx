@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { useStore } from "@/lib/store";
 import {
@@ -11,14 +11,13 @@ import {
   BookOpen,
   Sparkles,
   BookHeart,
-  Infinity as InfIcon,
-  RotateCcw,
   Loader2,
 } from "lucide-react";
 
 export const Route = createFileRoute("/azkar/")({
   component: AzkarPage,
 });
+
 
 const CATEGORY_META: Record<string, { icon: any; gradient: string }> = {
   "أذكار الصباح": { icon: Sunrise, gradient: "from-amber-500/25 to-orange-600/10" },

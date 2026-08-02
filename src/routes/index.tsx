@@ -32,9 +32,11 @@ function Home() {
     { to: "/quran", label: "القرآن الكريم", Icon: MushafIcon },
     { to: "/hadith", label: "الحديث الشريف", Icon: HadithIcon },
     { to: "/azkar", label: "أذكار وأدعية", Icon: MisbahaIcon },
+    { to: "/tasbih", label: "المسبحة", Icon: MisbahaIcon },
     { to: "/favorites", label: "المفضلة", Icon: HeartStarIcon },
     { to: "/contact", label: "تواصل معنا", Icon: Mail },
   ] as const;
+
 
   return (
     <div>
