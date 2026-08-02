@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useStore } from "@/lib/store";
-import { Compass, Mail } from "lucide-react";
+import { Mail, BookHeart } from "lucide-react";
 import {
   MushafIcon, MinbarIcon, MisbahaIcon, HadithIcon, HeartStarIcon,
   CrescentIcon, SunIcon,
@@ -31,10 +31,12 @@ function Home() {
   const sections = [
     { to: "/quran", label: "القرآن الكريم", Icon: MushafIcon },
     { to: "/hadith", label: "الحديث الشريف", Icon: HadithIcon },
-    { to: "/azkar", label: "أذكار وأدعية", Icon: MisbahaIcon },
+    { to: "/azkar", label: "أذكار وأدعية", Icon: BookHeart },
+    { to: "/tasbih", label: "المسبحة", Icon: MisbahaIcon },
     { to: "/favorites", label: "المفضلة", Icon: HeartStarIcon },
     { to: "/contact", label: "تواصل معنا", Icon: Mail },
   ] as const;
+
 
   return (
     <div>
