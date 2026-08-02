@@ -1,12 +1,13 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { MushafIcon, MisbahaIcon, HeartStarIcon, HadithIcon, MosqueIcon } from "@/components/icons/IslamicIcons";
+import { MushafIcon, MisbahaIcon, HadithIcon, MosqueIcon } from "@/components/icons/IslamicIcons";
+import { BookHeart } from "lucide-react";
 
 const items = [
-  { to: "/", label: "الرئيسية", Icon: MosqueIcon },
   { to: "/quran", label: "المصحف", Icon: MushafIcon },
   { to: "/hadith", label: "الحديث", Icon: HadithIcon },
-  { to: "/azkar", label: "التسبيح", Icon: MisbahaIcon },
-  { to: "/favorites", label: "المفضلة", Icon: HeartStarIcon },
+  { to: "/", label: "الرئيسية", Icon: MosqueIcon },
+  { to: "/azkar", label: "الأذكار", Icon: BookHeart },
+  { to: "/tasbih", label: "المسبحة", Icon: MisbahaIcon },
 ] as const;
 
 export function BottomNav() {
