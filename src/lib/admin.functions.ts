@@ -63,6 +63,28 @@ export const adminMutate = createServerFn({ method: "POST" })
         if (error) throw new Error(error.message);
         return { ok: true };
       }
+      case "dhikr.create": {
+        const input = DhikrInput.parse(data.data);
+        const { data: row, error } = await supabaseAdmin
+          .from("azkar").insert(input).select().single();
+        if (error) throw new Error(error.message);
+        return row;
+      }
+      case "dhikr.update": {
+        if (!data.id) throw new Error("id required");
+        const input = DhikrInput.partial().parse(data.data);
+        const { data: row, error } = await supabaseAdmin
+          .from("azkar").update(input).eq("id", data.id).select().single();
+        if (error) throw new Error(error.message);
+        return row;
+      }
+      case "dhikr.delete": {
+        if (!data.id) throw new Error("id required");
+        const { error } = await supabaseAdmin
+          .from("azkar").delete().eq("id", data.id);
+        if (error) throw new Error(error.message);
+        return { ok: true };
+      }
       case "hadith.set": {
         const value = z.object({ value: z.string().min(1) }).parse(data.data).value;
         const { error } = await supabaseAdmin
