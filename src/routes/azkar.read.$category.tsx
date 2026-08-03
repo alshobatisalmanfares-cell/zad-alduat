@@ -108,7 +108,7 @@ function AzkarReader() {
 
           <button
             onClick={() => !done && setCount((c) => c + 1)}
-            className={`relative h-14 w-14 rounded-full grid place-items-center border-2 active:scale-95 transition-transform ${
+            className={`relative flex-1 h-11 rounded-2xl overflow-hidden grid place-items-center border active:scale-[0.98] transition-transform ${
               done
                 ? "bg-[color:var(--gold)] text-black border-[color:var(--gold)]"
                 : "bg-[color:var(--gold)]/10 border-[color:var(--gold)]/40"
@@ -116,21 +116,17 @@ function AzkarReader() {
             aria-label="زيادة العدّاد"
           >
             <div
-              className="absolute inset-0.5 rounded-full border-2 border-[color:var(--gold)]/70"
-              style={{
-                clipPath: `polygon(50% 50%, 50% 0%, ${
-                  50 + 50 * Math.sin((pct / 100) * 2 * Math.PI)
-                }% ${50 - 50 * Math.cos((pct / 100) * 2 * Math.PI)}%, 50% 50%)`,
-              }}
+              className="absolute inset-y-0 right-0 bg-[color:var(--gold)]/25 transition-all duration-200"
+              style={{ width: `${pct}%` }}
             />
-            <div className="relative text-center leading-none">
-              {done ? (
-                <CheckCircle2 className="h-5 w-5 mx-auto" />
-              ) : (
-                <span className="text-lg font-black tabular-nums">{count}</span>
-              )}
+            <div className="relative flex items-center gap-1.5 leading-none">
+              {done && <CheckCircle2 className="h-4 w-4" />}
+              <span className="text-base font-black tabular-nums" dir="ltr">
+                {count} / {z.count}
+              </span>
             </div>
           </button>
+
 
           <button
             onClick={() => setCount(0)}
@@ -150,7 +146,7 @@ function AzkarReader() {
             className="h-11 w-11 rounded-xl bg-[color:var(--gold)]/10 border border-[color:var(--gold)]/30 text-[color:var(--gold)] grid place-items-center disabled:opacity-30 disabled:cursor-not-allowed"
             aria-label="التالي"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronRight className="h-5 w-5" style={{ transform: "none" }} />
           </button>
 
           <div className="flex items-center gap-2 flex-1 justify-center">
@@ -172,8 +168,9 @@ function AzkarReader() {
             className="h-11 w-11 rounded-xl bg-[color:var(--gold)]/10 border border-[color:var(--gold)]/30 text-[color:var(--gold)] grid place-items-center disabled:opacity-30 disabled:cursor-not-allowed"
             aria-label="السابق"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5" style={{ transform: "none" }} />
           </button>
+
         </div>
       </div>
 
