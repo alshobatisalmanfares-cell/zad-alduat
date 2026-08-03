@@ -1,0 +1,134 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "zad-the-preacher-s-provision",
+      "version": "0.1.0",
+      "title": "Zād: The Preacher's Provision"
+    },
+    "tools": [
+      {
+        "name": "list_khutab",
+        "title": "List Friday sermons",
+        "description": "List published Friday sermons (خطب الجمعة) with id, title, category and date. Optionally filter by category or a search term.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "string",
+              "description": "Optional text to match in the sermon title or content."
+            },
+            "category": {
+              "type": "string",
+              "description": "Optional category name to filter by."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Max sermons to return (default 20, max 100)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_khutbah",
+        "title": "Get a Friday sermon",
+        "description": "Get the full Arabic text of one Friday sermon (خطبة) by its id.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The sermon id returned by list_khutab."
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_azkar_categories",
+        "title": "List azkar categories",
+        "description": "List the distinct azkar categories available in the app, with how many entries each contains.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_azkar",
+        "title": "List azkar and supplications",
+        "description": "List azkar and du'a (الأذكار والأدعية) with their full Arabic text, repetition count and category, ordered by sort order.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string",
+              "description": "Optional category, e.g. أذكار الصباح."
+            },
+            "search": {
+              "type": "string",
+              "description": "Optional text to match in the title or body."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Max entries to return (default 50, max 200)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_hadith_of_day",
+        "title": "Get hadith of the day",
+        "description": "Get the current featured hadith of the day (حديث اليوم) shown on the app home page.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
