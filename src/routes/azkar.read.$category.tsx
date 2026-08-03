@@ -146,7 +146,7 @@ function AzkarReader() {
             className="h-11 w-11 rounded-xl bg-[color:var(--gold)]/10 border border-[color:var(--gold)]/30 text-[color:var(--gold)] grid place-items-center disabled:opacity-30 disabled:cursor-not-allowed"
             aria-label="التالي"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronRight className="h-5 w-5" style={{ transform: "none" }} />
           </button>
 
           <div className="flex items-center gap-2 flex-1 justify-center">
@@ -168,8 +168,9 @@ function AzkarReader() {
             className="h-11 w-11 rounded-xl bg-[color:var(--gold)]/10 border border-[color:var(--gold)]/30 text-[color:var(--gold)] grid place-items-center disabled:opacity-30 disabled:cursor-not-allowed"
             aria-label="السابق"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5" style={{ transform: "none" }} />
           </button>
+
         </div>
       </div>
 
