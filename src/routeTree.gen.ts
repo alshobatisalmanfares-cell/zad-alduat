@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TasbihRouteImport } from './routes/tasbih'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as QuranRouteImport } from './routes/quran'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as KhutbahRouteImport } from './routes/khutbah'
 import { Route as HadithRouteImport } from './routes/hadith'
 import { Route as FavoritesRouteImport } from './routes/favorites'
@@ -30,7 +31,10 @@ import { Route as AdminHadithRouteImport } from './routes/admin.hadith'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminAzkarRouteImport } from './routes/admin.azkar'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as AzkarReadCategoryRouteImport } from './routes/azkar.read.$category'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 
 const TasbihRoute = TasbihRouteImport.update({
   id: '/tasbih',
@@ -45,6 +49,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const QuranRoute = QuranRouteImport.update({
   id: '/quran',
   path: '/quran',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KhutbahRoute = KhutbahRouteImport.update({
@@ -137,11 +146,29 @@ const AdminAzkarRoute = AdminAzkarRouteImport.update({
   path: '/azkar',
   getParentRoute: () => AdminRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AzkarReadCategoryRoute = AzkarReadCategoryRouteImport.update({
   id: '/read/$category',
   path: '/read/$category',
   getParentRoute: () => AzkarRoute,
 } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -151,9 +178,12 @@ export interface FileRoutesByFullPath {
   '/favorites': typeof FavoritesRoute
   '/hadith': typeof HadithRoute
   '/khutbah': typeof KhutbahRouteWithChildren
+  '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasbih': typeof TasbihRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/azkar': typeof AdminAzkarRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -165,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/azkar/': typeof AzkarIndexRoute
   '/khutbah/': typeof KhutbahIndexRoute
   '/quran/': typeof QuranIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/azkar/read/$category': typeof AzkarReadCategoryRoute
 }
 export interface FileRoutesByTo {
@@ -173,8 +204,11 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/favorites': typeof FavoritesRoute
   '/hadith': typeof HadithRoute
+  '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasbih': typeof TasbihRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/azkar': typeof AdminAzkarRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -186,6 +220,7 @@ export interface FileRoutesByTo {
   '/azkar': typeof AzkarIndexRoute
   '/khutbah': typeof KhutbahIndexRoute
   '/quran': typeof QuranIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/azkar/read/$category': typeof AzkarReadCategoryRoute
 }
 export interface FileRoutesById {
@@ -197,9 +232,12 @@ export interface FileRoutesById {
   '/favorites': typeof FavoritesRoute
   '/hadith': typeof HadithRoute
   '/khutbah': typeof KhutbahRouteWithChildren
+  '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasbih': typeof TasbihRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/azkar': typeof AdminAzkarRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -211,6 +249,7 @@ export interface FileRoutesById {
   '/azkar/': typeof AzkarIndexRoute
   '/khutbah/': typeof KhutbahIndexRoute
   '/quran/': typeof QuranIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/azkar/read/$category': typeof AzkarReadCategoryRoute
 }
 export interface FileRouteTypes {
@@ -223,9 +262,12 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/hadith'
     | '/khutbah'
+    | '/mcp'
     | '/quran'
     | '/sitemap.xml'
     | '/tasbih'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/azkar'
     | '/admin/categories'
     | '/admin/dashboard'
@@ -237,6 +279,7 @@ export interface FileRouteTypes {
     | '/azkar/'
     | '/khutbah/'
     | '/quran/'
+    | '/.mcp/invoke-tool/$tool'
     | '/azkar/read/$category'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -245,8 +288,11 @@ export interface FileRouteTypes {
     | '/contact'
     | '/favorites'
     | '/hadith'
+    | '/mcp'
     | '/sitemap.xml'
     | '/tasbih'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/azkar'
     | '/admin/categories'
     | '/admin/dashboard'
@@ -258,6 +304,7 @@ export interface FileRouteTypes {
     | '/azkar'
     | '/khutbah'
     | '/quran'
+    | '/.mcp/invoke-tool/$tool'
     | '/azkar/read/$category'
   id:
     | '__root__'
@@ -268,9 +315,12 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/hadith'
     | '/khutbah'
+    | '/mcp'
     | '/quran'
     | '/sitemap.xml'
     | '/tasbih'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/azkar'
     | '/admin/categories'
     | '/admin/dashboard'
@@ -282,6 +332,7 @@ export interface FileRouteTypes {
     | '/azkar/'
     | '/khutbah/'
     | '/quran/'
+    | '/.mcp/invoke-tool/$tool'
     | '/azkar/read/$category'
   fileRoutesById: FileRoutesById
 }
@@ -293,9 +344,13 @@ export interface RootRouteChildren {
   FavoritesRoute: typeof FavoritesRoute
   HadithRoute: typeof HadithRoute
   KhutbahRoute: typeof KhutbahRouteWithChildren
+  McpRoute: typeof McpRoute
   QuranRoute: typeof QuranRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TasbihRoute: typeof TasbihRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -319,6 +374,13 @@ declare module '@tanstack/react-router' {
       path: '/quran'
       fullPath: '/quran'
       preLoaderRoute: typeof QuranRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/khutbah': {
@@ -447,12 +509,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAzkarRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/azkar/read/$category': {
       id: '/azkar/read/$category'
       path: '/read/$category'
       fullPath: '/azkar/read/$category'
       preLoaderRoute: typeof AzkarReadCategoryRouteImport
       parentRoute: typeof AzkarRoute
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -522,9 +605,14 @@ const rootRouteChildren: RootRouteChildren = {
   FavoritesRoute: FavoritesRoute,
   HadithRoute: HadithRoute,
   KhutbahRoute: KhutbahRouteWithChildren,
+  McpRoute: McpRoute,
   QuranRoute: QuranRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TasbihRoute: TasbihRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
