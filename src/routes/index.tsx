@@ -25,7 +25,17 @@ function useHadithOfDay(fallback: string) {
 }
 
 function Home() {
-  const { hadithOfDay, nightMode, toggleNight } = useStore();
+  const { hadithOfDay, nightMode, toggleNight, syncing, syncData } = useStore();
+  const handleSync = async () => {
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      toast.error("لا يوجد اتصال بالإنترنت حالياً");
+      return;
+    }
+    const ok = await syncData();
+    if (ok) toast.success("تمت المزامنة وتحديث البيانات بنجاح");
+    else toast.error("لا يوجد اتصال بالإنترنت حالياً");
+  };
+
   const daily = useHadithOfDay(hadithOfDay);
 
   const sections = [
