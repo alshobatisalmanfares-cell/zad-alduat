@@ -120,7 +120,15 @@ function AzkarReader() {
           <span className="text-[10px] font-bold opacity-75 shrink-0">× {z.count}</span>
 
           <button
-            onClick={() => !done && setCount((c) => c + 1)}
+            onClick={() => {
+              if (done) return;
+              const next = count + 1;
+              setCount(next);
+              if (next >= (z?.count ?? 1) && idx === list.length - 1) {
+                setTimeout(() => setFinished(true), 450);
+              }
+            }}
+
             className={`relative flex-1 h-11 rounded-2xl overflow-hidden grid place-items-center border active:scale-[0.98] transition-transform ${
               done
                 ? "bg-[color:var(--gold)] text-black border-[color:var(--gold)]"
