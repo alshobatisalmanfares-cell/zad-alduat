@@ -236,6 +236,20 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addCategory: (name) => setCategories((p) => [...p, { id: uid(), name }]),
     deleteCategory: (id) => setCategories((p) => p.filter((c) => c.id !== id)),
     hadithOfDay,
+    syncing,
+    syncData: async () => {
+      if (typeof navigator !== "undefined" && navigator.onLine === false) return false;
+      setSyncing(true);
+      try {
+        await fetchAll();
+        return true;
+      } catch {
+        return false;
+      } finally {
+        setSyncing(false);
+      }
+    },
+
     setHadithOfDay: async (t) => {
       await adminMutate({ data: { password: requirePw(), action: "hadith.set", data: { value: t } } });
     },
