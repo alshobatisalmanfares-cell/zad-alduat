@@ -15,6 +15,8 @@ import { AppStoreProvider } from "../lib/store";
 import { BottomNav } from "../components/BottomNav";
 import { InstallPrompt } from "../components/InstallPrompt";
 import { Toaster } from "../components/ui/sonner";
+import { registerServiceWorker } from "../lib/pwa";
+
 
 
 function NotFoundComponent() {
