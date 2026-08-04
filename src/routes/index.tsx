@@ -66,6 +66,19 @@ function Home() {
             {nightMode ? <SunIcon className="h-4 w-4" /> : <CrescentIcon className="h-4 w-4" />}
           </button>
 
+          <button
+            type="button"
+            onClick={handleSync}
+            disabled={syncing}
+            aria-label="تحديث البيانات"
+            title="تحديث البيانات"
+            className="absolute top-0 right-0 h-9 w-9 rounded-full bg-[color:var(--gold)]/15 grid place-items-center backdrop-blur hover:bg-[color:var(--gold)]/25 transition text-[color:var(--gold)] border border-[color:var(--gold)]/30 disabled:opacity-60"
+          >
+            <RefreshCw className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
+          </button>
+
+
+
           <div className="h-14 w-14 rounded-2xl bg-[color:var(--gold)]/15 backdrop-blur grid place-items-center overflow-hidden border border-[color:var(--gold)]/30">
             <img src="/icon-192.png" alt="زاد الدعاة" className="h-12 w-12 rounded-xl object-cover" />
           </div>
