@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useStore } from "@/lib/store";
-import { ArrowRight, ChevronLeft, ChevronRight, Share2, Heart, RotateCcw, CheckCircle2 } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Share2, Heart, RotateCcw, CheckCircle2, Sparkles, List } from "lucide-react";
 import { ReaderControls } from "@/components/ReaderControls";
 
 export const Route = createFileRoute("/azkar/read/$category")({
@@ -17,15 +17,28 @@ function AzkarReader() {
   const [idx, setIdx] = useState(0);
   const [count, setCount] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [finished, setFinished] = useState(false);
 
   const z = list[idx];
 
   const go = (n: number) => {
-    if (n < 0 || n >= list.length) return;
+    if (n < 0) return;
+    if (n >= list.length) {
+      setFinished(true);
+      return;
+    }
     setIdx(n);
     setCount(0);
     setCopied(false);
   };
+
+  const restart = () => {
+    setFinished(false);
+    setIdx(0);
+    setCount(0);
+    setCopied(false);
+  };
+
 
   const share = async () => {
     if (!z) return;
