@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { useStore } from "@/lib/store";
+import { sortCategories } from "@/lib/azkar-order";
+
 import {
   ChevronLeft,
   Sunrise,
