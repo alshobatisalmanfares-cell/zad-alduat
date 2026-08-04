@@ -198,7 +198,7 @@ function AzkarReader() {
         <div dir="rtl" className="flex items-center justify-between gap-2 rounded-2xl bg-card border border-border shadow-card p-2">
           <button
             onClick={() => go(idx + 1)}
-            disabled={idx === list.length - 1}
+            disabled={false}
             className="h-11 w-11 rounded-xl bg-[color:var(--gold)]/10 border border-[color:var(--gold)]/30 text-[color:var(--gold)] grid place-items-center disabled:opacity-30 disabled:cursor-not-allowed"
             aria-label="التالي"
           >
