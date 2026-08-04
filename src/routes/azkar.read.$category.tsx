@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useStore } from "@/lib/store";
-import { ArrowRight, ChevronLeft, ChevronRight, Share2, Heart, RotateCcw, CheckCircle2 } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Share2, Heart, RotateCcw, CheckCircle2, Sparkles, List } from "lucide-react";
 import { ReaderControls } from "@/components/ReaderControls";
 
 export const Route = createFileRoute("/azkar/read/$category")({
@@ -17,15 +17,28 @@ function AzkarReader() {
   const [idx, setIdx] = useState(0);
   const [count, setCount] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [finished, setFinished] = useState(false);
 
   const z = list[idx];
 
   const go = (n: number) => {
-    if (n < 0 || n >= list.length) return;
+    if (n < 0) return;
+    if (n >= list.length) {
+      setFinished(true);
+      return;
+    }
     setIdx(n);
     setCount(0);
     setCopied(false);
   };
+
+  const restart = () => {
+    setFinished(false);
+    setIdx(0);
+    setCount(0);
+    setCopied(false);
+  };
+
 
   const share = async () => {
     if (!z) return;
@@ -58,8 +71,43 @@ function AzkarReader() {
   const done = count >= (z?.count ?? 1);
   const pct = Math.min(100, (count / (z?.count ?? 1)) * 100);
 
+  if (finished) {
+    return (
+      <div className="min-h-[85vh] px-5 grid place-items-center">
+        <div className="w-full rounded-3xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[oklch(0.18_0.02_80)] to-[oklch(0.08_0.005_80)] text-[color:var(--gold)] p-7 text-center shadow-soft animate-in fade-in zoom-in-95 duration-500">
+          <div className="relative mx-auto h-20 w-20 grid place-items-center">
+            <span className="absolute inset-0 rounded-full bg-[color:var(--gold)]/15 animate-ping" />
+            <span className="absolute inset-2 rounded-full bg-[color:var(--gold)]/10 blur-md" />
+            <CheckCircle2 className="relative h-14 w-14" />
+            <Sparkles className="absolute -top-1 -right-1 h-5 w-5 animate-pulse" />
+            <Sparkles className="absolute bottom-0 -left-1 h-4 w-4 animate-pulse" />
+          </div>
+          <h2 className="mt-4 text-2xl font-black">جزاك الله خيراً</h2>
+          <p className="mt-2 text-sm leading-loose text-[color:var(--gold)]/80" style={{ fontFamily: "Amiri, serif" }}>
+            تقبل الله طاعتك وكتب لك أجرها وحفظك ورعاك.
+          </p>
+          <div className="mt-6 space-y-2">
+            <button
+              onClick={() => navigate({ to: "/azkar" })}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[color:var(--gold)] text-black py-3 font-black text-sm"
+            >
+              <List className="h-4 w-4" /> العودة لقائمة الأذكار
+            </button>
+            <button
+              onClick={restart}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-2xl border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 py-3 font-black text-sm"
+            >
+              <RotateCcw className="h-4 w-4" /> إعادة القراءة
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
+
       <header className="gradient-header text-primary-foreground rounded-b-3xl px-5 pt-10 pb-6">
         <div className="flex items-center justify-between mb-3">
           <button
@@ -107,7 +155,15 @@ function AzkarReader() {
           <span className="text-[10px] font-bold opacity-75 shrink-0">× {z.count}</span>
 
           <button
-            onClick={() => !done && setCount((c) => c + 1)}
+            onClick={() => {
+              if (done) return;
+              const next = count + 1;
+              setCount(next);
+              if (next >= (z?.count ?? 1) && idx === list.length - 1) {
+                setTimeout(() => setFinished(true), 450);
+              }
+            }}
+
             className={`relative flex-1 h-11 rounded-2xl overflow-hidden grid place-items-center border active:scale-[0.98] transition-transform ${
               done
                 ? "bg-[color:var(--gold)] text-black border-[color:var(--gold)]"
@@ -142,7 +198,7 @@ function AzkarReader() {
         <div dir="rtl" className="flex items-center justify-between gap-2 rounded-2xl bg-card border border-border shadow-card p-2">
           <button
             onClick={() => go(idx + 1)}
-            disabled={idx === list.length - 1}
+            disabled={false}
             className="h-11 w-11 rounded-xl bg-[color:var(--gold)]/10 border border-[color:var(--gold)]/30 text-[color:var(--gold)] grid place-items-center disabled:opacity-30 disabled:cursor-not-allowed"
             aria-label="التالي"
           >
