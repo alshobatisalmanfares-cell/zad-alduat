@@ -130,24 +130,30 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     document.documentElement.classList.toggle("dark", nightMode);
   }, [nightMode]);
 
+  const [syncing, setSyncing] = useState(false);
+
+  const fetchAll = async () => {
+    const [{ data: kh }, { data: az }, { data: st }] = await Promise.all([
+      supabase.from("khutab").select("*").order("created_at", { ascending: false }),
+      supabase.from("azkar").select("*").order("sort_order", { ascending: true }),
+      supabase.from("app_settings").select("value").eq("key", "hadith_of_day").maybeSingle(),
+    ]);
+    if (kh) setKhutab(kh as Khutbah[]);
+    if (az) setAzkar((az as DhikrRow[]).map(mapDhikr));
+    if (st?.value) setHadithLocal(st.value);
+  };
+
   // Initial fetch + realtime sync from Supabase (cache-first; refreshes in background)
   useEffect(() => {
     let alive = true;
     (async () => {
       try {
-        const [{ data: kh }, { data: az }, { data: st }] = await Promise.all([
-          supabase.from("khutab").select("*").order("created_at", { ascending: false }),
-          supabase.from("azkar").select("*").order("sort_order", { ascending: true }),
-          supabase.from("app_settings").select("value").eq("key", "hadith_of_day").maybeSingle(),
-        ]);
-        if (!alive) return;
-        if (kh) setKhutab(kh as Khutbah[]);
-        if (az) setAzkar((az as DhikrRow[]).map(mapDhikr));
-        if (st?.value) setHadithLocal(st.value);
+        await fetchAll();
       } finally {
         if (alive) setKhutabLoading(false);
       }
     })().catch(() => { if (alive) setKhutabLoading(false); });
+
 
     const ch = supabase
       .channel("zad-live")
