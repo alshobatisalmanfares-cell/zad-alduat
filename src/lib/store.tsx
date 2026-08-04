@@ -67,6 +67,9 @@ type Store = {
   addCategory: (name: string) => void;
   deleteCategory: (id: string) => void;
   hadithOfDay: string;
+  syncing: boolean;
+  syncData: () => Promise<boolean>;
+
   setHadithOfDay: (t: string) => Promise<void>;
   favorites: Favorite[];
   toggleFavorite: (f: Favorite) => void;
