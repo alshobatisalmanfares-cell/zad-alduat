@@ -34,8 +34,9 @@ function AzkarPage() {
   const categories = useMemo(() => {
     const map = new Map<string, number>();
     for (const z of azkar) map.set(z.category, (map.get(z.category) ?? 0) + 1);
-    return Array.from(map.entries()).map(([name, count]) => ({ name, count }));
+    return sortCategories(Array.from(map.entries()).map(([name, count]) => ({ name, count })));
   }, [azkar]);
+
 
   return (
     <div>
