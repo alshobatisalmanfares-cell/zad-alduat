@@ -8,13 +8,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
+
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -22,60 +25,53 @@ jobs:
           distribution: temurin
           java-version: 21
 
+
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
+
       - name: Build web app
+        run: npm run build
+
+
+      - name: Verify web build
         run: |
-          npm run build
+          echo "Checking dist folder..."
+          ls -la dist || true
 
-      - name: Prepare Capacitor folder
-        run: |
-          echo "Searching built files..."
-
-          find . -maxdepth 3 -name index.html
-
-          mkdir -p www
-
-          cp -r dist/* www/ || true
-
-          if [ ! -f www/index.html ]; then
-            echo "index.html not found"
+          if [ ! -f dist/index.html ]; then
+            echo "index.html missing"
+            find . -name index.html
             exit 1
           fi
 
-          ls -la www
 
       - name: Install Capacitor
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android --legacy-peer-deps
 
-      - name: Update Capacitor config
-        run: |
-          node -e "
-          const fs=require('fs');
-          let c=fs.readFileSync('capacitor.config.ts','utf8');
-          c=c.replace(/webDir:\s*['\"].*?['\"]/, 'webDir: \"www\"');
-          fs.writeFileSync('capacitor.config.ts',c);
-          "
 
       - name: Clean Android
         run: |
           rm -rf android
 
+
       - name: Add Android
         run: |
           npx cap add android
 
+
       - name: Sync Capacitor
         run: |
           npx cap sync android
+
 
       - name: Build APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
+
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
