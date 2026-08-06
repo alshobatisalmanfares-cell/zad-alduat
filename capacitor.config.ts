@@ -3,7 +3,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
 const config: CapacitorConfig = {
   appId: "app.lovable.zadalduat",
   appName: "زاد الدعاة",
-  webDir: ".output/public",
+  webDir: "dist",
 
   server: {
     androidScheme: "https"
