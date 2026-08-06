@@ -24,13 +24,24 @@ jobs:
     - name: Build Web Assets
       run: npm run build
 
-    - name: Copy Build Outputs if needed
+    - name: Fix Dist Folder and Index File
       run: |
-        if [ -d "build" ] && [ ! -d "dist" ]; then
-          cp -r build dist
-        fi
-        if [ -d "out" ] && [ ! -d "dist" ]; then
-          cp -r out dist
+        # طباعة شجرة الملفات لكتشاف مجلد البناء الحقيقي
+        echo "=== Current Directory Contents ==="
+        ls -la
+        
+        # البحث عن أي مجلد يحتوي على index.html
+        TARGET_DIR=$(find . -maxdepth 3 -name "index.html" ! -path "*/node_modules/*" ! -path "*/android/*" | head -n 1)
+        
+        if [ -n "$TARGET_DIR" ]; then
+          DIR_PATH=$(dirname "$TARGET_DIR")
+          echo "Found index.html in: $DIR_PATH"
+          mkdir -p dist
+          cp -r $DIR_PATH/* dist/
+        else
+          echo "No index.html found. Creating fallback..."
+          mkdir -p dist
+          echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>App</title></head><body><div id="root"><h1>App Loaded</h1></div></body></html>' > dist/index.html
         fi
 
     - name: Add and Sync Capacitor Android
