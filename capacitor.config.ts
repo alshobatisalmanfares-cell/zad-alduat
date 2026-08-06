@@ -3,20 +3,15 @@ import type { CapacitorConfig } from "@capacitor/cli";
 const config: CapacitorConfig = {
   appId: "app.lovable.zadalduat",
   appName: "زاد الدعاة",
-
   webDir: ".output/public",
 
-  android: {
-    allowMixedContent: false,
-    backgroundColor: "#0B0B0B",
+  server: {
+    androidScheme: "https"
   },
 
-  plugins: {
-    SplashScreen: {
-      backgroundColor: "#0B0B0B",
-      showSpinner: false,
-    },
-  },
+  android: {
+    backgroundColor: "#0B0B0B"
+  }
 };
 
 export default config;
