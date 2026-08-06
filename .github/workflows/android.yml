@@ -28,29 +28,16 @@ jobs:
       - name: Build app
         run: npm run build
 
-      - name: Prepare Capacitor assets
+      - name: Check build output
         run: |
-          echo "Preparing web assets..."
+          echo "Searching index.html..."
+          find . -name index.html
 
-          if [ ! -f .output/public/index.html ]; then
-            echo "Creating index.html"
-
-            cat > .output/public/index.html <<'EOF'
-          <!doctype html>
-          <html lang="ar" dir="rtl">
-          <head>
-            <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>زاد الدعاة</title>
-          </head>
-          <body>
-            <div id="root"></div>
-          </body>
-          </html>
-          EOF
-          fi
-
-          ls -la .output/public
+          echo "Checking folders..."
+          ls -la
+          ls -la .output || true
+          ls -la .output/public || true
+          ls -la dist || true
 
       - name: Install Capacitor
         run: |
@@ -63,7 +50,8 @@ jobs:
           fi
 
       - name: Sync Capacitor
-        run: npx cap sync android
+        run: |
+          npx cap sync android
 
       - name: Build APK
         run: |
