@@ -1,8 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowRight, Heart, Loader2 } from "lucide-react";
+import { ArrowRight, Heart, Loader2, WifiOff } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { ReaderControls } from "@/components/ReaderControls";
+import { idbGet, idbSet } from "@/lib/offline-db";
 import surahs from "@/data/surahs.json";
 
 export const Route = createFileRoute("/quran/$id")({
@@ -12,20 +13,39 @@ export const Route = createFileRoute("/quran/$id")({
 type Ayah = { number: number; numberInSurah: number; text: string };
 type Meta = { number: number; nameAr: string; nameEn: string; revelation: string; ayahs: number };
 
-const CACHE_PREFIX = "zad.quran.surah.";
+const LEGACY_PREFIX = "zad.quran.surah.";
 
+/** Offline-first: local database → legacy localStorage cache → network. */
 async function fetchSurah(id: number): Promise<Ayah[]> {
-  const cached = typeof window !== "undefined" ? localStorage.getItem(CACHE_PREFIX + id) : null;
-  if (cached) {
-    try { return JSON.parse(cached); } catch { /* ignore */ }
+  const local = await idbGet<Ayah[]>("quran", String(id));
+  if (local?.length) return local;
+
+  if (typeof window !== "undefined") {
+    const legacy = localStorage.getItem(LEGACY_PREFIX + id);
+    if (legacy) {
+      try {
+        const parsed = JSON.parse(legacy) as Ayah[];
+        if (parsed?.length) {
+          void idbSet("quran", String(id), parsed);
+          return parsed;
+        }
+      } catch {
+        /* ignore */
+      }
+    }
   }
+
+  if (typeof navigator !== "undefined" && navigator.onLine === false) {
+    throw new Error("offline");
+  }
+
   const res = await fetch(`https://api.alquran.cloud/v1/surah/${id}/quran-uthmani`);
   if (!res.ok) throw new Error("Failed to fetch surah");
   const json = await res.json();
   const ayahs: Ayah[] = json.data.ayahs.map((a: { number: number; numberInSurah: number; text: string }) => ({
     number: a.number, numberInSurah: a.numberInSurah, text: a.text,
   }));
-  try { localStorage.setItem(CACHE_PREFIX + id, JSON.stringify(ayahs)); } catch { /* ignore */ }
+  void idbSet("quran", String(id), ayahs);
   return ayahs;
 }
 
@@ -38,16 +58,28 @@ function SurahReader() {
   const { fontScale, toggleFavorite, isFavorite } = useStore();
   const [ayahs, setAyahs] = useState<Ayah[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [offline, setOffline] = useState(false);
 
   useEffect(() => {
     let alive = true;
     setAyahs(null);
     setErr(null);
+    setOffline(false);
     fetchSurah(surahId)
       .then((a) => { if (alive) setAyahs(a); })
-      .catch(() => { if (alive) setErr("تعذر تحميل السورة. تحقق من الاتصال بالإنترنت."); });
+      .catch((e: Error) => {
+        if (!alive) return;
+        const isOffline = e.message === "offline" || navigator.onLine === false;
+        setOffline(isOffline);
+        setErr(
+          isOffline
+            ? "هذه السورة غير محفوظة على جهازك. اتصل بالإنترنت مرة واحدة لتحميلها ثم ستعمل بدون انترنت."
+            : "تعذر تحميل السورة. حاول مرة أخرى.",
+        );
+      });
     return () => { alive = false; };
   }, [surahId]);
+
 
   const showBasmala = surahId !== 1 && surahId !== 9;
 
