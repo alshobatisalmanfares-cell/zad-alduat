@@ -28,13 +28,21 @@ jobs:
       - name: Build app
         run: npm run build
 
-      - name: Check web files
+      - name: Prepare web assets
         run: |
-          echo "Checking dist folder..."
-          ls -la dist || true
+          echo "Preparing web assets..."
 
-          if [ ! -f dist/index.html ]; then
-            echo "ERROR: dist/index.html not found"
+          mkdir -p .output/public
+
+          if [ -d "dist" ]; then
+            cp -r dist/* .output/public/ || true
+          fi
+
+          echo "Checking output:"
+          ls -la .output/public
+
+          if [ ! -f ".output/public/index.html" ]; then
+            echo "ERROR: index.html not found"
             find . -name index.html
             exit 1
           fi
