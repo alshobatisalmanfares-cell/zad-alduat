@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppStoreProvider } from "../lib/store";
+import { OfflineBanner } from "@/components/OfflineBanner";
+
 import { BottomNav } from "../components/BottomNav";
 import { InstallPrompt } from "../components/InstallPrompt";
 import { Toaster } from "../components/ui/sonner";
