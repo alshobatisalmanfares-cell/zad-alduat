@@ -151,9 +151,11 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AppStoreProvider>
         <div className="min-h-screen pb-20 max-w-md mx-auto bg-background">
+          <OfflineBanner />
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
           <BottomNav />
+
           <InstallPrompt />
           <Toaster position="top-center" richColors />
 
