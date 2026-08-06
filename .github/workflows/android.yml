@@ -26,10 +26,7 @@ jobs:
 
     - name: Ensure Dist and index.html Exist
       run: |
-        # إنشاء مجلد dist إذا لم يكن موجوداً
         mkdir -p dist
-        
-        # البحث عن ملف index.html في مجلدات البناء المختلفة ونسخه إلى dist
         if [ -f "build/index.html" ]; then
           cp -r build/* dist/
         elif [ -f "out/index.html" ]; then
@@ -37,8 +34,6 @@ jobs:
         elif [ -f "public/index.html" ] && [ ! -f "dist/index.html" ]; then
           cp public/index.html dist/index.html
         fi
-
-        # إذا ظل dist/index.html غير موجود، يتم إنشاؤه لتفادي توقف البناء
         if [ ! -f "dist/index.html" ]; then
           echo '<!DOCTYPE html><html><head><title>Zad Alduat</title></head><body><div id="root"></div></body></html>' > dist/index.html
         fi
@@ -56,14 +51,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
-
-    - name: Build APK with Gradle
+    - name: Build APK with Gradle Wrapper Direct
       run: |
         cd android
         chmod +x gradlew
-        ./gradlew assembleDebug --stacktrace
+        ./gradlew assembleDebug --no-daemon
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
