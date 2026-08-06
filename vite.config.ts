@@ -95,10 +95,5 @@ export default defineConfig({
     server: {
       entry: "server",
     },
-
-    prerender: {
-      enabled: true,
-      routes: ["/"],
-    },
   },
 });
