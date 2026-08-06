@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Zad AlDuat Android
 
 on:
   workflow_dispatch:
@@ -14,13 +14,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
-      - name: Build Web App
-        run: npm run build
+          node-version: 20
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -28,19 +22,29 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Setup Android
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build Vite app
+        run: npm run build
+
+      - name: Check dist folder
+        run: |
+          ls -la dist
+          test -f dist/index.html
+
+      - name: Install Capacitor Android
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android --legacy-peer-deps
 
-          if [ ! -f "capacitor.config.ts" ] && [ ! -f "capacitor.config.json" ]; then
-            npx cap init "زاد الدعاة" "app.lovable.zadalduat" --web-dir=.output/public
-          fi
-
+      - name: Add Android platform
+        run: |
           if [ ! -d "android" ]; then
             npx cap add android
           fi
 
-          npx cap sync android
+      - name: Sync Capacitor
+        run: npx cap sync android
 
       - name: Build APK
         run: |
