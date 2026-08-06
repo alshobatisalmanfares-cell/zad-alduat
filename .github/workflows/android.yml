@@ -25,15 +25,19 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build Vite app
-        run: npm run build
-
-      - name: Check dist folder
+      - name: Build app
         run: |
-          ls -la dist
-          test -f dist/index.html
+          npm run build
 
-      - name: Install Capacitor Android
+      - name: Check web assets
+        run: |
+          echo "Checking .output folder..."
+          ls -la .output || true
+          echo "Checking public folder..."
+          ls -la .output/public || true
+          test -f .output/public/index.html
+
+      - name: Install Capacitor
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android --legacy-peer-deps
 
