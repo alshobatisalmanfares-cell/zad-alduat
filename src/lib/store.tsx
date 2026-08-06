@@ -1,6 +1,8 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { adminMutate } from "@/lib/admin.functions";
+import { idbGet, idbSet } from "@/lib/offline-db";
+
 
 
 export type Khutbah = {
@@ -69,6 +71,12 @@ type Store = {
   hadithOfDay: string;
   syncing: boolean;
   syncData: () => Promise<boolean>;
+  // offline
+  hydrated: boolean;
+  online: boolean;
+  lastSyncAt: number | null;
+  syncError: string | null;
+
 
   setHadithOfDay: (t: string) => Promise<void>;
   favorites: Favorite[];
@@ -118,11 +126,15 @@ function useLS<T>(key: string, initial: T): [T, (v: T | ((p: T) => T)) => void] 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [fontScale, setFontScale] = useLS("zad.fontScale", 1);
   const [nightMode, setNightMode] = useLS("zad.night", false);
-  const [khutab, setKhutab] = useLS<Khutbah[]>("zad.khutab.cache", []);
-  const [khutabLoading, setKhutabLoading] = useState<boolean>(khutab.length === 0);
-  const [azkar, setAzkar] = useLS<Dhikr[]>("zad.azkar.cloud", []);
+  const [khutab, setKhutab] = useState<Khutbah[]>([]);
+  const [khutabLoading, setKhutabLoading] = useState(true);
+  const [azkar, setAzkar] = useState<Dhikr[]>([]);
   const [categories, setCategories] = useLS<Category[]>("zad.cats", seedCategories);
   const [hadithOfDay, setHadithLocal] = useState<string>(seedHadith);
+  const [hydrated, setHydrated] = useState(false);
+  const [online, setOnline] = useState(true);
+  const [lastSyncAt, setLastSyncAt] = useLS<number | null>("zad.lastSync", null);
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   const [favorites, setFavorites] = useLS<Favorite[]>("zad.favs", []);
   const [isAdmin, setIsAdmin] = useLS<boolean>("zad.admin", false);
@@ -135,51 +147,101 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   const [syncing, setSyncing] = useState(false);
 
+  // ---- local offline database (IndexedDB) writers -------------------------
+  const saveKhutab = (rows: Khutbah[]) => {
+    setKhutab(rows);
+    void idbSet("khutab", "all", rows);
+  };
+  const saveAzkar = (rows: Dhikr[]) => {
+    setAzkar(rows);
+    void idbSet("azkar", "all", rows);
+  };
+  const saveHadith = (text: string) => {
+    setHadithLocal(text);
+    void idbSet("settings", "hadith_of_day", text);
+  };
+
   const fetchAll = async () => {
-    const [{ data: kh }, { data: az }, { data: st }] = await Promise.all([
+    const [khRes, azRes, stRes] = await Promise.all([
       supabase.from("khutab").select("*").order("created_at", { ascending: false }),
       supabase.from("azkar").select("*").order("sort_order", { ascending: true }),
       supabase.from("app_settings").select("value").eq("key", "hadith_of_day").maybeSingle(),
     ]);
-    if (kh) setKhutab(kh as Khutbah[]);
-    if (az) setAzkar((az as DhikrRow[]).map(mapDhikr));
-    if (st?.value) setHadithLocal(st.value);
+    const err = khRes.error || azRes.error || stRes.error;
+    if (err) throw err;
+    if (khRes.data) saveKhutab(khRes.data as Khutbah[]);
+    if (azRes.data) saveAzkar((azRes.data as DhikrRow[]).map(mapDhikr));
+    if (stRes.data?.value) saveHadith(stRes.data.value);
+    setLastSyncAt(Date.now());
+    setSyncError(null);
   };
 
-  // Initial fetch + realtime sync from Supabase (cache-first; refreshes in background)
+  const fetchRef = useRef(fetchAll);
+  fetchRef.current = fetchAll;
+
+  // 1) Hydrate instantly from the local offline database, 2) refresh from Supabase when online.
   useEffect(() => {
     let alive = true;
-    (async () => {
-      try {
-        await fetchAll();
-      } finally {
-        if (alive) setKhutabLoading(false);
-      }
-    })().catch(() => { if (alive) setKhutabLoading(false); });
 
+    (async () => {
+      const [localKh, localAz, localHadith] = await Promise.all([
+        idbGet<Khutbah[]>("khutab", "all"),
+        idbGet<Dhikr[]>("azkar", "all"),
+        idbGet<string>("settings", "hadith_of_day"),
+      ]);
+      if (!alive) return;
+      if (localKh?.length) setKhutab(localKh);
+      if (localAz?.length) setAzkar(localAz);
+      if (localHadith) setHadithLocal(localHadith);
+      setHydrated(true);
+      setKhutabLoading(!localKh?.length);
+
+      const isOnline = navigator.onLine !== false;
+      setOnline(isOnline);
+      if (isOnline) {
+        try {
+          await fetchRef.current();
+        } catch {
+          if (alive) setSyncError("تعذّر تحديث البيانات من الخادم — يتم العرض من النسخة المحفوظة.");
+        }
+      }
+      if (alive) setKhutabLoading(false);
+    })();
+
+    // Auto-sync as soon as the connection comes back.
+    const goOnline = () => {
+      setOnline(true);
+      fetchRef.current().catch(() => {});
+    };
+    const goOffline = () => setOnline(false);
+    window.addEventListener("online", goOnline);
+    window.addEventListener("offline", goOffline);
 
     const ch = supabase
       .channel("zad-live")
       .on("postgres_changes", { event: "*", schema: "public", table: "khutab" }, async () => {
         const { data } = await supabase.from("khutab").select("*").order("created_at", { ascending: false });
-        if (data) setKhutab(data as Khutbah[]);
+        if (data) saveKhutab(data as Khutbah[]);
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "azkar" }, async () => {
         const { data } = await supabase.from("azkar").select("*").order("sort_order", { ascending: true });
-        if (data) setAzkar((data as DhikrRow[]).map(mapDhikr));
+        if (data) saveAzkar((data as DhikrRow[]).map(mapDhikr));
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "app_settings" }, async () => {
         const { data } = await supabase.from("app_settings").select("value").eq("key", "hadith_of_day").maybeSingle();
-        if (data?.value) setHadithLocal(data.value);
+        if (data?.value) saveHadith(data.value);
       })
       .subscribe();
 
     return () => {
       alive = false;
+      window.removeEventListener("online", goOnline);
+      window.removeEventListener("offline", goOffline);
       supabase.removeChannel(ch);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const requirePw = () => {
     if (!adminPassword) throw new Error("Not authenticated");
@@ -195,15 +257,15 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     khutabLoading,
     addKhutbah: async (k) => {
       const row = (await adminMutate({ data: { password: requirePw(), action: "khutbah.create", data: k } })) as Khutbah;
-      if (row?.id) setKhutab((p) => (p.some((x) => x.id === row.id) ? p : [row, ...p]));
+      if (row?.id) saveKhutab(khutab.some((x) => x.id === row.id) ? khutab : [row, ...khutab]);
     },
     updateKhutbah: async (id, k) => {
       const row = (await adminMutate({ data: { password: requirePw(), action: "khutbah.update", id, data: k } })) as Khutbah;
-      if (row?.id) setKhutab((p) => p.map((x) => (x.id === row.id ? row : x)));
+      if (row?.id) saveKhutab(khutab.map((x) => (x.id === row.id ? row : x)));
     },
     deleteKhutbah: async (id) => {
       await adminMutate({ data: { password: requirePw(), action: "khutbah.delete", id } });
-      setKhutab((p) => p.filter((x) => x.id !== id));
+      saveKhutab(khutab.filter((x) => x.id !== id));
     },
     azkar,
     addDhikr: async (d) => {
@@ -214,7 +276,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
           data: { title: d.title, text: d.text, category: d.category, count: d.count, sort_order: d.sortOrder ?? 0 },
         },
       })) as DhikrRow;
-      if (row?.id) setAzkar((p) => sortAzkar([...p.filter((x) => x.id !== row.id), mapDhikr(row)]));
+      if (row?.id) saveAzkar(sortAzkar([...azkar.filter((x) => x.id !== row.id), mapDhikr(row)]));
     },
     updateDhikr: async (id, d) => {
       const patch: Record<string, unknown> = {};
@@ -226,24 +288,33 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       const row = (await adminMutate({
         data: { password: requirePw(), action: "dhikr.update", id, data: patch },
       })) as DhikrRow;
-      if (row?.id) setAzkar((p) => sortAzkar(p.map((x) => (x.id === row.id ? mapDhikr(row) : x))));
+      if (row?.id) saveAzkar(sortAzkar(azkar.map((x) => (x.id === row.id ? mapDhikr(row) : x))));
     },
     deleteDhikr: async (id) => {
       await adminMutate({ data: { password: requirePw(), action: "dhikr.delete", id } });
-      setAzkar((p) => p.filter((x) => x.id !== id));
+      saveAzkar(azkar.filter((x) => x.id !== id));
     },
+
     categories,
     addCategory: (name) => setCategories((p) => [...p, { id: uid(), name }]),
     deleteCategory: (id) => setCategories((p) => p.filter((c) => c.id !== id)),
     hadithOfDay,
     syncing,
+    hydrated,
+    online,
+    lastSyncAt,
+    syncError,
     syncData: async () => {
-      if (typeof navigator !== "undefined" && navigator.onLine === false) return false;
+      if (typeof navigator !== "undefined" && navigator.onLine === false) {
+        setSyncError("لا يوجد اتصال بالإنترنت حالياً");
+        return false;
+      }
       setSyncing(true);
       try {
         await fetchAll();
         return true;
       } catch {
+        setSyncError("تعذّر تحديث البيانات من الخادم — يتم العرض من النسخة المحفوظة.");
         return false;
       } finally {
         setSyncing(false);
@@ -252,7 +323,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
     setHadithOfDay: async (t) => {
       await adminMutate({ data: { password: requirePw(), action: "hadith.set", data: { value: t } } });
+      saveHadith(t);
     },
+
     favorites,
     toggleFavorite: (f) =>
       setFavorites((p) => (p.some((x) => x.id === f.id) ? p.filter((x) => x.id !== f.id) : [f, ...p])),

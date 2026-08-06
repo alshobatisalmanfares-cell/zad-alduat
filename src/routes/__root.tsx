@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppStoreProvider } from "../lib/store";
+import { OfflineBanner } from "@/components/OfflineBanner";
+
 import { BottomNav } from "../components/BottomNav";
 import { InstallPrompt } from "../components/InstallPrompt";
 import { Toaster } from "../components/ui/sonner";
@@ -151,9 +153,11 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AppStoreProvider>
         <div className="min-h-screen pb-20 max-w-md mx-auto bg-background">
+          <OfflineBanner />
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
           <BottomNav />
+
           <InstallPrompt />
           <Toaster position="top-center" richColors />
 
