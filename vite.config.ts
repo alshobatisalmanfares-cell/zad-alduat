@@ -4,6 +4,7 @@
 //     nitro (build-only using cloudflare as a default target), VITE_* env injection, @ path alias,
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
+
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 import { VitePWA } from "vite-plugin-pwa";
@@ -11,55 +12,93 @@ import { VitePWA } from "vite-plugin-pwa";
 export default defineConfig({
   plugins: [
     mcpPlugin(),
+
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: null,
       devOptions: { enabled: false },
       filename: "sw.js",
       manifest: false,
+
       workbox: {
-        navigateFallbackDenylist: [/^\/~oauth/, /^\/api\//, /^\/mcp/, /^\/\.mcp/],
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2,json,webmanifest}"],
+        navigateFallbackDenylist: [
+          /^\/~oauth/,
+          /^\/api\//,
+          /^\/mcp/,
+          /^\/\.mcp/,
+        ],
+
+        globPatterns: [
+          "**/*.{js,css,html,ico,png,svg,woff,woff2,json,webmanifest}",
+        ],
+
         runtimeCaching: [
           {
-            urlPattern: ({ request }: { request: Request }) => request.mode === "navigate",
+            urlPattern: ({ request }: { request: Request }) =>
+              request.mode === "navigate",
             handler: "NetworkFirst",
-            options: { cacheName: "zad-pages", networkTimeoutSeconds: 5 },
+            options: {
+              cacheName: "zad-pages",
+              networkTimeoutSeconds: 5,
+            },
           },
+
           {
             urlPattern: ({ url, request }: { url: URL; request: Request }) =>
-              url.origin === self.location.origin && request.destination !== "document",
+              url.origin === self.location.origin &&
+              request.destination !== "document",
             handler: "CacheFirst",
             options: {
               cacheName: "zad-assets",
-              expiration: { maxEntries: 300, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              expiration: {
+                maxEntries: 300,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
             },
           },
+
           {
             urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\//,
             handler: "CacheFirst",
             options: {
               cacheName: "zad-fonts",
-              expiration: { maxEntries: 40, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
+              expiration: {
+                maxEntries: 40,
+                maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
             },
           },
+
           {
             urlPattern: /^https:\/\/api\.alquran\.cloud\//,
             handler: "StaleWhileRevalidate",
             options: {
               cacheName: "zad-quran-api",
-              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 90 },
-              cacheableResponse: { statuses: [0, 200] },
+              expiration: {
+                maxEntries: 200,
+                maxAgeSeconds: 60 * 60 * 24 * 90,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
             },
           },
         ],
       },
     }),
   ],
+
   tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
-    server: { entry: "server" },
+    server: {
+      entry: "server",
+    },
+
+    prerender: {
+      enabled: true,
+      routes: ["/"],
+    },
   },
 });
