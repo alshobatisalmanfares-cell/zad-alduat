@@ -17,11 +17,50 @@ export const Route = createFileRoute("/tasbih")({
   component: TasbihPage,
 });
 
+const STORAGE_KEY = "zad.tasbih.state";
+
+type TasbihState = { count: number; target: number; phraseIdx: number };
+
+function loadState(): TasbihState {
+  if (typeof window === "undefined") return { count: 0, target: 33, phraseIdx: 0 };
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const s = JSON.parse(raw) as Partial<TasbihState>;
+      return {
+        count: Number(s.count) || 0,
+        target: Number(s.target) || 33,
+        phraseIdx: Number(s.phraseIdx) || 0,
+      };
+    }
+  } catch {
+    /* ignore */
+  }
+  return { count: 0, target: 33, phraseIdx: 0 };
+}
+
 function TasbihPage() {
+  // Fully offline: state lives on the device only, restored on every launch.
   const [count, setCount] = useState(0);
   const [target, setTarget] = useState(33);
   const phrases = ["سبحان الله", "الحمد لله", "لا إله إلا الله", "الله أكبر", "أستغفر الله"];
   const [phraseIdx, setPhraseIdx] = useState(0);
+
+  useEffect(() => {
+    const s = loadState();
+    setCount(s.count);
+    setTarget(s.target);
+    setPhraseIdx(Math.min(s.phraseIdx, phrases.length - 1));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ count, target, phraseIdx }));
+    } catch {
+      /* ignore */
+    }
+  }, [count, target, phraseIdx]);
 
   const inc = () => {
     setCount((c) => {
@@ -32,6 +71,7 @@ function TasbihPage() {
   };
 
   const pct = Math.min(100, (count / target) * 100);
+
 
   return (
     <div>
