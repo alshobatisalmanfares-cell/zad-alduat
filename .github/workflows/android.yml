@@ -25,31 +25,39 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build app
-        run: npm run build
-
-      - name: Prepare web assets
+      - name: Build web app
         run: |
-          echo "Preparing web assets..."
+          npm run build
 
-          mkdir -p .output/public
+      - name: Prepare Capacitor folder
+        run: |
+          echo "Searching built files..."
 
-          if [ -d "dist" ]; then
-            cp -r dist/* .output/public/ || true
-          fi
+          find . -maxdepth 3 -name index.html
 
-          echo "Checking output:"
-          ls -la .output/public
+          mkdir -p www
 
-          if [ ! -f ".output/public/index.html" ]; then
-            echo "ERROR: index.html not found"
-            find . -name index.html
+          cp -r dist/* www/ || true
+
+          if [ ! -f www/index.html ]; then
+            echo "index.html not found"
             exit 1
           fi
+
+          ls -la www
 
       - name: Install Capacitor
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android --legacy-peer-deps
+
+      - name: Update Capacitor config
+        run: |
+          node -e "
+          const fs=require('fs');
+          let c=fs.readFileSync('capacitor.config.ts','utf8');
+          c=c.replace(/webDir:\s*['\"].*?['\"]/, 'webDir: \"www\"');
+          fs.writeFileSync('capacitor.config.ts',c);
+          "
 
       - name: Clean Android
         run: |
