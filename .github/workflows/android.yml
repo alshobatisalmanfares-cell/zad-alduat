@@ -26,22 +26,21 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Build app
-        run: |
-          npm run build
+        run: npm run build
 
-      - name: Check web assets
+      - name: Check build output
         run: |
-          echo "Checking .output folder..."
-          ls -la .output || true
-          echo "Checking public folder..."
-          ls -la .output/public || true
-          test -f .output/public/index.html
+          echo "Checking .output..."
+          find .output -maxdepth 3 -type f | head -100
+
+          echo "Checking public assets..."
+          ls -la .output/public
 
       - name: Install Capacitor
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android --legacy-peer-deps
 
-      - name: Add Android platform
+      - name: Add Android
         run: |
           if [ ! -d "android" ]; then
             npx cap add android
