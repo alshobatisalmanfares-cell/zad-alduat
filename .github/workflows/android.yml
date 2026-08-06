@@ -28,26 +28,28 @@ jobs:
       - name: Build app
         run: npm run build
 
-      - name: Check build output
+      - name: Check web files
         run: |
-          echo "Searching index.html..."
-          find . -name index.html
-
-          echo "Checking folders..."
-          ls -la
-          ls -la .output || true
-          ls -la .output/public || true
+          echo "Checking dist folder..."
           ls -la dist || true
+
+          if [ ! -f dist/index.html ]; then
+            echo "ERROR: dist/index.html not found"
+            find . -name index.html
+            exit 1
+          fi
 
       - name: Install Capacitor
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android --legacy-peer-deps
 
+      - name: Clean Android
+        run: |
+          rm -rf android
+
       - name: Add Android
         run: |
-          if [ ! -d "android" ]; then
-            npx cap add android
-          fi
+          npx cap add android
 
       - name: Sync Capacitor
         run: |
