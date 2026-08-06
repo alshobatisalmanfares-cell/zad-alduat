@@ -24,11 +24,16 @@ jobs:
     - name: Build Web Assets
       run: npm run build
 
-    - name: Ensure Dist Folder
+    - name: Locate and Copy Web Assets to Dist
       run: |
         mkdir -p dist
-        if [ -d "build" ]; then cp -r build/* dist/; fi
-        if [ -d "out" ]; then cp -r out/* dist/; fi
+        # البحث عن ملف index.html في مشروعك خارج مجلدات النظام
+        INDEX_PATH=$(find . -maxdepth 4 -name "index.html" ! -path "*/node_modules/*" ! -path "*/android/*" ! -path "./dist/*" | head -n 1)
+        if [ -n "$INDEX_PATH" ]; then
+          BUILD_DIR=$(dirname "$INDEX_PATH")
+          echo "Found build assets in: $BUILD_DIR"
+          cp -r $BUILD_DIR/* dist/
+        fi
 
     - name: Add and Sync Capacitor Android
       run: |
