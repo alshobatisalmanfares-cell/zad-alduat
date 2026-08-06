@@ -300,13 +300,21 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     deleteCategory: (id) => setCategories((p) => p.filter((c) => c.id !== id)),
     hadithOfDay,
     syncing,
+    hydrated,
+    online,
+    lastSyncAt,
+    syncError,
     syncData: async () => {
-      if (typeof navigator !== "undefined" && navigator.onLine === false) return false;
+      if (typeof navigator !== "undefined" && navigator.onLine === false) {
+        setSyncError("لا يوجد اتصال بالإنترنت حالياً");
+        return false;
+      }
       setSyncing(true);
       try {
         await fetchAll();
         return true;
       } catch {
+        setSyncError("تعذّر تحديث البيانات من الخادم — يتم العرض من النسخة المحفوظة.");
         return false;
       } finally {
         setSyncing(false);
@@ -315,7 +323,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
     setHadithOfDay: async (t) => {
       await adminMutate({ data: { password: requirePw(), action: "hadith.set", data: { value: t } } });
+      saveHadith(t);
     },
+
     favorites,
     toggleFavorite: (f) =>
       setFavorites((p) => (p.some((x) => x.id === f.id) ? p.filter((x) => x.id !== f.id) : [f, ...p])),
