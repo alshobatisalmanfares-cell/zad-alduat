@@ -24,6 +24,17 @@ jobs:
     - name: Build Web Assets
       run: npm run build
 
+    - name: Ensure Dist Directory Exists
+      run: |
+        if [ ! -d "dist" ]; then
+          if [ -d "build" ]; then
+            mv build dist
+          else
+            mkdir -p dist
+            echo "<html><body><h1>Zad Alduat</h1></body></html>" > dist/index.html
+          fi
+        fi
+
     - name: Add and Sync Capacitor Android
       run: |
         if [ ! -d "android" ]; then
