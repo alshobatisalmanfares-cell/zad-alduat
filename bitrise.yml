@@ -1,0 +1,32 @@
+format_version: "13"
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+
+project_type: android
+
+workflows:
+  android-build:
+    steps:
+    - activate-ssh-key@4: {}
+    - git-clone@8: {}
+    - node-installer@1:
+        inputs:
+        - node_version: "20.x"
+    - script@1:
+        title: Install & Build Capacitor Web Assets
+        inputs:
+        - content: |-
+            #!/bin/bash
+            set -ex
+            npm install
+            npm run build
+            npx cap sync android
+    - install-missing-android-tools@3:
+        inputs:
+        - gradlew_path: ./android/gradlew
+    - android-build@1:
+        inputs:
+        - project_path: ./android
+        - module: app
+        - variant: debug
+        - build_type: apk
+    - deploy-to-bitrise-io@2: {}
