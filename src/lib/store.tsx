@@ -257,15 +257,15 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     khutabLoading,
     addKhutbah: async (k) => {
       const row = (await adminMutate({ data: { password: requirePw(), action: "khutbah.create", data: k } })) as Khutbah;
-      if (row?.id) setKhutab((p) => (p.some((x) => x.id === row.id) ? p : [row, ...p]));
+      if (row?.id) saveKhutab(khutab.some((x) => x.id === row.id) ? khutab : [row, ...khutab]);
     },
     updateKhutbah: async (id, k) => {
       const row = (await adminMutate({ data: { password: requirePw(), action: "khutbah.update", id, data: k } })) as Khutbah;
-      if (row?.id) setKhutab((p) => p.map((x) => (x.id === row.id ? row : x)));
+      if (row?.id) saveKhutab(khutab.map((x) => (x.id === row.id ? row : x)));
     },
     deleteKhutbah: async (id) => {
       await adminMutate({ data: { password: requirePw(), action: "khutbah.delete", id } });
-      setKhutab((p) => p.filter((x) => x.id !== id));
+      saveKhutab(khutab.filter((x) => x.id !== id));
     },
     azkar,
     addDhikr: async (d) => {
@@ -276,7 +276,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
           data: { title: d.title, text: d.text, category: d.category, count: d.count, sort_order: d.sortOrder ?? 0 },
         },
       })) as DhikrRow;
-      if (row?.id) setAzkar((p) => sortAzkar([...p.filter((x) => x.id !== row.id), mapDhikr(row)]));
+      if (row?.id) saveAzkar(sortAzkar([...azkar.filter((x) => x.id !== row.id), mapDhikr(row)]));
     },
     updateDhikr: async (id, d) => {
       const patch: Record<string, unknown> = {};
@@ -288,12 +288,13 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       const row = (await adminMutate({
         data: { password: requirePw(), action: "dhikr.update", id, data: patch },
       })) as DhikrRow;
-      if (row?.id) setAzkar((p) => sortAzkar(p.map((x) => (x.id === row.id ? mapDhikr(row) : x))));
+      if (row?.id) saveAzkar(sortAzkar(azkar.map((x) => (x.id === row.id ? mapDhikr(row) : x))));
     },
     deleteDhikr: async (id) => {
       await adminMutate({ data: { password: requirePw(), action: "dhikr.delete", id } });
-      setAzkar((p) => p.filter((x) => x.id !== id));
+      saveAzkar(azkar.filter((x) => x.id !== id));
     },
+
     categories,
     addCategory: (name) => setCategories((p) => [...p, { id: uid(), name }]),
     deleteCategory: (id) => setCategories((p) => p.filter((c) => c.id !== id)),
