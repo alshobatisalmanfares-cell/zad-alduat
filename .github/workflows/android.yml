@@ -34,14 +34,41 @@ jobs:
         run: npm run build
 
 
+      - name: Prepare Capacitor web folder
+        run: |
+          echo "Preparing dist folder..."
+
+          rm -rf dist
+          mkdir -p dist
+
+          if [ -f ".output/public/index.html" ]; then
+            echo "Using .output/public"
+            cp -r .output/public/* dist/
+
+          elif [ -f "dist/index.html" ]; then
+            echo "Using existing dist"
+
+          else
+            echo "Searching for index.html..."
+            INDEX=$(find . -path "./node_modules" -prune -o -name index.html -print | head -n 1)
+
+            if [ -n "$INDEX" ]; then
+              echo "Found: $INDEX"
+              cp "$INDEX" dist/index.html
+            else
+              echo "No index.html found"
+              exit 1
+            fi
+          fi
+
+
       - name: Verify web build
         run: |
-          echo "Checking dist folder..."
-          ls -la dist || true
+          echo "Final dist content:"
+          ls -la dist
 
           if [ ! -f dist/index.html ]; then
-            echo "index.html missing"
-            find . -name index.html
+            echo "index.html still missing"
             exit 1
           fi
 
