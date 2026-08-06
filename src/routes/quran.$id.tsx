@@ -114,7 +114,13 @@ function SurahReader() {
             <Loader2 className="h-4 w-4 animate-spin" /> جاري تحميل السورة...
           </div>
         )}
-        {err && <p className="text-center text-destructive py-10">{err}</p>}
+        {err && (
+          <div className="mx-auto max-w-sm text-center py-10 px-4 rounded-2xl border border-border bg-card">
+            {offline && <WifiOff className="mx-auto h-6 w-6 mb-2 text-[color:var(--gold)]" />}
+            <p className="text-sm text-muted-foreground leading-loose">{err}</p>
+          </div>
+        )}
+
 
         {ayahs && (
           <div className="rounded-2xl bg-card border border-border shadow-card p-5">
