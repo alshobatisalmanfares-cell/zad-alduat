@@ -71,6 +71,12 @@ type Store = {
   hadithOfDay: string;
   syncing: boolean;
   syncData: () => Promise<boolean>;
+  // offline
+  hydrated: boolean;
+  online: boolean;
+  lastSyncAt: number | null;
+  syncError: string | null;
+
 
   setHadithOfDay: (t: string) => Promise<void>;
   favorites: Favorite[];
