@@ -95,4 +95,6 @@ export default defineConfig({
   build: {
     outDir: "dist",
   },
+
+  appType: "spa",
 });
