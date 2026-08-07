@@ -41,18 +41,16 @@ jobs:
         npx cap add android
         npx cap sync android
 
-    - name: Force Overwrite Android Icons Directly
+    - name: Force Fix Android Icons Without XML Conflict
       run: |
-        # البحث عن صورة الأيقونة في المشروع (icon-512.png أو favicon أو غيرها)
+        # حذف ملفات XML المتكيفة لتفادي التعارض Duplicate resources
+        rm -rf android/app/src/main/res/mipmap-anydpi-v26
+        
+        # البحث عن الشعار في مجلدات المشروع
         ICON_SRC=$(find public src -name "*icon-512*.png" -o -name "*logo*.png" -o -name "*favicon*.png" | head -n 1)
+        if [ -z "$ICON_SRC" ]; then ICON_SRC="public/icon-512.png"; fi
         
-        if [ -z "$ICON_SRC" ]; then
-          ICON_SRC="public/icon-512.png"
-        fi
-        
-        echo "Using icon source: $ICON_SRC"
-        
-        # استبدال جميع أيقونات أندرويد الافتراضية مباشرة بصورتك
+        # استبدال صور الميبماب بالكامل بصورتك
         for dir in android/app/src/main/res/mipmap-*; do
           if [ -d "$dir" ]; then
             cp -f "$ICON_SRC" "$dir/ic_launcher.png"
