@@ -21,31 +21,28 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
+    # 1. البناء الإجباري في مجلد dist
     - name: Build Web Assets
-      run: npm run build || npx vite build
-
-    - name: Absolute Fix for Dist Folder
       run: |
-        mkdir -p dist
-        # البحث عن ملف index.html في المستودع
-        FOUND_INDEX=$(find . -name "index.html" ! -path "*/node_modules/*" ! -path "*/android/*" ! -path "./dist/*" | head -n 1)
-        if [ -n "$FOUND_INDEX" ]; then
-          SRC_DIR=$(dirname "$FOUND_INDEX")
-          echo "Copying assets from $SRC_DIR to dist"
-          cp -r $SRC_DIR/* dist/
-        fi
-        
-        # حماية إضافية: إنشاء index.html مؤقت إذا لم يُعثر على شيء لمنع فشل Capacitor
-        if [ ! -f "dist/index.html" ]; then
-          echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>App</title></head><body><div id="root"></div></body></html>' > dist/index.html
-        fi
+        npm run build
+        # إذا لم يكن هناك مجلد dist، أنشئ واحداً وانقل محتويات build إليه (أغلب مشاريع الويب تستخدم build)
+        if [ ! -d "dist" ] && [ -d "build" ]; then mv build dist; fi
+        if [ ! -d "dist" ] && [ -d "out" ]; then mv out dist; fi
+        if [ ! -d "dist" ]; then mkdir -p dist; fi
 
-    - name: Clean & Sync Capacitor Android
+    # 2. تجهيز الإعدادات قبل إضافة أندرويد
+    - name: Configure Capacitor
+      run: |
+        # التأكد من أن الإعدادات تشير إلى dist
+        echo '{"webDir": "dist", "appName": "Zad Al-Duat", "appId": "com.zad.alduat"}' > capacitor.config.json
+
+    - name: Clean & Add Capacitor Android
       run: |
         rm -rf android
         npx cap add android
         npx cap sync android
 
+    # 3. الأيقونة
     - name: Generate App Icons
       run: |
         npm install @capacitor/assets
@@ -57,13 +54,13 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Build APK with Gradle
+    - name: Build APK
       run: |
         cd android
         chmod +x gradlew
         ./gradlew assembleDebug --no-daemon
 
-    - name: Upload APK Artifact
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: zad-alduat-app-debug
