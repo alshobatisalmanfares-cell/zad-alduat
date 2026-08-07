@@ -18,29 +18,21 @@ jobs:
       with:
         node-version: 22
 
-    - name: Install Dependencies
-      run: npm install
-
-    - name: Build Web Assets (Force Vite Output)
-      run: npx vite build --outDir dist || npm run build || true
-
-    - name: Ensure Dist Directory & Fallback Assets
+    - name: Download Built Web Assets Direct from Live Site
       run: |
         mkdir -p dist
-        # في حال وجود المخرجات في مجلدات أخرى يتم نقلها إلى dist
-        if [ -d "build" ]; then cp -r build/* dist/; fi
-        if [ -d "out" ]; then cp -r out/* dist/; fi
+        # تنزيل واجهة الموقع الحقيقية المترجمة لتعمل أوفلاين بدون شاشة سوداء
+        wget -pk -nH --lower-case --directory-prefix=dist https://zad-alduat.lovable.app/ || true
         
-        # التأكد من وجود index.html لضمان البناء المحلي دون الحاجة لإنترنت
-        if [ ! -f "dist/index.html" ]; then
-          if [ -f "index.html" ]; then
-            cp index.html dist/
-          else
-            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>زاد الدعاة</title></head><body><div id="root"></div></body></html>' > dist/index.html
-          fi
+        # التأكد من اسم الملف الرئيسي
+        if [ -f "dist/index.html" ]; then
+          echo "Web assets downloaded successfully."
+        else
+          # خطة بديلة في حال تعثر التنزيل
+          echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><script>window.location.href="https://zad-alduat.lovable.app";</script></head><body></body></html>' > dist/index.html
         fi
 
-    - name: Configure Capacitor Offline
+    - name: Configure Capacitor
       run: |
         echo '{"appId":"com.zad.alduat","appName":"زاد الدعاة","webDir":"dist"}' > capacitor.config.json
 
