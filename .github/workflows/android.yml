@@ -24,32 +24,25 @@ jobs:
     - name: Build Web Assets
       run: npm run build
 
-    - name: Force Prepare Dist Directory
+    - name: Prepare Dist Directory
       run: |
         mkdir -p dist
-        # البحث عن ملف index.html المولد في أي مجلد فرعي ونسخ محتوياته إلى dist
         FOUND_INDEX=$(find . -maxdepth 4 -name "index.html" ! -path "*/node_modules/*" ! -path "*/android/*" ! -path "./dist/*" | head -n 1)
         if [ -n "$FOUND_INDEX" ]; then
           SRC_DIR=$(dirname "$FOUND_INDEX")
-          echo "Found build output in: $SRC_DIR"
           cp -r $SRC_DIR/* dist/
         fi
-        
-        # تحقق أخير: إيجاد أو إنشائه لعدم إيقاف العملية
-        if [ ! -f "dist/index.html" ]; then
-          echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Zad Al-Duat</title></head><body><div id="root"></div></body></html>' > dist/index.html
-        fi
 
-    - name: Add and Sync Capacitor Android
+    - name: Force Clean & Re-add Android
       run: |
         rm -rf android
         npx cap add android
         npx cap sync android
 
-    - name: Generate App Icons
+    - name: Replace App Icons Direct
       run: |
         npm install @capacitor/assets
-        npx @capacitor/assets generate --iconPath public/icon-512.png || true
+        npx @capacitor/assets generate --iconPath public/icon-512.png --android || true
 
     - name: Set up JDK 21
       uses: actions/setup-java@v4
