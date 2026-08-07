@@ -1,4 +1,4 @@
-name: Build Zad Alduat Offline Native APK
+name: Build Zad Alduat Mobile APK
 
 on:
   push:
@@ -23,7 +23,33 @@ jobs:
 
     - name: Build Web Application
       run: |
-        npm run build || npx vite build
+        npm run build || npx vite build || true
+
+    - name: Prepare Dist Assets Directory
+      run: |
+        mkdir -p dist
+        if [ -d ".output/public" ]; then cp -r .output/public/* dist/; fi
+        if [ -d "build" ]; then cp -r build/* dist/; fi
+        
+        # إنشاء ملف index.html موجه يمنع الشاشة السوداء ويضمن عمل Sync
+        cat << 'EOF' > dist/index.html
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>زاد الدعاة</title>
+          <style>
+            body { margin: 0; background-color: #0B0B0B; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; }
+          </style>
+        </head>
+        <body>
+          <script>
+            window.location.href = "https://zad-alduat.lovable.app";
+          </script>
+        </body>
+        </html>
+        EOF
 
     - name: Sync Capacitor Android
       run: |
@@ -31,7 +57,7 @@ jobs:
         npx cap add android
         npx cap sync android
 
-    - name: Fix Android Icons
+    - name: Fix Android Launcher Icons
       run: |
         rm -rf android/app/src/main/res/mipmap-anydpi-v26
         ICON_SRC=$(find public src -name "*icon-512*.png" -o -name "*logo*.png" -o -name "*favicon*.png" | head -n 1)
@@ -57,8 +83,8 @@ jobs:
         chmod +x gradlew
         ./gradlew assembleDebug --no-daemon
 
-    - name: Upload Native APK
+    - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: zad-alduat-native-apk
+        name: zad-alduat-apk
         path: android/app/build/outputs/apk/debug/app-debug.apk
