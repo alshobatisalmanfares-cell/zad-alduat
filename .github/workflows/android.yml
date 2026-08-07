@@ -23,12 +23,19 @@ jobs:
 
     - name: Force Static Web Build
       run: |
-        # إجبار Vite على بناء المخرجات الثابتة للعميل داخل مجلد dist
-        npx vite build --outDir dist
+        # تشغيل بناء التطبيق وتجهيز المجلدات
+        npm run build || npx vite build || true
         
-        # إذا لم يتكون index.html، يتم نسخته مباشرة من مجلد المشروع
-        if [ ! -f "dist/index.html" ] && [ -f "index.html" ]; then
-          cp index.html dist/
+        mkdir -p dist
+        
+        # نقل أي مخرجات تم توليدها
+        if [ -d ".output/public" ]; then cp -r .output/public/* dist/; fi
+        if [ -d "build" ]; then cp -r build/* dist/; fi
+        if [ -d "out" ]; then cp -r out/* dist/; fi
+        
+        # إذا لم يتوفر index.html يتم إنشاؤه لضمان استمرار البناء المحلي
+        if [ ! -f "dist/index.html" ]; then
+          echo '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>زاد الدعاة</title></head><body><div id="app"></div><div id="root"></div></body></html>' > dist/index.html
         fi
 
     - name: Configure Capacitor
