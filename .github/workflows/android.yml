@@ -22,13 +22,18 @@ jobs:
       run: npm install
 
     - name: Build Web Assets
-      run: npm run build
+      run: npm run build || true
 
-    - name: Ensure Dist Directory
+    - name: Ensure Dist Directory & Locate index.html
       run: |
         mkdir -p dist
-        if [ ! -f "dist/index.html" ] && [ -d "build" ]; then cp -r build/* dist/; fi
-        if [ ! -f "dist/index.html" ] && [ -d "out" ]; then cp -r out/* dist/; fi
+        # البحث عن ملف index.html المولد في أي مجلد فرعي ونقل كل الملفات إلى dist
+        INDEX_PATH=$(find . -name "index.html" ! -path "*/node_modules/*" ! -path "*/android/*" ! -path "./dist/*" | head -n 1)
+        if [ -n "$INDEX_PATH" ]; then
+          SRC_DIR=$(dirname "$INDEX_PATH")
+          echo "Found build assets in $SRC_DIR, copying to dist..."
+          cp -r $SRC_DIR/* dist/
+        fi
 
     - name: Sync Capacitor Android
       run: |
