@@ -26,13 +26,28 @@ jobs:
         mkdir -p dist
         wget -pk -nH --lower-case --directory-prefix=dist https://zad-alduat.lovable.app/ || true
         
-        if [ ! -f "dist/index.html" ]; then
-          echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><script>window.location.href="https://zad-alduat.lovable.app";</script></head><body></body></html>' > dist/index.html
-        fi
+        # تعديل الرابط الداخلي ليعمل داخل iframe يملأ الشاشة بدون الخروج للمتصفح
+        cat << 'EOF' > dist/index.html
+        <!DOCTYPE html>
+        <html lang="ar">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+          <title>زاد الدعاة</title>
+          <style>
+            html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #ffffff; }
+            iframe { width: 100%; height: 100%; border: none; margin: 0; padding: 0; display: block; }
+          </style>
+        </head>
+        <body>
+          <iframe src="https://zad-alduat.lovable.app" allow="geolocation; microphone; camera"></iframe>
+        </body>
+        </html>
+        EOF
 
     - name: Configure Capacitor
       run: |
-        echo '{"appId":"com.zad.alduat","appName":"زاد الدعاة","webDir":"dist"}' > capacitor.config.json
+        echo '{"appId":"com.zad.alduat","appName":"زاد الدعاة","webDir":"dist","server":{"allowNavigation":["*"]}}' > capacitor.config.json
 
     - name: Clean & Sync Capacitor Android
       run: |
