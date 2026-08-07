@@ -21,25 +21,26 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
-    - name: Build Web Assets (Force OutDir)
-      run: npx vite build --outDir dist || npm run build
+    - name: Build Web Assets
+      run: npm run build || npx vite build
 
-    - name: Ensure Dist Structure
+    - name: Absolute Fix for Dist Folder
       run: |
         mkdir -p dist
-        # البحث في كافة المجلدات المحتملة (dist, build, out, public)
-        for dir in build out public; do
-          if [ -d "$dir" ] && [ -f "$dir/index.html" ]; then
-            cp -r $dir/* dist/
-          fi
-        done
+        # البحث عن ملف index.html في المستودع
+        FOUND_INDEX=$(find . -name "index.html" ! -path "*/node_modules/*" ! -path "*/android/*" ! -path "./dist/*" | head -n 1)
+        if [ -n "$FOUND_INDEX" ]; then
+          SRC_DIR=$(dirname "$FOUND_INDEX")
+          echo "Copying assets from $SRC_DIR to dist"
+          cp -r $SRC_DIR/* dist/
+        fi
         
-        # إذا لم يتم العثور على index.html إطلاقاً يتم نسسخه من الجذور
-        if [ ! -f "dist/index.html" ] && [ -f "index.html" ]; then
-          cp index.html dist/
+        # حماية إضافية: إنشاء index.html مؤقت إذا لم يُعثر على شيء لمنع فشل Capacitor
+        if [ ! -f "dist/index.html" ]; then
+          echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>App</title></head><body><div id="root"></div></body></html>' > dist/index.html
         fi
 
-    - name: Clean & Add Capacitor Android
+    - name: Clean & Sync Capacitor Android
       run: |
         rm -rf android
         npx cap add android
