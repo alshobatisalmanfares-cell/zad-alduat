@@ -21,25 +21,31 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
-    - name: Build Web Assets
-      run: npm run build
+    - name: Build Web Assets (Force OutDir)
+      run: npx vite build --outDir dist || npm run build
 
-    - name: Prepare Dist Directory
+    - name: Ensure Dist Structure
       run: |
         mkdir -p dist
-        FOUND_INDEX=$(find . -maxdepth 4 -name "index.html" ! -path "*/node_modules/*" ! -path "*/android/*" ! -path "./dist/*" | head -n 1)
-        if [ -n "$FOUND_INDEX" ]; then
-          SRC_DIR=$(dirname "$FOUND_INDEX")
-          cp -r $SRC_DIR/* dist/
+        # البحث في كافة المجلدات المحتملة (dist, build, out, public)
+        for dir in build out public; do
+          if [ -d "$dir" ] && [ -f "$dir/index.html" ]; then
+            cp -r $dir/* dist/
+          fi
+        done
+        
+        # إذا لم يتم العثور على index.html إطلاقاً يتم نسسخه من الجذور
+        if [ ! -f "dist/index.html" ] && [ -f "index.html" ]; then
+          cp index.html dist/
         fi
 
-    - name: Force Clean & Re-add Android
+    - name: Clean & Add Capacitor Android
       run: |
         rm -rf android
         npx cap add android
         npx cap sync android
 
-    - name: Replace App Icons Direct
+    - name: Generate App Icons
       run: |
         npm install @capacitor/assets
         npx @capacitor/assets generate --iconPath public/icon-512.png --android || true
