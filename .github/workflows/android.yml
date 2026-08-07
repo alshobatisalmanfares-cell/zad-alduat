@@ -41,10 +41,25 @@ jobs:
         npx cap add android
         npx cap sync android
 
-    - name: Generate App Icons
+    - name: Force Overwrite Android Icons Directly
       run: |
-        npm install @capacitor/assets
-        npx @capacitor/assets generate --iconPath public/icon-512.png --android || true
+        # البحث عن صورة الأيقونة في المشروع (icon-512.png أو favicon أو غيرها)
+        ICON_SRC=$(find public src -name "*icon-512*.png" -o -name "*logo*.png" -o -name "*favicon*.png" | head -n 1)
+        
+        if [ -z "$ICON_SRC" ]; then
+          ICON_SRC="public/icon-512.png"
+        fi
+        
+        echo "Using icon source: $ICON_SRC"
+        
+        # استبدال جميع أيقونات أندرويد الافتراضية مباشرة بصورتك
+        for dir in android/app/src/main/res/mipmap-*; do
+          if [ -d "$dir" ]; then
+            cp -f "$ICON_SRC" "$dir/ic_launcher.png"
+            cp -f "$ICON_SRC" "$dir/ic_launcher_round.png"
+            cp -f "$ICON_SRC" "$dir/ic_launcher_foreground.png"
+          fi
+        done
 
     - name: Set up JDK 21
       uses: actions/setup-java@v4
