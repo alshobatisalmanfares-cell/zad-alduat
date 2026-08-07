@@ -28,15 +28,17 @@ jobs:
         # إنشاء مجلد dist
         mkdir -p dist
         
-        # نقل مخرجات Nitro من .output/public إلى dist
-        if [ -d ".output/public" ]; then
-          echo "Copying Nitro build assets from .output/public to dist..."
-          cp -r .output/public/* dist/
+        # البحث عن ملف index.html المولد ونقل كافة أصول المجلد الخاص به إلى dist
+        INDEX_PATH=$(find . -name "index.html" ! -path "*/node_modules/*" ! -path "*/android/*" ! -path "./dist/*" | head -n 1)
+        if [ -n "$INDEX_PATH" ]; then
+          SRC_DIR=$(dirname "$INDEX_PATH")
+          echo "Found index.html in $SRC_DIR, copying contents to dist..."
+          cp -r $SRC_DIR/* dist/
         fi
         
         # التحقق النهائي من وجود index.html
         if [ ! -f "dist/index.html" ]; then
-          echo "Error: index.html not found in dist"
+          echo "Error: index.html not found anywhere in build output"
           exit 1
         fi
 
