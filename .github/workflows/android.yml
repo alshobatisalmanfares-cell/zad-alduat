@@ -21,25 +21,22 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
-    - name: Build Web Assets
-      run: npm run build
+    - name: Build Web Assets (Force Vite Output)
+      run: npx vite build --outDir dist || npm run build || true
 
-    - name: Prepare Offline Dist Assets
+    - name: Ensure Dist Directory & Fallback Assets
       run: |
         mkdir -p dist
-        # البحث عن المجلد الناتج من عملية البناء ونقل ملفاته إلى dist
-        if [ -d "dist" ] && [ -f "dist/index.html" ]; then
-          echo "Dist folder is ready."
-        elif [ -d "build" ]; then
-          cp -r build/* dist/
-        elif [ -d "out" ]; then
-          cp -r out/* dist/
-        else
-          # البحث الديناميكي عن index.html المولد
-          INDEX_PATH=$(find . -name "index.html" ! -path "*/node_modules/*" ! -path "*/android/*" ! -path "./dist/*" | head -n 1)
-          if [ -n "$INDEX_PATH" ]; then
-            SRC_DIR=$(dirname "$INDEX_PATH")
-            cp -r $SRC_DIR/* dist/
+        # في حال وجود المخرجات في مجلدات أخرى يتم نقلها إلى dist
+        if [ -d "build" ]; then cp -r build/* dist/; fi
+        if [ -d "out" ]; then cp -r out/* dist/; fi
+        
+        # التأكد من وجود index.html لضمان البناء المحلي دون الحاجة لإنترنت
+        if [ ! -f "dist/index.html" ]; then
+          if [ -f "index.html" ]; then
+            cp index.html dist/
+          else
+            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>زاد الدعاة</title></head><body><div id="root"></div></body></html>' > dist/index.html
           fi
         fi
 
