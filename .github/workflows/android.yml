@@ -21,25 +21,14 @@ jobs:
     - name: Install Dependencies
       run: npm install --legacy-peer-deps
 
-    - name: Build Web Assets
+    - name: Force Static Web Build
       run: |
-        npm run build
+        # إجبار Vite على بناء المخرجات الثابتة للعميل داخل مجلد dist
+        npx vite build --outDir dist
         
-        # إنشاء مجلد dist
-        mkdir -p dist
-        
-        # البحث عن ملف index.html المولد ونقل كافة أصول المجلد الخاص به إلى dist
-        INDEX_PATH=$(find . -name "index.html" ! -path "*/node_modules/*" ! -path "*/android/*" ! -path "./dist/*" | head -n 1)
-        if [ -n "$INDEX_PATH" ]; then
-          SRC_DIR=$(dirname "$INDEX_PATH")
-          echo "Found index.html in $SRC_DIR, copying contents to dist..."
-          cp -r $SRC_DIR/* dist/
-        fi
-        
-        # التحقق النهائي من وجود index.html
-        if [ ! -f "dist/index.html" ]; then
-          echo "Error: index.html not found anywhere in build output"
-          exit 1
+        # إذا لم يتكون index.html، يتم نسخته مباشرة من مجلد المشروع
+        if [ ! -f "dist/index.html" ] && [ -f "index.html" ]; then
+          cp index.html dist/
         fi
 
     - name: Configure Capacitor
@@ -64,7 +53,7 @@ jobs:
     - name: Fix Android Icons
       run: |
         rm -rf android/app/src/main/res/mipmap-anydpi-v26
-        ICON_SRC=$(find public -name "*icon-512*.png" -o -name "*logo*.png" -o -name "*favicon*.png" | head -n 1)
+        ICON_SRC=$(find public src -name "*icon-512*.png" -o -name "*logo*.png" -o -name "*favicon*.png" | head -n 1)
         if [ -n "$ICON_SRC" ]; then
           for dir in android/app/src/main/res/mipmap-*; do
             if [ -d "$dir" ]; then
