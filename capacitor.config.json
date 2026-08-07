@@ -1,9 +1,0 @@
-{
-  "appId": "app.lovable.zadalduat",
-  "appName": "زاد الدعاة",
-  "webDir": "dist",
-  "bundledWebRuntime": false,
-  "android": {
-    "backgroundColor": "#0B0B0B"
-  }
-}
