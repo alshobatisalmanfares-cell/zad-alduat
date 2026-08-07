@@ -18,17 +18,15 @@ jobs:
       with:
         node-version: 22
 
+    - name: Install Dependencies
+      run: npm install
+
     - name: Download Built Web Assets Direct from Live Site
       run: |
         mkdir -p dist
-        # تنزيل واجهة الموقع الحقيقية المترجمة لتعمل أوفلاين بدون شاشة سوداء
         wget -pk -nH --lower-case --directory-prefix=dist https://zad-alduat.lovable.app/ || true
         
-        # التأكد من اسم الملف الرئيسي
-        if [ -f "dist/index.html" ]; then
-          echo "Web assets downloaded successfully."
-        else
-          # خطة بديلة في حال تعثر التنزيل
+        if [ ! -f "dist/index.html" ]; then
           echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><script>window.location.href="https://zad-alduat.lovable.app";</script></head><body></body></html>' > dist/index.html
         fi
 
