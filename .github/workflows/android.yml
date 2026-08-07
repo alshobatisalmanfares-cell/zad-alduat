@@ -21,13 +21,37 @@ jobs:
     - name: Install Dependencies
       run: npm install --legacy-peer-deps
 
-    # خطوة حاسمة: بناء التطبيق والتأكد من وجود المخرجات
     - name: Build Web Assets
       run: |
         npm run build
-        # التأكد من وجود index.html
-        if [ ! -f "dist/index.html" ] && [ -f ".output/public/index.html" ]; then cp -r .output/public/* dist/; fi
-        if [ ! -f "dist/index.html" ]; then echo "Error: Build failed to generate dist/index.html"; exit 1; fi
+        
+        # إنشاء مجلد dist
+        mkdir -p dist
+        
+        # نقل مخرجات Nitro من .output/public إلى dist
+        if [ -d ".output/public" ]; then
+          echo "Copying Nitro build assets from .output/public to dist..."
+          cp -r .output/public/* dist/
+        fi
+        
+        # التحقق النهائي من وجود index.html
+        if [ ! -f "dist/index.html" ]; then
+          echo "Error: index.html not found in dist"
+          exit 1
+        fi
+
+    - name: Configure Capacitor
+      run: |
+        cat << 'EOF' > capacitor.config.json
+        {
+          "appId": "app.lovable.zadalduat",
+          "appName": "زاد الدعاة",
+          "webDir": "dist",
+          "android": {
+            "backgroundColor": "#0B0B0B"
+          }
+        }
+        EOF
 
     - name: Sync Capacitor
       run: |
@@ -37,27 +61,31 @@ jobs:
 
     - name: Fix Android Icons
       run: |
-        # تخصيص الأيقونات لتبدو أصلية
-        ICON_SRC=$(find public -name "*icon-512*.png" | head -n 1)
+        rm -rf android/app/src/main/res/mipmap-anydpi-v26
+        ICON_SRC=$(find public -name "*icon-512*.png" -o -name "*logo*.png" -o -name "*favicon*.png" | head -n 1)
         if [ -n "$ICON_SRC" ]; then
           for dir in android/app/src/main/res/mipmap-*; do
-            cp -f "$ICON_SRC" "$dir/ic_launcher.png" 2>/dev/null || true
+            if [ -d "$dir" ]; then
+              cp -f "$ICON_SRC" "$dir/ic_launcher.png" 2>/dev/null || true
+              cp -f "$ICON_SRC" "$dir/ic_launcher_round.png" 2>/dev/null || true
+              cp -f "$ICON_SRC" "$dir/ic_launcher_foreground.png" 2>/dev/null || true
+            fi
           done
         fi
 
-    - name: Build Native APK
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
         java-version: '21'
         distribution: 'temurin'
-      
-    - name: Gradle Build
+
+    - name: Build Standalone APK
       run: |
         cd android
         chmod +x gradlew
-        ./gradlew assembleDebug
+        ./gradlew assembleDebug --no-daemon
 
-    - name: Upload APK
+    - name: Upload Native APK
       uses: actions/upload-artifact@v4
       with:
         name: zad-alduat-native-apk
