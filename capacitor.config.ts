@@ -6,15 +6,13 @@ const config: CapacitorConfig = {
   webDir: "dist",
 
   server: {
-    androidScheme: "https",
-    allowNavigation: [
-      "zad-alduat.lovable.app",
-      "*.lovable.app"
-    ]
+    androidScheme: "https"
   },
 
   android: {
-    backgroundColor: "#0B0B0B"
+    backgroundColor: "#0B0B0B",
+    allowMixedContent: true,
+    captureInput: true
   }
 };
 
