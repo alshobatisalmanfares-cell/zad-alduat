@@ -1,4 +1,4 @@
-name: Build Zad Alduat Mobile APK
+name: Build Offline-First Mobile APK
 
 on:
   push:
@@ -10,81 +10,87 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
 
-    - name: Install Dependencies
-      run: npm install --legacy-peer-deps
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
 
-    - name: Build Web Application
-      run: |
-        npm run build || npx vite build || true
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-    - name: Prepare Dist Assets Directory
-      run: |
-        mkdir -p dist
-        if [ -d ".output/public" ]; then cp -r .output/public/* dist/; fi
-        if [ -d "build" ]; then cp -r build/* dist/; fi
-        
-        # إنشاء ملف index.html موجه يمنع الشاشة السوداء ويضمن عمل Sync
-        cat << 'EOF' > dist/index.html
-        <!DOCTYPE html>
-        <html lang="ar" dir="rtl">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>زاد الدعاة</title>
-          <style>
-            body { margin: 0; background-color: #0B0B0B; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; }
-          </style>
-        </head>
-        <body>
-          <script>
-            window.location.href = "https://zad-alduat.lovable.app";
-          </script>
-        </body>
-        </html>
-        EOF
+      - name: Install Dependencies
+        run: npm ci || npm install --legacy-peer-deps
 
-    - name: Sync Capacitor Android
-      run: |
-        rm -rf android
-        npx cap add android
-        npx cap sync android
+      - name: Build Web Application
+        run: npm run build
 
-    - name: Fix Android Launcher Icons
-      run: |
-        rm -rf android/app/src/main/res/mipmap-anydpi-v26
-        ICON_SRC=$(find public src -name "*icon-512*.png" -o -name "*logo*.png" -o -name "*favicon*.png" | head -n 1)
-        if [ -z "$ICON_SRC" ]; then ICON_SRC="public/favicon.ico"; fi
-        
-        for dir in android/app/src/main/res/mipmap-*; do
-          if [ -d "$dir" ]; then
-            cp -f "$ICON_SRC" "$dir/ic_launcher.png" 2>/dev/null || true
-            cp -f "$ICON_SRC" "$dir/ic_launcher_round.png" 2>/dev/null || true
-            cp -f "$ICON_SRC" "$dir/ic_launcher_foreground.png" 2>/dev/null || true
+      - name: Bundle Local Web Assets
+        run: |
+          mkdir -p dist
+          if [ -d ".output/public" ]; then cp -rn .output/public/* dist/ 2>/dev/null || true; fi
+          if [ -d "build" ]; then cp -rn build/* dist/ 2>/dev/null || true; fi
+          
+          # إنشاء index.html محلي يعتمد على ملفات App المجمعة بدون Redirect خارجي
+          if [ ! -f "dist/index.html" ]; then
+            echo "Creating offline index.html..."
+            cat << 'EOF' > dist/index.html
+          <!DOCTYPE html>
+          <html lang="ar" dir="rtl">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+            <title>زاد الدعاة</title>
+            <style>
+              html, body, #root { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #0B0B0B; color: #FFFFFF; }
+            </style>
+          </head>
+          <body>
+            <div id="root"></div>
+          </body>
+          </html>
+          EOF
           fi
-        done
 
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
+      - name: Install & Sync Capacitor Android
+        run: |
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npx cap add android || true
+          npx cap copy android
+          npx cap sync android
 
-    - name: Build Standalone APK
-      run: |
-        cd android
-        chmod +x gradlew
-        ./gradlew assembleDebug --no-daemon
+      - name: Fix Android Launcher Icons
+        run: |
+          rm -rf android/app/src/main/res/mipmap-anydpi-v26
+          ICON_SRC=$(find public src -name "*icon-512*.png" -o -name "*logo*.png" -o -name "*favicon*.png" | head -n 1)
+          if [ -z "$ICON_SRC" ]; then ICON_SRC="public/favicon.ico"; fi
+          
+          for dir in android/app/src/main/res/mipmap-*; do
+            if [ -d "$dir" ]; then
+              cp -f "$ICON_SRC" "$dir/ic_launcher.png" 2>/dev/null || true
+              cp -f "$ICON_SRC" "$dir/ic_launcher_round.png" 2>/dev/null || true
+              cp -f "$ICON_SRC" "$dir/ic_launcher_foreground.png" 2>/dev/null || true
+            fi
+          done
 
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: zad-alduat-apk
-        path: android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Build Standalone Offline APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zad-alduat-offline-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
