@@ -30,12 +30,12 @@ function Home() {
   const { hadithOfDay, nightMode, toggleNight, syncing, syncData } = useStore();
   const handleSync = async () => {
     if (typeof navigator !== "undefined" && navigator.onLine === false) {
-      toast.error("لا يوجد اتصال بالإنترنت حالياً");
+      toast.warning("لا يوجد اتصال بالإنترنت، يتم عرض النسخة المحفوظة محلياً");
       return;
     }
     const ok = await syncData();
-    if (ok) toast.success("تمت المزامنة وتحديث البيانات بنجاح");
-    else toast.error("لا يوجد اتصال بالإنترنت حالياً");
+    if (ok) toast.success("تم تحديث البيانات بنجاح");
+    else toast.warning("لا يوجد اتصال بالإنترنت، يتم عرض النسخة المحفوظة محلياً");
   };
 
   const daily = useHadithOfDay(hadithOfDay);

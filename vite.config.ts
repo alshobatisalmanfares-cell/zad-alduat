@@ -92,9 +92,10 @@ export default defineConfig({
     },
   },
 
-  build: {
-    outDir: "dist",
+  vite: {
+    build: {
+      outDir: "dist",
+    },
+    appType: "spa",
   },
-
-  appType: "spa",
 });
