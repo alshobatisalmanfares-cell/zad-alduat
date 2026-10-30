@@ -9,76 +9,36 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TasbihRouteImport } from './routes/tasbih'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as QuranRouteImport } from './routes/quran'
-import { Route as McpRouteImport } from './routes/mcp'
-import { Route as KhutbahRouteImport } from './routes/khutbah'
-import { Route as HadithRouteImport } from './routes/hadith'
-import { Route as FavoritesRouteImport } from './routes/favorites'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as AzkarRouteImport } from './routes/azkar'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as QuranIndexRouteImport } from './routes/quran.index'
-import { Route as KhutbahIndexRouteImport } from './routes/khutbah.index'
-import { Route as AzkarIndexRouteImport } from './routes/azkar.index'
-import { Route as QuranIdRouteImport } from './routes/quran.$id'
-import { Route as KhutbahIdRouteImport } from './routes/khutbah.$id'
-import { Route as AzkarIdRouteImport } from './routes/azkar.$id'
-import { Route as AdminKhutabRouteImport } from './routes/admin.khutab'
-import { Route as AdminHadithRouteImport } from './routes/admin.hadith'
-import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
-import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
-import { Route as AdminAzkarRouteImport } from './routes/admin.azkar'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AzkarRouteImport } from './routes/azkar'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as HadithRouteImport } from './routes/hadith'
+import { Route as KhutbahRouteImport } from './routes/khutbah'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as QuranRouteImport } from './routes/quran'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TasbihRouteImport } from './routes/tasbih'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as AzkarReadCategoryRouteImport } from './routes/azkar.read.$category'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as AdminAzkarRouteImport } from './routes/admin.azkar'
+import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminHadithRouteImport } from './routes/admin.hadith'
+import { Route as AdminKhutabRouteImport } from './routes/admin.khutab'
+import { Route as AzkarIndexRouteImport } from './routes/azkar.index'
+import { Route as AzkarIdRouteImport } from './routes/azkar.$id'
+import { Route as KhutbahIndexRouteImport } from './routes/khutbah.index'
+import { Route as KhutbahIdRouteImport } from './routes/khutbah.$id'
+import { Route as QuranIndexRouteImport } from './routes/quran.index'
+import { Route as QuranIdRouteImport } from './routes/quran.$id'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as AzkarReadCategoryRouteImport } from './routes/azkar.read.$category'
 
-const TasbihRoute = TasbihRouteImport.update({
-  id: '/tasbih',
-  path: '/tasbih',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QuranRoute = QuranRouteImport.update({
-  id: '/quran',
-  path: '/quran',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const KhutbahRoute = KhutbahRouteImport.update({
-  id: '/khutbah',
-  path: '/khutbah',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HadithRoute = HadithRouteImport.update({
-  id: '/hadith',
-  path: '/hadith',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FavoritesRoute = FavoritesRouteImport.update({
-  id: '/favorites',
-  path: '/favorites',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AzkarRoute = AzkarRouteImport.update({
-  id: '/azkar',
-  path: '/azkar',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -86,54 +46,66 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AzkarRoute = AzkarRouteImport.update({
+  id: '/azkar',
+  path: '/azkar',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuranIndexRoute = QuranIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => QuranRoute,
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const KhutbahIndexRoute = KhutbahIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => KhutbahRoute,
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AzkarIndexRoute = AzkarIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AzkarRoute,
-} as any)
-const QuranIdRoute = QuranIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => QuranRoute,
-} as any)
-const KhutbahIdRoute = KhutbahIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => KhutbahRoute,
-} as any)
-const AzkarIdRoute = AzkarIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AzkarRoute,
-} as any)
-const AdminKhutabRoute = AdminKhutabRouteImport.update({
-  id: '/khutab',
-  path: '/khutab',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminHadithRoute = AdminHadithRouteImport.update({
+const HadithRoute = HadithRouteImport.update({
   id: '/hadith',
   path: '/hadith',
-  getParentRoute: () => AdminRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const KhutbahRoute = KhutbahRouteImport.update({
+  id: '/khutbah',
+  path: '/khutbah',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuranRoute = QuranRouteImport.update({
+  id: '/quran',
+  path: '/quran',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TasbihRoute = TasbihRouteImport.update({
+  id: '/tasbih',
+  path: '/tasbih',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminAzkarRoute = AdminAzkarRouteImport.update({
+  id: '/azkar',
+  path: '/azkar',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
@@ -141,27 +113,50 @@ const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminAzkarRoute = AdminAzkarRouteImport.update({
-  id: '/azkar',
-  path: '/azkar',
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => AdminRoute,
 } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const AzkarReadCategoryRoute = AzkarReadCategoryRouteImport.update({
-  id: '/read/$category',
-  path: '/read/$category',
+const AdminHadithRoute = AdminHadithRouteImport.update({
+  id: '/hadith',
+  path: '/hadith',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKhutabRoute = AdminKhutabRouteImport.update({
+  id: '/khutab',
+  path: '/khutab',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AzkarIndexRoute = AzkarIndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => AzkarRoute,
+} as any)
+const AzkarIdRoute = AzkarIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AzkarRoute,
+} as any)
+const KhutbahIndexRoute = KhutbahIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => KhutbahRoute,
+} as any)
+const KhutbahIdRoute = KhutbahIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => KhutbahRoute,
+} as any)
+const QuranIndexRoute = QuranIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => QuranRoute,
+} as any)
+const QuranIdRoute = QuranIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => QuranRoute,
 } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
@@ -169,6 +164,11 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AzkarReadCategoryRoute = AzkarReadCategoryRouteImport.update({
+  id: '/read/$category',
+  path: '/read/$category',
+  getParentRoute: () => AzkarRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -355,67 +355,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/tasbih': {
-      id: '/tasbih'
-      path: '/tasbih'
-      fullPath: '/tasbih'
-      preLoaderRoute: typeof TasbihRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/quran': {
-      id: '/quran'
-      path: '/quran'
-      fullPath: '/quran'
-      preLoaderRoute: typeof QuranRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/khutbah': {
-      id: '/khutbah'
-      path: '/khutbah'
-      fullPath: '/khutbah'
-      preLoaderRoute: typeof KhutbahRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hadith': {
-      id: '/hadith'
-      path: '/hadith'
-      fullPath: '/hadith'
-      preLoaderRoute: typeof HadithRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/favorites': {
-      id: '/favorites'
-      path: '/favorites'
-      fullPath: '/favorites'
-      preLoaderRoute: typeof FavoritesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/azkar': {
-      id: '/azkar'
-      path: '/azkar'
-      fullPath: '/azkar'
-      preLoaderRoute: typeof AzkarRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -425,95 +369,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/azkar': {
+      id: '/azkar'
+      path: '/azkar'
+      fullPath: '/azkar'
+      preLoaderRoute: typeof AzkarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quran/': {
-      id: '/quran/'
-      path: '/'
-      fullPath: '/quran/'
-      preLoaderRoute: typeof QuranIndexRouteImport
-      parentRoute: typeof QuranRoute
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/khutbah/': {
-      id: '/khutbah/'
-      path: '/'
-      fullPath: '/khutbah/'
-      preLoaderRoute: typeof KhutbahIndexRouteImport
-      parentRoute: typeof KhutbahRoute
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/azkar/': {
-      id: '/azkar/'
-      path: '/'
-      fullPath: '/azkar/'
-      preLoaderRoute: typeof AzkarIndexRouteImport
-      parentRoute: typeof AzkarRoute
-    }
-    '/quran/$id': {
-      id: '/quran/$id'
-      path: '/$id'
-      fullPath: '/quran/$id'
-      preLoaderRoute: typeof QuranIdRouteImport
-      parentRoute: typeof QuranRoute
-    }
-    '/khutbah/$id': {
-      id: '/khutbah/$id'
-      path: '/$id'
-      fullPath: '/khutbah/$id'
-      preLoaderRoute: typeof KhutbahIdRouteImport
-      parentRoute: typeof KhutbahRoute
-    }
-    '/azkar/$id': {
-      id: '/azkar/$id'
-      path: '/$id'
-      fullPath: '/azkar/$id'
-      preLoaderRoute: typeof AzkarIdRouteImport
-      parentRoute: typeof AzkarRoute
-    }
-    '/admin/khutab': {
-      id: '/admin/khutab'
-      path: '/khutab'
-      fullPath: '/admin/khutab'
-      preLoaderRoute: typeof AdminKhutabRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/hadith': {
-      id: '/admin/hadith'
+    '/hadith': {
+      id: '/hadith'
       path: '/hadith'
-      fullPath: '/admin/hadith'
-      preLoaderRoute: typeof AdminHadithRouteImport
-      parentRoute: typeof AdminRoute
+      fullPath: '/hadith'
+      preLoaderRoute: typeof HadithRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/dashboard': {
-      id: '/admin/dashboard'
-      path: '/dashboard'
-      fullPath: '/admin/dashboard'
-      preLoaderRoute: typeof AdminDashboardRouteImport
-      parentRoute: typeof AdminRoute
+    '/khutbah': {
+      id: '/khutbah'
+      path: '/khutbah'
+      fullPath: '/khutbah'
+      preLoaderRoute: typeof KhutbahRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/categories': {
-      id: '/admin/categories'
-      path: '/categories'
-      fullPath: '/admin/categories'
-      preLoaderRoute: typeof AdminCategoriesRouteImport
-      parentRoute: typeof AdminRoute
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/azkar': {
-      id: '/admin/azkar'
-      path: '/azkar'
-      fullPath: '/admin/azkar'
-      preLoaderRoute: typeof AdminAzkarRouteImport
-      parentRoute: typeof AdminRoute
+    '/quran': {
+      id: '/quran'
+      path: '/quran'
+      fullPath: '/quran'
+      preLoaderRoute: typeof QuranRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tasbih': {
+      id: '/tasbih'
+      path: '/tasbih'
+      fullPath: '/tasbih'
+      preLoaderRoute: typeof TasbihRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -523,12 +439,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/azkar/read/$category': {
-      id: '/azkar/read/$category'
-      path: '/read/$category'
-      fullPath: '/azkar/read/$category'
-      preLoaderRoute: typeof AzkarReadCategoryRouteImport
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/azkar': {
+      id: '/admin/azkar'
+      path: '/azkar'
+      fullPath: '/admin/azkar'
+      preLoaderRoute: typeof AdminAzkarRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/categories': {
+      id: '/admin/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminCategoriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/hadith': {
+      id: '/admin/hadith'
+      path: '/hadith'
+      fullPath: '/admin/hadith'
+      preLoaderRoute: typeof AdminHadithRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/khutab': {
+      id: '/admin/khutab'
+      path: '/khutab'
+      fullPath: '/admin/khutab'
+      preLoaderRoute: typeof AdminKhutabRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/azkar/': {
+      id: '/azkar/'
+      path: '/'
+      fullPath: '/azkar/'
+      preLoaderRoute: typeof AzkarIndexRouteImport
       parentRoute: typeof AzkarRoute
+    }
+    '/azkar/$id': {
+      id: '/azkar/$id'
+      path: '/$id'
+      fullPath: '/azkar/$id'
+      preLoaderRoute: typeof AzkarIdRouteImport
+      parentRoute: typeof AzkarRoute
+    }
+    '/khutbah/': {
+      id: '/khutbah/'
+      path: '/'
+      fullPath: '/khutbah/'
+      preLoaderRoute: typeof KhutbahIndexRouteImport
+      parentRoute: typeof KhutbahRoute
+    }
+    '/khutbah/$id': {
+      id: '/khutbah/$id'
+      path: '/$id'
+      fullPath: '/khutbah/$id'
+      preLoaderRoute: typeof KhutbahIdRouteImport
+      parentRoute: typeof KhutbahRoute
+    }
+    '/quran/': {
+      id: '/quran/'
+      path: '/'
+      fullPath: '/quran/'
+      preLoaderRoute: typeof QuranIndexRouteImport
+      parentRoute: typeof QuranRoute
+    }
+    '/quran/$id': {
+      id: '/quran/$id'
+      path: '/$id'
+      fullPath: '/quran/$id'
+      preLoaderRoute: typeof QuranIdRouteImport
+      parentRoute: typeof QuranRoute
     }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
@@ -536,6 +529,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/.mcp/invoke-tool/$tool'
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/azkar/read/$category': {
+      id: '/azkar/read/$category'
+      path: '/read/$category'
+      fullPath: '/azkar/read/$category'
+      preLoaderRoute: typeof AzkarReadCategoryRouteImport
+      parentRoute: typeof AzkarRoute
     }
   }
 }
