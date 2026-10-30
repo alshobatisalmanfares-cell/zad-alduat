@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppStoreProvider } from "../lib/store";
 import { OfflineBanner } from "@/components/OfflineBanner";
+import { PermissionPrompt } from "@/components/PermissionPrompt";
 
 import { BottomNav } from "../components/BottomNav";
 import { InstallPrompt } from "../components/InstallPrompt";
@@ -159,6 +160,7 @@ function RootComponent() {
           <BottomNav />
 
           <InstallPrompt />
+          <PermissionPrompt />
           <Toaster position="top-center" richColors />
 
         </div>
