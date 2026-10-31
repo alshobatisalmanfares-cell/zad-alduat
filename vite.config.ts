@@ -87,7 +87,6 @@ export default defineConfig({
   ],
 
   tanstackStart: {
-    ...(process.env.CAPACITOR_BUILD ? { spa: { enabled: true } } : {}),
     server: {
       entry: "server",
     },
