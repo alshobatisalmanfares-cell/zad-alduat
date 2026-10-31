@@ -11,7 +11,6 @@ background whenever the phone is online. This is not a remote WebView wrapper â€
 ```bash
 bun install
 bun run build && bun scripts/android-shell.mjs
-bun scripts/android-shell.mjs   # writes dist/client/index.html (webDir)
 bunx cap add android
 bunx cap sync android
 ```
