@@ -10,7 +10,7 @@ background whenever the phone is online. This is not a remote WebView wrapper â€
 
 ```bash
 bun install
-bun run build          # produces .output/public (webDir)
+bun run build && bun scripts/android-shell.mjs
 bunx cap add android
 bunx cap sync android
 ```
@@ -18,7 +18,7 @@ bunx cap sync android
 ## Every build after a code change
 
 ```bash
-bun run build
+bun run build && bun scripts/android-shell.mjs
 bunx cap sync android
 bunx cap open android   # then Build > Build APK / Bundle in Android Studio
 ```
