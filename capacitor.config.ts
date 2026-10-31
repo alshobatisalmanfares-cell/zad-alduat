@@ -3,17 +3,14 @@ import type { CapacitorConfig } from "@capacitor/cli";
 const config: CapacitorConfig = {
   appId: "app.lovable.zadalduat",
   appName: "زاد الدعاة",
-  webDir: "dist",
-
+  webDir: "dist/client",
   server: {
-    androidScheme: "https"
+    androidScheme: "https",
   },
-
   android: {
     backgroundColor: "#0B0B0B",
-    allowMixedContent: true,
-    captureInput: true
-  }
+    captureInput: true,
+  },
 };
 
 export default config;
