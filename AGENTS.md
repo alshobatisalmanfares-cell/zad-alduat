@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Android CI builds use Nitro's `node-middleware` preset only for local shell rendering; the packaging script resolves Nitro and legacy TanStack output paths into Capacitor's `dist/client` webDir so hosted deployment settings remain unchanged.
