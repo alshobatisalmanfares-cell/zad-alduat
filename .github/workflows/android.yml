@@ -9,10 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 40
-    env:
-      # Use a clean SDK so runner image updates cannot change sdkmanager.
-      ANDROID_HOME: ${{ runner.temp }}/zad-android-sdk
-      ANDROID_SDK_ROOT: ${{ runner.temp }}/zad-android-sdk
 
     steps:
       - name: Checkout code
@@ -28,6 +24,13 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
+
+      - name: Prepare isolated Android SDK
+        # Use a clean SDK so runner image updates cannot change sdkmanager.
+        run: |
+          mkdir -p "$RUNNER_TEMP/zad-android-sdk"
+          echo "ANDROID_HOME=$RUNNER_TEMP/zad-android-sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$RUNNER_TEMP/zad-android-sdk" >> "$GITHUB_ENV"
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
