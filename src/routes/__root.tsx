@@ -101,18 +101,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "​زاد الدعاة — خطب الجمعة والموسوعة الدعوية" },
       { name: "twitter:description", content: "موسوعة دعوية متجددة لخطب الجمعة المكتوبة والمصنفة للخطباء، تضم المصحف الشريف كاملاً، الأحاديث الصحيحة، وأذكار حصن المسلم مع دعم التصفح بدون إنترنت." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/312a0521-21ef-418c-8ebd-4aefa3fb85d4/id-preview-d8c5364b--24aa0d61-bdde-4cb6-922d-c427f5ee0279.lovable.app-1783600001253.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/312a0521-21ef-418c-8ebd-4aefa3fb85d4/id-preview-d8c5364b--24aa0d61-bdde-4cb6-922d-c427f5ee0279.lovable.app-1783600001253.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "preconnect", href: "https://pagead2.googlesyndication.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Amiri:wght@400;700&family=Amiri+Quran&display=swap" },
+      { rel: "preload", href: "/fonts/cairo-400.woff", as: "font", type: "font/woff", crossOrigin: "anonymous" },
+      { rel: "preload", href: "/fonts/amiri-quran-400.woff", as: "font", type: "font/woff", crossOrigin: "anonymous" },
     ],
     scripts: [
       {
