@@ -49,11 +49,17 @@ jobs:
         run: bun install
 
       - name: Build web app
-        run: bun run build
+        env:
+          # Render locally in CI without requiring a deployed server runtime.
+          NITRO_PRESET: node-middleware
+        run: |
+          bun run build
+          test -f .output/server/index.mjs
+          test -d dist/client/assets || test -d .output/public/assets
 
       - name: Create offline app page
         run: |
-          bun scripts/android-shell.mjs
+          node scripts/android-shell.mjs
           test -f dist/client/index.html
           test -d dist/client/assets
 
