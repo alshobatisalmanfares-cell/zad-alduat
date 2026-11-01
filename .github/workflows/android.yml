@@ -9,6 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    env:
+      # Use a clean SDK so runner image updates cannot change sdkmanager.
+      ANDROID_HOME: ${{ runner.temp }}/zad-android-sdk
+      ANDROID_SDK_ROOT: ${{ runner.temp }}/zad-android-sdk
 
     steps:
       - name: Checkout code
@@ -27,6 +31,16 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: '12266719'
+          accept-android-sdk-licenses: true
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
+
+      - name: Verify Android SDK components
+        run: |
+          sdkmanager --version
+          test -f "$ANDROID_SDK_ROOT/platforms/android-36/android.jar"
+          test -x "$ANDROID_SDK_ROOT/build-tools/36.0.0/aapt2"
 
       - name: Install dependencies
         run: bun install
