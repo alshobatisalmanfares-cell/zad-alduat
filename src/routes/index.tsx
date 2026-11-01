@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
 import { useStore } from "@/lib/store";
 import { Mail, BookHeart, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
@@ -8,26 +7,23 @@ import {
   MushafIcon, MinbarIcon, MisbahaIcon, HadithIcon, HeartStarIcon,
   CrescentIcon, SunIcon,
 } from "@/components/icons/IslamicIcons";
-import hadithData from "@/data/hadith.json";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "زاد الدعاة — الرئيسية" },
+      { name: "description", content: "خطب الجمعة والقرآن الكريم والحديث الشريف والأذكار والمسبحة في زاد الدعاة." },
+      { property: "og:title", content: "زاد الدعاة — الرئيسية" },
+      { property: "og:description", content: "تصفح خطب الجمعة والقرآن والأحاديث والأذكار والمسبحة." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: Home,
 });
 
-type Hadith = { id: string; book: string; number: string; category: string; grade: string; text: string };
-
-function useHadithOfDay(fallback: string) {
-  return useMemo(() => {
-    const items = hadithData as Hadith[];
-    if (!items.length) return fallback;
-    const dayIndex = Math.floor(Date.now() / 86_400_000);
-    const pick = items[dayIndex % items.length];
-    return pick?.text || fallback;
-  }, [fallback]);
-}
-
 function Home() {
-  const { hadithOfDay, nightMode, toggleNight, syncing, syncData } = useStore();
+  const { nightMode, toggleNight, syncing, syncData } = useStore();
   const handleSync = async () => {
     if (typeof navigator !== "undefined" && navigator.onLine === false) {
       toast.warning("لا يوجد اتصال بالإنترنت، يتم عرض النسخة المحفوظة محلياً");
@@ -37,8 +33,6 @@ function Home() {
     if (ok) toast.success("تم تحديث البيانات بنجاح");
     else toast.warning("لا يوجد اتصال بالإنترنت، يتم عرض النسخة المحفوظة محلياً");
   };
-
-  const daily = useHadithOfDay(hadithOfDay);
 
   const sections = [
     { to: "/quran", label: "القرآن الكريم", Icon: MushafIcon },
@@ -80,7 +74,7 @@ function Home() {
 
 
           <div className="h-14 w-14 rounded-2xl bg-[color:var(--gold)]/15 backdrop-blur grid place-items-center overflow-hidden border border-[color:var(--gold)]/30">
-            <img src="/icon-192.png" alt="زاد الدعاة" className="h-12 w-12 rounded-xl object-cover" />
+            <img src="/icon-192.png" alt="زاد الدعاة" width={192} height={192} loading="eager" className="h-12 w-12 rounded-xl object-cover" />
           </div>
 
           <h1 className="mt-2 text-2xl font-black leading-tight text-[color:var(--gold)]">زاد الدعاة</h1>
@@ -145,21 +139,6 @@ function Home() {
               </div>
             </Link>
           ))}
-        </div>
-      </section>
-
-      {/* Hadith of the day */}
-      <section className="px-5 mt-6">
-        <div className="rounded-2xl p-5 bg-gradient-to-br from-[oklch(0.16_0.02_80)] to-[oklch(0.10_0.02_80)] text-[color:var(--gold)] shadow-soft relative overflow-hidden border border-[color:var(--gold)]/30">
-          <div className="absolute -top-6 -left-6 w-24 h-24 rounded-full bg-[color:var(--gold)]/10" />
-          <div className="flex items-center justify-between mb-3">
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold bg-[color:var(--gold)]/15 border border-[color:var(--gold)]/30 px-2.5 py-1 rounded-full">
-              <HadithIcon className="h-3.5 w-3.5" /> حديث اليوم
-            </span>
-          </div>
-          <p className="text-[15px] leading-loose font-medium" style={{ fontFamily: "Amiri, serif" }}>
-            {daily}
-          </p>
         </div>
       </section>
 

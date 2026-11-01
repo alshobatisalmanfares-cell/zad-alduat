@@ -2,6 +2,57 @@
 @source "../src";
 @import "tw-animate-css";
 
+/* Complete Arabic and Latin glyph sets, bundled with the Android/PWA assets. */
+@font-face {
+  font-family: "Cairo";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/cairo-400.woff") format("woff");
+}
+@font-face {
+  font-family: "Cairo";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/cairo-600.woff") format("woff");
+}
+@font-face {
+  font-family: "Cairo";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/cairo-700.woff") format("woff");
+}
+@font-face {
+  font-family: "Cairo";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/cairo-900.woff") format("woff");
+}
+@font-face {
+  font-family: "Amiri";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/amiri-400.woff") format("woff");
+}
+@font-face {
+  font-family: "Amiri";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/amiri-700.woff") format("woff");
+}
+@font-face {
+  font-family: "Amiri Quran";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/amiri-quran-400.woff") format("woff");
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
