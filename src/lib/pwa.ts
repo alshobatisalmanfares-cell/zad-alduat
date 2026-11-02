@@ -8,8 +8,11 @@ function isBlockedContext(): boolean {
   } catch {
     return true;
   }
-  const h = window.location.hostname;
-  if (h.startsWith("id-preview--") || h.startsWith("preview--")) return true;
+  const h = window.location.hostname.toLowerCase();
+  const hostedPreviewDomain = /\.(lovable\.app|gpt-eng\.com|gptengineer\.run)$/.test(h);
+  const label = h.split(".")[0];
+  if (hostedPreviewDomain && /^(?:id-preview|preview)(?:-[a-z0-9]+)?--.+$/.test(label)) return true;
+  if (hostedPreviewDomain && /^project--.+-dev$/.test(label)) return true;
   if (h === "lovableproject.com" || h.endsWith(".lovableproject.com")) return true;
   if (h === "lovableproject-dev.com" || h.endsWith(".lovableproject-dev.com")) return true;
   if (h === "beta.lovable.dev" || h.endsWith(".beta.lovable.dev")) return true;
@@ -33,7 +36,10 @@ export function registerServiceWorker() {
     void unregisterAppSW();
     return;
   }
-  window.addEventListener("load", () => {
+  const register = () => {
     void navigator.serviceWorker.register(SW_URL, { scope: "/" }).catch(() => {});
-  });
+  };
+  // React may hydrate after load has already fired. Don't miss registration.
+  if (document.readyState === "complete") register();
+  else window.addEventListener("load", register, { once: true });
 }

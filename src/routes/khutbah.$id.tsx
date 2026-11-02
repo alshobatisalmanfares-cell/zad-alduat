@@ -9,6 +9,14 @@ import { Heart, Calendar, Tag, Copy, Check } from "lucide-react";
 
 export const Route = createFileRoute("/khutbah/$id")({
   component: KhutbahDetail,
+  head: () => ({ meta: [
+    { title: "قراءة خطبة الجمعة | زاد الدعاة" },
+    { name: "description", content: "قراءة نص خطبة الجمعة ونسخه وحفظه في المفضلة." },
+    { property: "og:title", content: "قراءة خطبة الجمعة | زاد الدعاة" },
+    { property: "og:description", content: "قراءة نص خطبة الجمعة ونسخه وحفظه في المفضلة." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
 function KhutbahDetail() {

@@ -6,6 +6,14 @@ import { Heart, Trash2, BookmarkX } from "lucide-react";
 
 export const Route = createFileRoute("/favorites")({
   component: FavoritesPage,
+  head: () => ({ meta: [
+    { title: "المفضلة | زاد الدعاة" },
+    { name: "description", content: "النصوص المحفوظة من الخطب والأذكار والأحاديث للقراءة لاحقًا." },
+    { property: "og:title", content: "المفضلة | زاد الدعاة" },
+    { property: "og:description", content: "النصوص المحفوظة من الخطب والأذكار والأحاديث للقراءة لاحقًا." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
 function FavoritesPage() {

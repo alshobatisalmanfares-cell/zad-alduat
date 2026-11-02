@@ -14,8 +14,11 @@ export default defineConfig({
       },
       filename: "sw.js",
       manifest: false,
+      outDir: "dist/client",
+      includeAssets: ["*.png", "fonts/*.woff", "manifest*.json", "manifest.webmanifest"],
 
       workbox: {
+        globDirectory: "dist/client",
         navigateFallbackDenylist: [
           /^\/~oauth/,
           /^\/api\//,
@@ -24,7 +27,7 @@ export default defineConfig({
         ],
 
         globPatterns: [
-          "**/*.{js,css,html,ico,png,svg,woff,woff2,json,webmanifest}",
+          "**/*.{js,css,html,ico,png,jpg,jpeg,webp,avif,gif,svg,woff,woff2,json,webmanifest}",
         ],
 
         runtimeCaching: [
@@ -41,7 +44,7 @@ export default defineConfig({
           {
             urlPattern: ({ url, request }: { url: URL; request: Request }) =>
               url.origin === self.location.origin &&
-              request.destination !== "document",
+              /^\/assets\/.*-[\w-]+\./.test(url.pathname),
             handler: "CacheFirst",
             options: {
               cacheName: "zad-assets",
@@ -53,10 +56,12 @@ export default defineConfig({
           },
 
           {
-            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\//,
-            handler: "CacheFirst",
+            urlPattern: ({ url, request }: { url: URL; request: Request }) =>
+              url.origin === self.location.origin &&
+              (request.destination === "image" || request.destination === "font"),
+            handler: "StaleWhileRevalidate",
             options: {
-              cacheName: "zad-fonts",
+              cacheName: "zad-media",
               expiration: {
                 maxEntries: 40,
                 maxAgeSeconds: 60 * 60 * 24 * 365,

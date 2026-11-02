@@ -46,6 +46,17 @@ test("fails clearly when no server was built", (t) => {
   assert.match(result.stderr, /No built server entry found/);
 });
 
+test("bundles unvisited public images and fonts when client assets already exist", (t) => {
+  const f = fixture(t, "dist/server/index.mjs", `export default { fetch() { return new Response(${JSON.stringify(html)}); } };`);
+  mkdirSync(join(f.root, "public/fonts"), { recursive: true });
+  writeFileSync(join(f.root, "public/icon-512.png"), "official icon");
+  writeFileSync(join(f.root, "public/fonts/cairo-400.woff"), "local font");
+  const result = f.run();
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(readFileSync(join(f.root, "dist/client/icon-512.png"), "utf8"), "official icon");
+  assert.equal(readFileSync(join(f.root, "dist/client/fonts/cairo-400.woff"), "utf8"), "local font");
+});
+
 test("rejects missing client assets", (t) => {
   const result = fixture(t, ".output/server/index.mjs", "export default {};", null).run();
   assert.equal(result.status, 1);

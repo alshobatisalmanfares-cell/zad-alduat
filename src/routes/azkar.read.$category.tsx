@@ -6,6 +6,14 @@ import { ReaderControls } from "@/components/ReaderControls";
 
 export const Route = createFileRoute("/azkar/read/$category")({
   component: AzkarReader,
+  head: () => ({ meta: [
+    { title: "قراءة أذكار القسم | زاد الدعاة" },
+    { name: "description", content: "قراءة أذكار القسم بالتتابع مع عداد التكرار." },
+    { property: "og:title", content: "قراءة أذكار القسم | زاد الدعاة" },
+    { property: "og:description", content: "قراءة أذكار القسم بالتتابع مع عداد التكرار." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
 function AzkarReader() {

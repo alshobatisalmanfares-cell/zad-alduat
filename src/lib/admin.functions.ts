@@ -32,7 +32,7 @@ const Payload = z.object({
 });
 
 export const adminMutate = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => Payload.parse(data))
+  .validator((data: unknown) => Payload.parse(data))
   .handler(async ({ data }) => {
     const expected = process.env.ADMIN_PASSWORD;
     if (!expected || data.password !== expected) {

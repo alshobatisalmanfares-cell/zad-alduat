@@ -8,6 +8,10 @@ export const Route = createFileRoute("/contact")({
     meta: [
       { title: "تواصل معنا | زاد الدعاة" },
       { name: "description", content: "تواصل مع فريق زاد الدعاة عبر البريد الإلكتروني أو واتساب لأي استفسار أو اقتراح." },
+      { property: "og:title", content: "تواصل معنا | زاد الدعاة" },
+      { property: "og:description", content: "تواصل مع فريق زاد الدعاة عبر البريد الإلكتروني أو واتساب لأي استفسار أو اقتراح." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 });

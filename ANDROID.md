@@ -9,8 +9,8 @@ background whenever the phone is online. This is not a remote WebView wrapper �
 ## One-time setup
 
 ```bash
-bun install
-bun run build && bun scripts/android-shell.mjs
+bun install --frozen-lockfile
+NITRO_PRESET=node-middleware bun run build && bun scripts/android-shell.mjs
 bunx cap add android
 bunx cap sync android
 ```
@@ -18,12 +18,12 @@ bunx cap sync android
 ## Every build after a code change
 
 ```bash
-bun run build && bun scripts/android-shell.mjs
+NITRO_PRESET=node-middleware bun run build && bun scripts/android-shell.mjs
 bunx cap sync android
 bunx cap open android   # then Build > Build APK / Bundle in Android Studio
 ```
 
-Requirements: Android Studio + JDK 21 + Android SDK 34+ on your machine
+Requirements: Node 22.12+ + Android Studio + JDK 21 + Android SDK 36 / Build Tools 36.0.0 on your machine
 (the cloud editor cannot run the native Gradle build).
 
 ## Offline behaviour
@@ -42,3 +42,11 @@ Sync rules:
 - The manual "تحديث البيانات" button forces a sync and reports success/failure.
 
 The admin dashboard is unchanged and still requires a connection for write operations.
+
+Local public images and fonts are copied into every APK, even if their pages have never
+been visited. The published PWA precaches them during service-worker installation;
+it needs one online installation to finish, not an online visit to every image.
+Offline service workers are intentionally disabled in the editor preview.
+GitHub Actions produces a debug APK artifact; a signed store release requires separate
+signing credentials and release configuration. Nitro remains pinned because newer
+registry versions are prereleases, not stable replacements.
