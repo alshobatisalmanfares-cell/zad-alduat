@@ -8,6 +8,14 @@ import surahs from "@/data/surahs.json";
 
 export const Route = createFileRoute("/quran/$id")({
   component: SurahReader,
+  head: () => ({ meta: [
+    { title: "قراءة السورة | زاد الدعاة" },
+    { name: "description", content: "قراءة آيات السورة بالرسم العثماني والتشكيل." },
+    { property: "og:title", content: "قراءة السورة | زاد الدعاة" },
+    { property: "og:description", content: "قراءة آيات السورة بالرسم العثماني والتشكيل." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
 type Ayah = { number: number; numberInSurah: number; text: string };

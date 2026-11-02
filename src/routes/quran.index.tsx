@@ -11,6 +11,10 @@ export const Route = createFileRoute("/quran/")({
     meta: [
       { title: "المصحف الشريف — 114 سورة | زاد الدعاة" },
       { name: "description", content: "فهرس المصحف الشريف كاملاً، 114 سورة من الفاتحة إلى الناس بخط عثماني مضبوط بالتشكيل." },
+      { property: "og:title", content: "المصحف الشريف — 114 سورة | زاد الدعاة" },
+      { property: "og:description", content: "فهرس المصحف الشريف كاملاً، 114 سورة من الفاتحة إلى الناس بخط عثماني مضبوط بالتشكيل." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 });

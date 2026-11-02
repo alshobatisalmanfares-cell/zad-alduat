@@ -15,6 +15,10 @@ export const Route = createFileRoute("/hadith")({
     meta: [
       { title: "الحديث الشريف — الصحيحين والأربعون النووية | زاد الدعاة" },
       { name: "description", content: "مجموعة كبيرة من الأحاديث الصحيحة من صحيح البخاري ومسلم والأربعين النووية، مصنّفة حسب الأبواب مع خط واضح وبحث سريع." },
+      { property: "og:title", content: "الحديث الشريف — الصحيحين والأربعون النووية | زاد الدعاة" },
+      { property: "og:description", content: "مجموعة كبيرة من الأحاديث الصحيحة من صحيح البخاري ومسلم والأربعين النووية، مصنّفة حسب الأبواب مع خط واضح وبحث سريع." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 });

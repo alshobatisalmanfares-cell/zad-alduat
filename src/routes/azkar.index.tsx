@@ -18,6 +18,14 @@ import {
 
 export const Route = createFileRoute("/azkar/")({
   component: AzkarPage,
+  head: () => ({ meta: [
+    { title: "الأذكار والأدعية | زاد الدعاة" },
+    { name: "description", content: "أذكار حصن المسلم اليومية والأدعية المأثورة مرتبة حسب أقسامها." },
+    { property: "og:title", content: "الأذكار والأدعية | زاد الدعاة" },
+    { property: "og:description", content: "أذكار حصن المسلم اليومية والأدعية المأثورة مرتبة حسب أقسامها." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
 

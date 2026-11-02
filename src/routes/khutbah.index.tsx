@@ -7,6 +7,14 @@ import { Highlight } from "@/lib/highlight";
 
 export const Route = createFileRoute("/khutbah/")({
   component: KhutbahIndex,
+  head: () => ({ meta: [
+    { title: "خطب الجمعة | زاد الدعاة" },
+    { name: "description", content: "خطب الجمعة المكتوبة والمصنفة مع البحث والمفضلة." },
+    { property: "og:title", content: "خطب الجمعة | زاد الدعاة" },
+    { property: "og:description", content: "خطب الجمعة المكتوبة والمصنفة مع البحث والمفضلة." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
 function KhutbahIndex() {

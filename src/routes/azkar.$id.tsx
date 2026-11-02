@@ -7,6 +7,14 @@ import { Heart, RotateCcw, CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/azkar/$id")({
   component: DhikrDetail,
+  head: () => ({ meta: [
+    { title: "قراءة الذكر | زاد الدعاة" },
+    { name: "description", content: "قراءة الذكر مع عداد التكرار وحفظه في المفضلة." },
+    { property: "og:title", content: "قراءة الذكر | زاد الدعاة" },
+    { property: "og:description", content: "قراءة الذكر مع عداد التكرار وحفظه في المفضلة." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
 function DhikrDetail() {
