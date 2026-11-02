@@ -159,7 +159,7 @@ function RootComponent() {
 
           <InstallPrompt />
           <PermissionPrompt />
-          <Toaster position="top-center" richColors />
+          <Toaster position="top-center" offset={{ bottom: 88 }} mobileOffset={{ bottom: 88 }} richColors />
 
         </div>
       </AppStoreProvider>
