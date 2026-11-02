@@ -13,6 +13,6 @@
 
 # Current Android and offline image update
 
-- [ ] Update compatible Android build dependencies and CI setup.
-- [ ] Precache local images/fonts and bundle them even when pages were never opened.
-- [ ] Verify packaging tests and offline image loading; report APK build limitations.
+- [x] Update compatible Android build dependencies and CI setup.
+- [x] Precache local images/fonts and bundle them even when pages were never opened.
+- [x] Verify packaging tests and offline image loading; APK generation on GitHub and real-device verification remain external checks.
