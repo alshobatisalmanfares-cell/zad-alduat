@@ -18,6 +18,11 @@ async function renderShell() {
   }
 
   const clientDir = resolve("dist/client");
+  // Always include public assets, even when Vite already produced client/assets.
+  // Otherwise fonts/icons can be absent until the user fetches them online.
+  if (existsSync(resolve("public"))) {
+    cpSync(resolve("public"), clientDir, { recursive: true });
+  }
   if (!existsSync(resolve(clientDir, "assets")) && existsSync(resolve(".output/public/assets"))) {
     cpSync(resolve(".output/public"), clientDir, { recursive: true });
   }

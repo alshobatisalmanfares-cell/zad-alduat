@@ -10,3 +10,9 @@
 - [x] Verify local logo paths and remove the home-page hadith card.
 - [x] Replace the sticky offline bar with a dismissible, temporary notification.
 - [x] Check offline fonts, images, notification dismissal, and home layout.
+
+# Current Android and offline image update
+
+- [ ] Update compatible Android build dependencies and CI setup.
+- [ ] Precache local images/fonts and bundle them even when pages were never opened.
+- [ ] Verify packaging tests and offline image loading; report APK build limitations.
