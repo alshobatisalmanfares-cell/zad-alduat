@@ -44,6 +44,7 @@ export default defineConfig({
           {
             urlPattern: ({ url, request }: { url: URL; request: Request }) =>
               url.origin === self.location.origin &&
+              (request.destination === "script" || request.destination === "style") &&
               /^\/assets\/.*-[\w-]+\./.test(url.pathname),
             handler: "CacheFirst",
             options: {
