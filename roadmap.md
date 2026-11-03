@@ -16,3 +16,9 @@
 - [x] Update compatible Android build dependencies and CI setup.
 - [x] Precache local images/fonts and bundle them even when pages were never opened.
 - [x] Verify packaging tests and offline image loading; APK generation on GitHub and real-device verification remain external checks.
+
+# Native branding and saved media
+
+- [x] Apply official launcher icons to every generated Android project.
+- [x] Serve saved remote images cache-first in PWA and native app image controls.
+- [x] Verify image cache reuse without network requests and native icon resources; 10 tests and workflow validation passed, full APK/device run remains unverified.

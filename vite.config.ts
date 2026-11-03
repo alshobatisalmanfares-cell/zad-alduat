@@ -44,6 +44,7 @@ export default defineConfig({
           {
             urlPattern: ({ url, request }: { url: URL; request: Request }) =>
               url.origin === self.location.origin &&
+              (request.destination === "script" || request.destination === "style") &&
               /^\/assets\/.*-[\w-]+\./.test(url.pathname),
             handler: "CacheFirst",
             options: {
@@ -57,14 +58,13 @@ export default defineConfig({
 
           {
             urlPattern: ({ url, request }: { url: URL; request: Request }) =>
-              url.origin === self.location.origin &&
+              (url.protocol === "https:" || url.origin === self.location.origin) &&
               (request.destination === "image" || request.destination === "font"),
-            handler: "StaleWhileRevalidate",
+            handler: "CacheFirst",
             options: {
               cacheName: "zad-media",
               expiration: {
-                maxEntries: 40,
-                maxAgeSeconds: 60 * 60 * 24 * 365,
+                maxEntries: 1000,
               },
               cacheableResponse: {
                 statuses: [0, 200],
