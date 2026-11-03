@@ -12,6 +12,7 @@ background whenever the phone is online. This is not a remote WebView wrapper â€
 bun install --frozen-lockfile
 NITRO_PRESET=node-middleware bun run build && bun scripts/android-shell.mjs
 bunx cap add android
+node scripts/android-icons.mjs
 bunx cap sync android
 ```
 
@@ -19,6 +20,7 @@ bunx cap sync android
 
 ```bash
 NITRO_PRESET=node-middleware bun run build && bun scripts/android-shell.mjs
+node scripts/android-icons.mjs
 bunx cap sync android
 bunx cap open android   # then Build > Build APK / Bundle in Android Studio
 ```
@@ -50,3 +52,14 @@ Offline service workers are intentionally disabled in the editor preview.
 GitHub Actions produces a debug APK artifact; a signed store release requires separate
 signing credentials and release configuration. Nitro remains pinned because newer
 registry versions are prereleases, not stable replacements.
+
+Native launcher icons are generated from public/icon-512.png for legacy, round and
+adaptive Android launchers after every fresh cap add. The golden/black source is
+preserved with safe adaptive padding; no template launcher resources are used.
+Remote images rendered through OfflineImage persist readable image blobs in device
+CacheStorage and return saved blobs before any network request. New remote servers
+must permit CORS for native blob caching. Published PWA image requests, including
+cross-origin images, are cache-first (opaque responses supported). Saved PWA media
+has no age expiry; the 1000-entry bound and device storage availability still apply.
+Quran pages currently render API text, not Quran image scans. A remote image must be
+loaded once online before it can be read offline; bundled icons need no such load.
