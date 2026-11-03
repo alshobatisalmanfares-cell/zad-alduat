@@ -19,6 +19,8 @@
 
 # Native branding and saved media
 
+- [x] Harden native logo source, density resources and Android manifest mappings; all 10 icon, packaging and offline media checks passed. APK/device verification remains external.
+
 - [x] Apply official launcher icons to every generated Android project.
 - [x] Serve saved remote images cache-first in PWA and native app image controls.
 - [x] Verify image cache reuse without network requests and native icon resources; 10 tests and workflow validation passed, full APK/device run remains unverified.
