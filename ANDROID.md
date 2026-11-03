@@ -56,6 +56,11 @@ registry versions are prereleases, not stable replacements.
 Native launcher icons are generated from public/icon-512.png for legacy, round and
 adaptive Android launchers after every fresh cap add. The golden/black source is
 preserved with safe adaptive padding; no template launcher resources are used.
+The generator also refreshes `resources/icon.png` from the official logo, removes
+conflicting density-specific fallback files, and explicitly maps the Android
+manifest's `android:icon` and `android:roundIcon` to the generated mipmaps.
+Run `bun run cap:icons` after creating the Android platform or changing the logo;
+`cap:sync` and GitHub Actions already run this step before syncing Android.
 Remote images rendered through OfflineImage persist readable image blobs in device
 CacheStorage and return saved blobs before any network request. New remote servers
 must permit CORS for native blob caching. Published PWA image requests, including
