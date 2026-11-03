@@ -19,6 +19,6 @@
 
 # Native branding and saved media
 
-- [ ] Apply official launcher icons to every generated Android project.
-- [ ] Serve saved remote images cache-first in PWA and native app image controls.
-- [ ] Verify image cache reuse without network requests and native icon resources.
+- [x] Apply official launcher icons to every generated Android project.
+- [x] Serve saved remote images cache-first in PWA and native app image controls.
+- [x] Verify image cache reuse without network requests and native icon resources; 10 tests and workflow validation passed, full APK/device run remains unverified.
