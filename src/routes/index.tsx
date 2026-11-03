@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useStore } from "@/lib/store";
 import { Mail, BookHeart, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { OfflineImage } from "@/components/OfflineImage";
 
 import {
   MushafIcon, MinbarIcon, MisbahaIcon, HadithIcon, HeartStarIcon,
@@ -74,7 +75,7 @@ function Home() {
 
 
           <div className="h-14 w-14 rounded-2xl bg-[color:var(--gold)]/15 backdrop-blur grid place-items-center overflow-hidden border border-[color:var(--gold)]/30">
-            <img src="/icon-192.png" alt="زاد الدعاة" width={192} height={192} loading="eager" className="h-12 w-12 rounded-xl object-cover" />
+            <OfflineImage src="/icon-192.png" alt="زاد الدعاة" width={192} height={192} loading="eager" className="h-12 w-12 rounded-xl object-cover" />
           </div>
 
           <h1 className="mt-2 text-2xl font-black leading-tight text-[color:var(--gold)]">زاد الدعاة</h1>

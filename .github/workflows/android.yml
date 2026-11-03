@@ -54,7 +54,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Verify offline packaging
-        run: node --test scripts/android-shell.test.mjs
+        run: node --test scripts/android-shell.test.mjs scripts/offline-media.test.mjs
 
       - name: Build web app
         env:
@@ -78,6 +78,7 @@ jobs:
         run: |
           rm -rf android
           bunx cap add android
+          node scripts/android-icons.mjs
           bunx cap sync android
 
       - name: Build APK

@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "cap:sync": "vite build && bun scripts/android-shell.mjs && cap sync android",
+    "cap:sync": "vite build && bun scripts/android-shell.mjs && node scripts/android-icons.mjs && cap sync android",
+    "cap:icons": "node scripts/android-icons.mjs",
     "cap:open": "cap open android"
   },
   "dependencies": {
