@@ -3,6 +3,8 @@ import { useMemo, useState } from "react";
 import { useStore } from "@/lib/store";
 import { PageHeader } from "@/components/PageHeader";
 import { Search, Heart, ChevronLeft, Loader2 } from "lucide-react";
+import { matchesKhutbah, khutbahCategories } from "@/lib/khutbah-search.mjs";
+import { Button } from "@/components/ui/button";
 import { Highlight } from "@/lib/highlight";
 
 export const Route = createFileRoute("/khutbah/")({
@@ -25,15 +27,11 @@ function KhutbahIndex() {
   // Search is strictly scoped to khutab (title + full content only).
   const filtered = useMemo(
     () =>
-      khutab.filter(
-        (k) =>
-          (!cat || k.category === cat) &&
-          (!q || k.title.toLowerCase().includes(q.toLowerCase()) || k.content.toLowerCase().includes(q.toLowerCase())),
-      ),
+      khutab.filter(k => matchesKhutbah(k, q, cat)), 
     [khutab, q, cat],
   );
 
-  const cats = ["الكل", ...categories.map((c) => c.name)];
+  const cats = ["الكل", ...new Set([...categories.map(c => c.name), ...khutab.flatMap(khutbahCategories)])];
 
   return (
     <div>
@@ -45,8 +43,9 @@ function KhutbahIndex() {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="ابحث في الخطب فقط..."
-            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            placeholder="ابحث بالعنوان أو النص أو الوسوم..."
+            aria-label="البحث في الخطب"
+            className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
         </div>
       </div>
@@ -56,7 +55,7 @@ function KhutbahIndex() {
           {cats.map((c) => {
             const active = (c === "الكل" && !cat) || c === cat;
             return (
-              <button
+              <Button variant="outline" size="sm"
                 key={c}
                 onClick={() => setCat(c === "الكل" ? null : c)}
                 className={`shrink-0 px-4 py-1.5 rounded-full text-xs font-bold border transition-colors ${
@@ -66,7 +65,7 @@ function KhutbahIndex() {
                 }`}
               >
                 {c}
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -84,7 +83,7 @@ function KhutbahIndex() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1.5">
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                      {k.category}
+                      {khutbahCategories(k).join("، ")}
                     </span>
                     <span className="text-[10px] text-muted-foreground">{k.date}</span>
                   </div>

@@ -1,0 +1,11 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { matchesKhutbah, khutbahCategories } from '../src/lib/khutbah-search.mjs';
+const sermon = { title: 'أَخْلَاقُ المؤمن', content: 'الإحسان إلى الأسرة', categories: ['الأخلاق', 'الأسرة'], tags: ['تربية'] };
+test('search finds a title ignoring tashkeel and alef variants', () => assert.equal(matchesKhutbah(sermon, 'اخلاق'), true));
+test('search finds full content', () => assert.equal(matchesKhutbah(sermon, 'احسان'), true));
+test('search finds tags', () => assert.equal(matchesKhutbah(sermon, 'تربية'), true));
+test('both assigned categories filter the same sermon', () => { assert.equal(matchesKhutbah(sermon, '', 'الأخلاق'), true); assert.equal(matchesKhutbah(sermon, '', 'الأسرة'), true); assert.equal(matchesKhutbah(sermon, '', 'العبادات'), false); });
+test('whitespace cannot produce empty failures', () => assert.equal(matchesKhutbah(sermon, '   '), true));
+test('tokens search across fields and unrelated text fails', () => { assert.equal(matchesKhutbah(sermon, 'المؤمن تربية'), true); assert.equal(matchesKhutbah(sermon, 'غير موجود'), false); });
+test('legacy single-category cache is preserved', () => assert.deepEqual(khutbahCategories({ category: 'الإيمان' }), ['الإيمان']));

@@ -65,31 +65,55 @@ export type Database = {
         }
         Relationships: []
       }
+      categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       khutab: {
         Row: {
+          categories: string[]
           category: string
           content: string
           created_at: string
           date: string
           id: string
+          tags: string[]
           title: string
           updated_at: string
         }
         Insert: {
+          categories?: string[]
           category?: string
           content?: string
           created_at?: string
           date?: string
           id?: string
+          tags?: string[]
           title: string
           updated_at?: string
         }
         Update: {
+          categories?: string[]
           category?: string
           content?: string
           created_at?: string
           date?: string
           id?: string
+          tags?: string[]
           title?: string
           updated_at?: string
         }

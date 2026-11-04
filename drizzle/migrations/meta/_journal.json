@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1793763996632,
+      "tag": "0000_persistent_sermon_categories",
+      "breakpoints": true
+    }
+  ]
+}

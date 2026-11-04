@@ -4,6 +4,8 @@ import { z } from "zod";
 const KhutbahInput = z.object({
   title: z.string().min(1).max(300),
   category: z.string().max(120).default(""),
+  categories: z.array(z.string().trim().min(1).max(120)).max(50).default([]),
+  tags: z.array(z.string().trim().min(1).max(120)).max(50).default([]),
   date: z.string().max(60).default(""),
   content: z.string().min(1),
 });
@@ -26,6 +28,9 @@ const Payload = z.object({
     "dhikr.update",
     "dhikr.delete",
     "hadith.set",
+    "category.create",
+    "category.update",
+    "category.delete",
   ]),
   id: z.string().uuid().optional(),
   data: z.unknown().optional(),
@@ -41,6 +46,25 @@ export const adminMutate = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     switch (data.action) {
+      case "category.create": {
+        const input = z.object({ name: z.string().trim().min(1).max(120) }).parse(data.data);
+        const { data: row, error } = await supabaseAdmin.from("categories").insert(input).select("id, name").single();
+        if (error) throw new Error(error.message);
+        return row;
+      }
+      case "category.update": {
+        if (!data.id) throw new Error("id required");
+        const input = z.object({ name: z.string().trim().min(1).max(120) }).parse(data.data);
+        const { data: row, error } = await supabaseAdmin.from("categories").update(input).eq("id", data.id).select("id, name").single();
+        if (error) throw new Error(error.message);
+        return row;
+      }
+      case "category.delete": {
+        if (!data.id) throw new Error("id required");
+        const { error } = await supabaseAdmin.from("categories").delete().eq("id", data.id);
+        if (error) throw new Error(error.message);
+        return { ok: true };
+      }
       case "khutbah.create": {
         const input = KhutbahInput.parse(data.data);
         const { data: row, error } = await supabaseAdmin
