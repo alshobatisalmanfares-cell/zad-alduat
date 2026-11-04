@@ -1,5 +1,14 @@
 # Android build repair
 
+# Current content and offline fixes
+
+- [ ] Enable global selection, copying and native sharing.
+- [ ] Normalize sermon search across title, content, tags and multiple categories.
+- [ ] Persist category create, rename and delete with synchronized sermon assignments.
+- [ ] Add multi-category sermon editing.
+- [ ] Bundle the complete text Quran for offline first launch.
+- [ ] Verify content management, search, sharing and offline Quran flows.
+
 - [x] Align the offline shell script with TanStack/Nitro build outputs.
 - [x] Configure GitHub Actions to generate a CI-compatible server and verify the offline page.
 - [x] Run script regression tests and workflow validation (7 tests passed).
