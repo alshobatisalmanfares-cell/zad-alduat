@@ -1,13 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useStore, type Khutbah } from "@/lib/store";
+import { Button } from "@/components/ui/button";
+import { matchesKhutbah, khutbahCategories } from "@/lib/khutbah-search.mjs";
 import { Plus, Edit3, Trash2, X, Save, Loader2, Search, ArrowUpDown } from "lucide-react";
 
 export const Route = createFileRoute("/admin/khutab")({
   component: AdminKhutab,
+  head: () => ({ meta: [
+    { title: "إدارة الخطب | زاد الدعاة" },
+    { name: "description", content: "إدارة خطب الجمعة وأقسامها ووسومها." },
+    { property: "og:title", content: "إدارة الخطب | زاد الدعاة" },
+    { property: "og:description", content: "إدارة خطب الجمعة وأقسامها ووسومها." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
-const empty: Omit<Khutbah, "id"> = { title: "", category: "", date: "", content: "" };
+const empty: Omit<Khutbah, "id"> = { title: "", category: "", categories: [], tags: [], date: "", content: "" };
 
 function AdminKhutab() {
   const { khutab, categories, addKhutbah, updateKhutbah, deleteKhutbah } = useStore();
@@ -20,12 +30,7 @@ function AdminKhutab() {
   const [sort, setSort] = useState<"newest" | "oldest" | "title">("newest");
 
   const visible = useMemo(() => {
-    const ql = q.trim().toLowerCase();
-    const list = khutab.filter(
-      (k) =>
-        (filterCat === "الكل" || k.category === filterCat) &&
-        (!ql || k.title.toLowerCase().includes(ql) || k.content.toLowerCase().includes(ql)),
-    );
+    const list = khutab.filter(k => matchesKhutbah(k, q, filterCat === "الكل" ? null : filterCat));
     return [...list].sort((a, b) => {
       if (sort === "title") return a.title.localeCompare(b.title, "ar");
       const cmp = (a.date || "").localeCompare(b.date || "");
@@ -35,12 +40,12 @@ function AdminKhutab() {
 
 
   const openCreate = () => {
-    setForm({ ...empty, category: categories[0]?.name ?? "", date: new Date().toISOString().slice(0, 10) });
+    setForm({ ...empty, category: "", categories: [], date: new Date().toISOString().slice(0, 10) });
     setCreating(true);
   };
   const openEdit = (k: Khutbah) => {
     setEditing(k);
-    setForm({ title: k.title, category: k.category, date: k.date, content: k.content });
+    setForm({ title: k.title, category: k.category, categories: khutbahCategories(k), tags: k.tags ?? [], date: k.date, content: k.content });
   };
   const close = () => {
     setCreating(false);
@@ -50,8 +55,9 @@ function AdminKhutab() {
     if (!form.title.trim() || !form.content.trim() || saving) return;
     setSaving(true);
     try {
-      if (editing) await updateKhutbah(editing.id, form);
-      else await addKhutbah(form);
+      const data = { ...form, category: form.categories?.[0] ?? "" };
+      if (editing) await updateKhutbah(editing.id, data);
+      else await addKhutbah(data);
       close();
     } catch (e) {
       alert("فشل الحفظ: " + (e as Error).message);
@@ -63,12 +69,12 @@ function AdminKhutab() {
 
   return (
     <div className="space-y-3">
-      <button
+      <Button
         onClick={openCreate}
         className="w-full inline-flex items-center justify-center gap-2 rounded-2xl gradient-primary text-primary-foreground py-3 font-bold text-sm shadow-soft"
       >
         <Plus className="h-4 w-4" /> إضافة خطبة جديدة
-      </button>
+      </Button>
 
       <div className="flex items-center gap-2 bg-card rounded-2xl px-3 py-2.5 border border-border shadow-card">
         <Search className="h-4 w-4 text-muted-foreground" />
@@ -115,7 +121,7 @@ function AdminKhutab() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                    {k.category || "—"}
+                    {khutbahCategories(k).join("، ") || "—"}
                   </span>
                   <span className="text-[10px] text-muted-foreground">{k.date}</span>
                 </div>
@@ -123,10 +129,10 @@ function AdminKhutab() {
                 <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{k.content}</p>
               </div>
               <div className="flex flex-col gap-1.5 shrink-0">
-                <button onClick={() => openEdit(k)} className="h-8 w-8 rounded-lg bg-primary/10 text-primary grid place-items-center">
+                <Button onClick={() => openEdit(k)} className="h-8 w-8 rounded-lg bg-primary/10 text-primary grid place-items-center">
                   <Edit3 className="h-3.5 w-3.5" />
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={async () => {
                     if (!confirm("حذف هذه الخطبة؟")) return;
                     try {
@@ -138,7 +144,7 @@ function AdminKhutab() {
                   className="h-8 w-8 rounded-lg bg-destructive/10 text-destructive grid place-items-center"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               </div>
             </div>
           </li>
@@ -153,9 +159,9 @@ function AdminKhutab() {
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-black">{editing ? "تعديل خطبة" : "خطبة جديدة"}</h2>
-              <button onClick={close} className="h-8 w-8 rounded-full bg-muted grid place-items-center">
+              <Button onClick={close} className="h-8 w-8 rounded-full bg-muted grid place-items-center">
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
 
             <div className="space-y-3">
@@ -167,20 +173,15 @@ function AdminKhutab() {
                 />
               </Field>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="القسم">
-                  <select
-                    value={form.category}
-                    onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    className="input"
-                  >
-                    <option value="">اختر...</option>
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.name}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
+                <fieldset className="min-w-0">
+                  <legend className="text-xs font-bold mb-2">الأقسام</legend>
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {categories.map(c => <label key={c.id} className="flex items-center gap-2 text-sm">
+                      <input type="checkbox" checked={form.categories?.includes(c.name) ?? false} onChange={e => setForm({ ...form, categories: e.target.checked ? [...(form.categories ?? []), c.name] : (form.categories ?? []).filter(n => n !== c.name) })} />
+                      {c.name}
+                    </label>)}
+                  </div>
+                </fieldset>
                 <Field label="التاريخ">
                   <input
                     value={form.date}
@@ -190,6 +191,9 @@ function AdminKhutab() {
                   />
                 </Field>
               </div>
+              <Field label="الوسوم">
+                <input className="input" value={(form.tags ?? []).join("، ")} onChange={e => setForm({ ...form, tags: e.target.value.split(/[,،]/).map(s => s.trim()).filter(Boolean) })} placeholder="تربية، إحسان" />
+              </Field>
               <Field label="نص الخطبة">
                 <textarea
                   rows={10}
@@ -200,7 +204,7 @@ function AdminKhutab() {
                 />
               </Field>
 
-              <button
+              <Button
                 onClick={save}
                 disabled={saving}
                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl gradient-primary text-primary-foreground py-2.5 font-bold text-sm disabled:opacity-70 disabled:cursor-not-allowed"
@@ -212,7 +216,7 @@ function AdminKhutab() {
                     <Save className="h-4 w-4" /> حفظ
                   </>
                 )}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

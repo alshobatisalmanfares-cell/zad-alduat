@@ -9,6 +9,8 @@ export type Khutbah = {
   id: string;
   title: string;
   category: string;
+  categories?: string[];
+  tags?: string[];
   date: string;
   content: string;
 };
@@ -66,8 +68,9 @@ type Store = {
   updateDhikr: (id: string, d: Partial<Omit<Dhikr, "id">>) => Promise<void>;
   deleteDhikr: (id: string) => Promise<void>;
   categories: Category[];
-  addCategory: (name: string) => void;
-  deleteCategory: (id: string) => void;
+  addCategory: (name: string) => Promise<void>;
+  updateCategory: (id: string, name: string) => Promise<void>;
+  deleteCategory: (id: string) => Promise<void>;
   hadithOfDay: string;
   syncing: boolean;
   syncData: () => Promise<boolean>;
@@ -90,7 +93,7 @@ type Store = {
 };
 
 
-const uid = () => Math.random().toString(36).slice(2, 10);
+
 
 const sortAzkar = (list: Dhikr[]) => [...list].sort((a, b) => a.sortOrder - b.sortOrder);
 
@@ -161,14 +164,21 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     void idbSet("settings", "hadith_of_day", text);
   };
 
+  const saveCategories = (rows: Category[]) => {
+    setCategories(rows);
+    void idbSet("settings", "categories", rows);
+  };
+
   const fetchAll = async () => {
-    const [khRes, azRes, stRes] = await Promise.all([
+    const [khRes, azRes, stRes, catRes] = await Promise.all([
       supabase.from("khutab").select("*").order("created_at", { ascending: false }),
       supabase.from("azkar").select("*").order("sort_order", { ascending: true }),
       supabase.from("app_settings").select("value").eq("key", "hadith_of_day").maybeSingle(),
+      supabase.from("categories").select("id, name").order("created_at"),
     ]);
-    const err = khRes.error || azRes.error || stRes.error;
+    const err = khRes.error || azRes.error || stRes.error || catRes.error;
     if (err) throw err;
+    if (catRes.data) saveCategories(catRes.data);
     if (khRes.data) saveKhutab(khRes.data as Khutbah[]);
     if (azRes.data) saveAzkar((azRes.data as DhikrRow[]).map(mapDhikr));
     if (stRes.data?.value) saveHadith(stRes.data.value);
@@ -184,15 +194,17 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     let alive = true;
 
     (async () => {
-      const [localKh, localAz, localHadith] = await Promise.all([
+      const [localKh, localAz, localHadith, localCategories] = await Promise.all([
         idbGet<Khutbah[]>("khutab", "all"),
         idbGet<Dhikr[]>("azkar", "all"),
         idbGet<string>("settings", "hadith_of_day"),
+        idbGet<Category[]>("settings", "categories"),
       ]);
       if (!alive) return;
       if (localKh?.length) setKhutab(localKh);
       if (localAz?.length) setAzkar(localAz);
       if (localHadith) setHadithLocal(localHadith);
+      if (localCategories) setCategories(localCategories);
       setHydrated(true);
       setKhutabLoading(!localKh?.length);
 
@@ -231,6 +243,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         const { data } = await supabase.from("app_settings").select("value").eq("key", "hadith_of_day").maybeSingle();
         if (data?.value) saveHadith(data.value);
       })
+      .on("postgres_changes", { event: "*", schema: "public", table: "categories" }, () => { fetchRef.current().catch(() => {}); })
       .subscribe();
 
     return () => {
@@ -296,8 +309,20 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     },
 
     categories,
-    addCategory: (name) => setCategories((p) => [...p, { id: uid(), name }]),
-    deleteCategory: (id) => setCategories((p) => p.filter((c) => c.id !== id)),
+    addCategory: async (name) => {
+      const row = await adminMutate({ data: { password: requirePw(), action: "category.create", data: { name } } }) as Category;
+      saveCategories([...categories.filter(c => c.id !== row.id), row]);
+    },
+    updateCategory: async (id, name) => {
+      const row = await adminMutate({ data: { password: requirePw(), action: "category.update", id, data: { name } } }) as Category;
+      saveCategories(categories.map(c => c.id === id ? row : c));
+      await fetchAll();
+    },
+    deleteCategory: async (id) => {
+      await adminMutate({ data: { password: requirePw(), action: "category.delete", id } });
+      saveCategories(categories.filter(c => c.id !== id));
+      await fetchAll();
+    },
     hadithOfDay,
     syncing,
     hydrated,
