@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useStore } from "@/lib/store";
 import { ArrowRight, ChevronLeft, ChevronRight, Share2, Heart, RotateCcw, CheckCircle2, Sparkles, List } from "lucide-react";
+import { shareText } from "@/lib/text-actions";
 import { ReaderControls } from "@/components/ReaderControls";
 
 export const Route = createFileRoute("/azkar/read/$category")({
@@ -51,17 +52,7 @@ function AzkarReader() {
   const share = async () => {
     if (!z) return;
     const text = `${z.title}\n\n${z.text}\n\n— من تطبيق زاد الدعاة`;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: z.title, text });
-      } else {
-        await navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1600);
-      }
-    } catch {
-      /* dismissed */
-    }
+    await shareText(z.title, text);
   };
 
   if (list.length === 0) {

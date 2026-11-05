@@ -4,7 +4,10 @@ import { toast } from "sonner";
 import { useStore } from "@/lib/store";
 import { PageHeader } from "@/components/PageHeader";
 import { ReaderControls } from "@/components/ReaderControls";
-import { Heart, Calendar, Tag, Copy, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { copyText, shareText } from "@/lib/text-actions";
+import { khutbahCategories } from "@/lib/khutbah-search.mjs";
+import { Heart, Calendar, Tag, Copy, Check, Share2 } from "lucide-react";
 
 
 export const Route = createFileRoute("/khutbah/$id")({
@@ -22,18 +25,19 @@ export const Route = createFileRoute("/khutbah/$id")({
 function KhutbahDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const { khutab, toggleFavorite, isFavorite, fontScale } = useStore();
+  const { khutab, toggleFavorite, isFavorite, fontScale, khutabLoading, hydrated } = useStore();
   const [copied, setCopied] = useState(false);
   const k = khutab.find((x) => x.id === id);
 
 
+  if (!k && (!hydrated || khutabLoading)) return <p className="p-6 text-center text-muted-foreground">جاري تحميل الخطبة...</p>;
   if (!k) {
     return (
       <div className="p-6 text-center">
         <p className="text-sm text-muted-foreground mb-4">الخطبة غير موجودة</p>
-        <button onClick={() => navigate({ to: "/khutbah" })} className="text-primary font-bold text-sm">
+        <Button variant="ghost" onClick={() => navigate({ to: "/khutbah" })} className="text-primary font-bold text-sm">
           العودة إلى قائمة الخطب
-        </button>
+        </Button>
       </div>
     );
   }
@@ -45,13 +49,13 @@ function KhutbahDetail() {
       <PageHeader
         title={k.title}
         right={
-          <button
+          <Button variant="ghost"
             onClick={() => toggleFavorite({ id: k.id, type: "khutbah", title: k.title, content: k.content })}
             className="h-9 w-9 rounded-full bg-white/15 grid place-items-center"
             aria-label="حفظ في المفضلة"
           >
             <Heart className={`h-4 w-4 ${fav ? "fill-rose-400 text-rose-400" : ""}`} />
-          </button>
+          </Button>
         }
       />
 
@@ -63,13 +67,13 @@ function KhutbahDetail() {
         <article className="rounded-2xl bg-card border border-border shadow-card p-5 text-foreground">
           <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-border">
             <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
-              <span className="inline-flex items-center gap-1"><Tag className="h-3.5 w-3.5" /> {k.category}</span>
+              <span className="inline-flex items-center gap-1"><Tag className="h-3.5 w-3.5" /> {khutbahCategories(k).join("، ")}</span>
               <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {k.date}</span>
             </div>
-            <button
+            <Button variant="ghost"
               onClick={async () => {
                 try {
-                  await navigator.clipboard.writeText(`${k.title}\n\n${k.content}`);
+                  await copyText(`${k.title}\n\n${k.content}`);
                   setCopied(true);
                   toast.success("تم نسخ النص بنجاح");
                   setTimeout(() => setCopied(false), 1800);
@@ -82,7 +86,8 @@ function KhutbahDetail() {
             >
               {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {copied ? "تم النسخ" : "نسخ"}
-            </button>
+            </Button>
+            <Button variant="outline" size="icon" aria-label="مشاركة الخطبة" onClick={() => shareText(k.title, `${k.title}\n\n${k.content}`)}><Share2 /></Button>
           </div>
 
           <div className="leading-loose" style={{ fontFamily: "Amiri, serif", fontSize: `${fontScale * 17}px` }}>
