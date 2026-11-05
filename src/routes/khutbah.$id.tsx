@@ -51,7 +51,7 @@ function KhutbahDetail() {
         right={
           <Button variant="ghost"
             onClick={() => toggleFavorite({ id: k.id, type: "khutbah", title: k.title, content: k.content })}
-            className="h-9 w-9 rounded-full bg-white/15 grid place-items-center"
+            className="h-9 w-9 rounded-full bg-gold/15 text-gold grid place-items-center"
             aria-label="حفظ في المفضلة"
           >
             <Heart className={`h-4 w-4 ${fav ? "fill-rose-400 text-rose-400" : ""}`} />
