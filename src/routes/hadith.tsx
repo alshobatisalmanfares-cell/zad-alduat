@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { ReaderControls } from "@/components/ReaderControls";
 import { useStore } from "@/lib/store";
 import { Heart, Search, BookOpen, X, Copy, Check, Share2, ChevronLeft, ChevronRight } from "lucide-react";
+import { copyText, shareText } from "@/lib/text-actions";
 import { toast } from "sonner";
 
 import hadithData from "@/data/hadith.json";
@@ -91,7 +92,7 @@ function HadithPage() {
           return (
             <article
               key={h.id}
-              onClick={() => setOpenIdx(i)}
+              onClick={() => { if (!window.getSelection()?.toString()) setOpenIdx(i); }}
               className="rounded-2xl bg-card border border-border shadow-card p-4 cursor-pointer active:scale-[0.99] hover:border-[color:var(--gold)]/60 transition"
             >
               <div className="flex items-center justify-between mb-2 gap-2">
@@ -177,7 +178,7 @@ function HadithPage() {
               <button
                 onClick={async () => {
                   try {
-                    await navigator.clipboard.writeText(`${active.text}\n\n${active.book} — ${active.number} (${active.grade})`);
+                    await copyText(`${active.text}\n\n${active.book} — ${active.number} (${active.grade})`);
                     setCopied(true);
                     toast.success("تم نسخ النص بنجاح");
                     setTimeout(() => setCopied(false), 1800);
@@ -192,15 +193,7 @@ function HadithPage() {
               <button
                 onClick={async () => {
                   const text = `${active.text}\n\n${active.book} — ${active.number}\n— من تطبيق زاد الدعاة`;
-                  try {
-                    if (navigator.share) await navigator.share({ title: active.book, text });
-                    else {
-                      await navigator.clipboard.writeText(text);
-                      toast.success("تم نسخ النص بنجاح");
-                    }
-                  } catch {
-                    /* dismissed */
-                  }
+                  await shareText(active.book, text);
                 }}
                 className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[color:var(--gold)] text-black py-2.5 text-xs font-black active:scale-95 transition"
               >

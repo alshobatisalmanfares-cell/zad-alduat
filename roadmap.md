@@ -2,12 +2,12 @@
 
 # Current content and offline fixes
 
-- [ ] Enable global selection, copying and native sharing.
-- [ ] Normalize sermon search across title, content, tags and multiple categories.
-- [ ] Persist category create, rename and delete with synchronized sermon assignments.
-- [ ] Add multi-category sermon editing.
-- [ ] Bundle the complete text Quran for offline first launch.
-- [ ] Verify content management, search, sharing and offline Quran flows.
+- [x] Enable global selection, copying and native sharing.
+- [x] Normalize sermon search across title, content, tags and multiple categories.
+- [x] Persist category create, rename and delete with synchronized sermon assignments.
+- [x] Add multi-category sermon editing.
+- [x] Bundle the complete text Quran for offline first launch.
+- [x] Verify real category CRUD, multi-category creation, search, clipboard and never-opened Quran reading; 20 tests passed. Native share sheet and installed APK require device verification.
 
 - [x] Align the offline shell script with TanStack/Nitro build outputs.
 - [x] Configure GitHub Actions to generate a CI-compatible server and verify the offline page.

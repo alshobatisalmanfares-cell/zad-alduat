@@ -154,12 +154,21 @@
     border-color: var(--color-border);
   }
   body {
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-tap-highlight-color: transparent;
   }
 }
+
+[data-share-content] :is(p, h1, h2, h3, span, article, label) {
+  -webkit-user-select: text;
+  user-select: text;
+}
+.clipboard-fallback { position: fixed; inset: 0 auto auto 0; opacity: 0; }
 
 @utility gradient-header {
   background-image: var(--gradient-header);

@@ -14,10 +14,10 @@ export function PageHeader({
   back?: boolean;
 }) {
   return (
-    <header className="gradient-header text-primary-foreground rounded-b-3xl px-5 pt-10 pb-6">
+    <header className="gradient-header text-gold rounded-b-3xl px-5 pt-10 pb-6">
       <div className="flex items-center justify-between mb-3">
         {back ? (
-          <Link to="/" className="h-9 w-9 rounded-full bg-white/15 grid place-items-center">
+          <Link to="/" className="h-9 w-9 rounded-full bg-gold/15 grid place-items-center">
             <ArrowRight className="h-4 w-4" />
           </Link>
         ) : (
