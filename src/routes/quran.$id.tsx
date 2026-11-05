@@ -5,6 +5,7 @@ import { useStore } from "@/lib/store";
 import { ReaderControls } from "@/components/ReaderControls";
 import { idbGet, idbSet } from "@/lib/offline-db";
 import surahs from "@/data/surahs.json";
+import quran from "@/data/quran-uthmani.json";
 
 export const Route = createFileRoute("/quran/$id")({
   component: SurahReader,
@@ -25,6 +26,8 @@ const LEGACY_PREFIX = "zad.quran.surah.";
 
 /** Offline-first: local database → legacy localStorage cache → network. */
 async function fetchSurah(id: number): Promise<Ayah[]> {
+  const bundled = quran.surahs[String(id) as keyof typeof quran.surahs];
+  if (bundled?.length) return bundled;
   const local = await idbGet<Ayah[]>("quran", String(id));
   if (local?.length) return local;
 
@@ -162,6 +165,7 @@ function SurahReader() {
       </div>
 
       <div className="h-8" />
+      <p className="text-center text-xs text-muted-foreground pb-3">النص القرآني: <a href="https://tanzil.net" className="text-primary underline">مشروع تنزيل</a></p>
     </div>
   );
 }
