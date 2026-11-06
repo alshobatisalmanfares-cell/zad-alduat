@@ -137,6 +137,7 @@ function AzkarReader() {
       <div className="px-5 mt-5">
         <article
           key={z.id}
+          data-copy-text={`${z.title}\n\n${z.text}`}
           className="rounded-3xl p-6 border border-[color:var(--gold)]/40 bg-gradient-to-br from-[oklch(0.15_0.01_80)] to-[oklch(0.08_0.005_80)] text-[color:var(--gold)] shadow-soft animate-in fade-in slide-in-from-right-4 duration-300"
           style={{ direction: "rtl" }}
         >
