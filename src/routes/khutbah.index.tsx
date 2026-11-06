@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import { useStore } from "@/lib/store";
 import { PageHeader } from "@/components/PageHeader";
 import { Search, Heart, ChevronLeft, Loader2 } from "lucide-react";
@@ -25,11 +25,12 @@ function KhutbahIndex() {
   const [cat, setCat] = useState<string | null>(null);
 
   // Search is strictly scoped to khutab (title + full content only).
+  const dq = useDeferredValue(q);
   const filtered = useMemo(
-    () =>
-      khutab.filter(k => matchesKhutbah(k, q, cat)), 
-    [khutab, q, cat],
+    () => khutab.filter(k => matchesKhutbah(k, dq, cat)),
+    [khutab, dq, cat],
   );
+  const searching = dq.trim() !== "" || cat !== null;
 
   const cats = ["الكل", ...new Set([...categories.map(c => c.name), ...khutab.flatMap(khutbahCategories)])];
 
@@ -50,7 +51,12 @@ function KhutbahIndex() {
         </div>
       </div>
 
-      <div className="px-5 mt-4">
+      <div className="px-5 mt-3 flex items-center justify-between text-[11px] text-muted-foreground" aria-live="polite">
+        <span>{searching ? `تم العثور على ${filtered.length} خطبة` : `${filtered.length} خطبة`}</span>
+        {q && <button type="button" onClick={() => setQ("")} className="font-bold text-primary">مسح البحث</button>}
+      </div>
+
+      <div className="px-5 mt-2">
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 no-scrollbar">
           {cats.map((c) => {
             const active = (c === "الكل" && !cat) || c === cat;
@@ -88,11 +94,12 @@ function KhutbahIndex() {
                     <span className="text-[10px] text-muted-foreground">{k.date}</span>
                   </div>
                   <h3 className="font-black text-[15px] leading-snug truncate">
-                    <Highlight text={k.title} query={q} />
+                    <Highlight text={k.title} query={dq} />
                   </h3>
                   <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
-                    <Highlight text={k.content} query={q} />
+                    <Highlight text={snippet(k.content)} query={dq} />
                   </p>
+                  {!!k.tags?.length && <div className="mt-1.5 flex flex-wrap gap-1">{k.tags.map(t => <span key={t} className="text-[10px] text-muted-foreground">#{t}</span>)}</div>}
                 </div>
                 <div className="flex flex-col items-center gap-2 shrink-0">
                   {isFavorite(k.id) && <Heart className="h-4 w-4 fill-rose-500 text-rose-500" />}
@@ -114,4 +121,8 @@ function KhutbahIndex() {
       </ul>
     </div>
   );
+}
+
+function snippet(content: string) {
+  return content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 220);
 }
