@@ -137,6 +137,7 @@ function HadithPage() {
           <div
             className="w-full max-w-md rounded-3xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[oklch(0.16_0.02_80)] to-[oklch(0.09_0.01_80)] text-[color:var(--gold)] p-5 shadow-soft max-h-[88vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
+            data-copy-text={`${active.text}\n\n${active.book} — ${active.number} (${active.grade})`}
             style={{ direction: "rtl" }}
           >
             <div className="flex items-center justify-between mb-4">
