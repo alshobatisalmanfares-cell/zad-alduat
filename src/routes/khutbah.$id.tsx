@@ -64,7 +64,7 @@ function KhutbahDetail() {
       </div>
 
       <div className="px-5 mt-5">
-        <article className="rounded-2xl bg-card border border-border shadow-card p-5 text-foreground">
+        <article data-copy-text={`${k.title}\n\n${k.content}`} className="rounded-2xl bg-card border border-border shadow-card p-5 text-foreground">
           <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-border">
             <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
               <span className="inline-flex items-center gap-1"><Tag className="h-3.5 w-3.5" /> {khutbahCategories(k).join("، ")}</span>

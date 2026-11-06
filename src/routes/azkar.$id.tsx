@@ -70,6 +70,7 @@ function DhikrDetail() {
 
       <div className="px-5 mt-5">
         <article
+          data-copy-text={`${z.title}\n\n${z.text}`}
           className="rounded-3xl bg-card border border-border shadow-card p-6 leading-loose text-foreground text-center"
           style={{ fontFamily: "Amiri, serif", fontSize: `${fontScale * 20}px`, direction: "rtl" }}
         >
