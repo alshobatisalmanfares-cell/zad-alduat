@@ -20,7 +20,6 @@ import { BottomNav } from "../components/BottomNav";
 import { InstallPrompt } from "../components/InstallPrompt";
 import { Toaster } from "../components/ui/sonner";
 import { registerServiceWorker } from "../lib/pwa";
-import { TextActions } from "@/components/TextActions";
 
 
 
@@ -156,7 +155,6 @@ function RootComponent() {
           <OfflineBanner />
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <main data-share-content><Outlet /></main>
-          <TextActions />
           <BottomNav />
 
           <InstallPrompt />

@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useStore } from "@/lib/store";
-import { ArrowRight, ChevronLeft, ChevronRight, Share2, Heart, RotateCcw, CheckCircle2, Sparkles, List } from "lucide-react";
-import { shareText } from "@/lib/text-actions";
+import { Copy, ArrowRight, ChevronLeft, ChevronRight, Share2, Heart, RotateCcw, CheckCircle2, Sparkles, List } from "lucide-react";
+import { copyText, shareText } from "@/lib/text-actions";
+import { toast } from "sonner";
 import { ReaderControls } from "@/components/ReaderControls";
 
 export const Route = createFileRoute("/azkar/read/$category")({
@@ -214,7 +215,18 @@ function AzkarReader() {
               className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--gold)] text-black px-3 py-1.5 text-xs font-black"
             >
               <Share2 className="h-3.5 w-3.5" />
-              {copied ? "تم النسخ" : "مشاركة"}
+              مشاركة
+            </button>
+            <button
+              onClick={async () => {
+                if (!z) return;
+                try { await copyText(`${z.title}\n\n${z.text}`); setCopied(true); toast.success("تم نسخ النص بنجاح"); setTimeout(() => setCopied(false), 1800); }
+                catch { toast.error("تعذّر النسخ"); }
+              }}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/50 text-[color:var(--gold)] px-3 py-1.5 text-xs font-black"
+            >
+              <Copy className="h-3.5 w-3.5" />
+              {copied ? "تم النسخ" : "نسخ"}
             </button>
           </div>
 
