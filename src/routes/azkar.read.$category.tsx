@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useStore } from "@/lib/store";
-import { ArrowRight, ChevronLeft, ChevronRight, Share2, Heart, RotateCcw, CheckCircle2, Sparkles, List } from "lucide-react";
-import { shareText } from "@/lib/text-actions";
+import { Copy, ArrowRight, ChevronLeft, ChevronRight, Share2, Heart, RotateCcw, CheckCircle2, Sparkles, List } from "lucide-react";
+import { copyText, shareText } from "@/lib/text-actions";
+import { toast } from "sonner";
 import { ReaderControls } from "@/components/ReaderControls";
 
 export const Route = createFileRoute("/azkar/read/$category")({
