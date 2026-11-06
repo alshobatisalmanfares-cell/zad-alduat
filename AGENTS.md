@@ -16,4 +16,4 @@
 - Remote image controls use OfflineImage and device CacheStorage blobs before fetch, independent of service workers; PWA image requests use cache-first and never age-expire saved media. Quran reading currently uses text, not page images.
 - Quran reading uses the complete verbatim bundled Tanzil Uthmani corpus before cached or remote data; preserve its license notice and attribution for offline first-launch reading.
 - Sermon categories and tags use array fields, with the legacy category field mirroring the first assignment; database triggers keep renamed/deleted category assignments consistent.
-- Shared text actions use native Capacitor clipboard/share on devices and browser APIs with copy fallback on web; a shared page toolbar supports selection on every view.
+- Shared text actions use native Capacitor clipboard/share on devices and browser APIs with copy fallback on web; copy/share buttons live only inside detail views (no global floating toolbar).
